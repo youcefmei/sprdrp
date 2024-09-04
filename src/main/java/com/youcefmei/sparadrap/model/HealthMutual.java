@@ -2,10 +2,12 @@ package com.youcefmei.sparadrap.model;
 
 import com.youcefmei.sparadrap.exception.InvalidInputException;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class HealthMutual {
 
+    public final static String[] mutualNames = {"Acoris Mutuelles","ADREA Mutuelle","APREVA","Avenir Mutuelle","Avenir Santé Mutuelle","CCMO","France Mutuelle","GFP","Harmonie Mutuelle"};
     private String name;
     private String phone;
     private String mail;
@@ -14,7 +16,6 @@ public class HealthMutual {
     private String city;
     private String state;
     private float healthCareRate;
-    private List<String> mutualNames = List.of("Acoris Mutuelles","ADREA Mutuelle	","APREVA","Avenir Mutuelle","Avenir Santé Mutuelle","CCMO","France Mutuelle","GFP","Harmonie Mutuelle");
 
     public HealthMutual(String name, String phone, String mail, String address, String areaCode, String city, String state, float healthCareRate) throws InvalidInputException {
         setName(name);
@@ -122,15 +123,20 @@ public class HealthMutual {
     }
 
     public void setName(String name) throws InvalidInputException {
-        List<String>  mutualNameFound = mutualNames.stream().filter(
+        List<String>  mutualNameFound = Arrays.asList(mutualNames).stream().filter(
                 mutualNameTemp -> mutualNameTemp.toLowerCase().equals(name.trim().toLowerCase())
         ).toList();
 
         if (mutualNameFound.isEmpty() ) {
-            throw  new InvalidInputException("Veuillez saisir une mutuelle valide !");
+            throw  new InvalidInputException("Veuillez saisir une mutuelle valide ! \nVeuillez choisir entre:" + mutualNames.toString());
         }else{
             this.name = name;
         }
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 
 

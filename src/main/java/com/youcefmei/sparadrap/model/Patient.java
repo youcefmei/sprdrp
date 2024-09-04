@@ -14,12 +14,43 @@ public class Patient extends User{
     private LocalDate birthDate;
     private String birthDateStr;
     private DoctorGeneral familyDoctor;
+    private HealthMutual healthMutual;
     private List<DoctorSpecialized> doctorSpecializeds;
 
 
 
-    public Patient(String firstName, String lastName, String phone, String mail, String address, String city, String areaCode, String secuId, LocalDate birthDate, DoctorGeneral familyDoctor) throws InvalidInputException {
+    public Patient(String firstName, String lastName, String phone, String mail, String address, String city,
+                   String areaCode, String secuId, LocalDate birthDate, DoctorGeneral familyDoctor
+    ) throws InvalidInputException, InvalidDateException {
+
         super(firstName, lastName, phone, mail, address, city, areaCode);
+        setSecuId(secuId);
+        setBirthDate(birthDate);
+        setFamilyDoctor(familyDoctor);
+    }
+
+    public String getSecuId() {
+        return secuId;
+    }
+
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public String getBirthDateStr() {
+        return birthDateStr;
+    }
+
+    public DoctorGeneral getFamilyDoctor() {
+        return familyDoctor;
+    }
+
+    public List<DoctorSpecialized> getDoctorSpecializeds() {
+        return doctorSpecializeds;
+    }
+
+    public HealthMutual getHealthMutual() {
+        return healthMutual;
     }
 
     public void setFamilyDoctor(DoctorGeneral familyDoctor) {
@@ -50,17 +81,20 @@ public class Patient extends User{
         if (GenericValidator.isDate(birthDateStr,"dd-MM-yyyy",true)){
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
             LocalDate date = LocalDate.parse( birthDateStr, formatter);
-
             setBirthDate(date);
             this.birthDateStr = birthDateStr;
         }
         else{
             throw new InvalidInputException("La date d'inscription n'est pas valide");
         }
-
     }
 
+    public void setHealthMutual(HealthMutual healthMutual) {
+        this.healthMutual = healthMutual;
+    }
 
-
-
+    @Override
+    public String toString() {
+        return  getLastName() + " - " + secuId ;
+    }
 }

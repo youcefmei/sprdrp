@@ -48,5 +48,8 @@ public abstract class Doctor extends  User {
         return null;
     }
 
-
+    @Override
+    public String toString() {
+        return  super.getLastName() + " - " + registrationNb ;
+    }
 }

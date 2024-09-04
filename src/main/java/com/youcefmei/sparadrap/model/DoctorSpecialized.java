@@ -33,4 +33,9 @@ public class DoctorSpecialized extends Doctor{
         }
 
     }
+
+    @Override
+    public String toString() {
+        return  super.getLastName() + " - " + super.getRegistrationNb() + " - "+ getSpeciality()  ;
+    }
 }

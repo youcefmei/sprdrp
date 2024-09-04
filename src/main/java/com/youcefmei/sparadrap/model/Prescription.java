@@ -10,8 +10,10 @@ public class Prescription {
     private Patient patient;
     private Doctor doctor;
     private List<Medicament> medicaments;
+    private float priceWithoutMutual;
+    private float priceWithMutual;
 
-    public Prescription(LocalDate date, Patient patient, Doctor doctor, List<Medicament> medicaments) throws Exception {
+    public Prescription(LocalDate date, Patient patient, Doctor doctor, List<Medicament> medicaments) throws NullPointerException, InvalidDateException {
         setDate(date);
         setPatient(patient);
         setDoctor(doctor);
@@ -34,6 +36,27 @@ public class Prescription {
         return date;
     }
 
+    public float getPriceWithoutMutual() {
+        float totalPrice = 0;
+        for (Medicament medicament : medicaments) {
+            totalPrice += medicament.getPrice();
+        }
+        return totalPrice;
+    }
+
+
+    public float getPriceWithMutual() {
+        if (patient.getHealthMutual() == null){
+            return getPriceWithoutMutual();
+        }else{
+            float totalPrice = 0;
+            for (Medicament medicament : medicaments) {
+                totalPrice += medicament.getPrice() * ( 100 - patient.getHealthMutual().getHealthCareRate() ) / 100;
+            }
+            return totalPrice;
+        }
+
+    }
 
     public void setDate(LocalDate date) throws InvalidDateException {
         if ( (date == null)  || date.isAfter(LocalDate.now() )) {
@@ -43,18 +66,18 @@ public class Prescription {
         }
     }
 
-    public void setPatient(Patient patient) throws Exception {
+    public void setPatient(Patient patient) throws NullPointerException {
         if (patient == null) {
-            throw new Exception("Le patient ne peut pas etre null");
+            throw new NullPointerException("Le patient ne peut pas etre null");
         } else{
             this.patient = patient;
         }
 
     }
 
-    public void setDoctor(Doctor doctor) throws Exception {
+    public void setDoctor(Doctor doctor) throws NullPointerException {
         if (doctor == null) {
-            throw new Exception("Le docteur ne peut pas etre null");
+            throw new NullPointerException("Le docteur ne peut pas etre null");
         } else{
             this.doctor = doctor;
         }
@@ -63,4 +86,7 @@ public class Prescription {
     public void setMedicaments(List<Medicament> medicaments) {
         this.medicaments = medicaments;
     }
+
+
+
 }
