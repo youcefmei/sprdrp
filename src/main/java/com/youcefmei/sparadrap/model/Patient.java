@@ -29,6 +29,18 @@ public class Patient extends User{
         setFamilyDoctor(familyDoctor);
     }
 
+
+    public Patient(String firstName, String lastName, String phone, String mail, String address, String city,
+                   String areaCode, String secuId, LocalDate birthDate, DoctorGeneral familyDoctor,HealthMutual healthMutual
+    ) throws InvalidInputException, InvalidDateException {
+
+        super(firstName, lastName, phone, mail, address, city, areaCode);
+        setSecuId(secuId);
+        setBirthDate(birthDate);
+        setFamilyDoctor(familyDoctor);
+        setHealthMutual(healthMutual);
+    }
+
     public String getSecuId() {
         return secuId;
     }

@@ -14,15 +14,16 @@ public class Medicament {
             "Cardiologie","Dermatologie","Endocrinologie","Gastro-entérologie","Hématologie",
             "Neurologie","Oncologie","Psychiatrie","Rhumatologie","Urologie"
     };
-    private String name;
+    private String title;
     private String category;
     private float price;
+    private float totalPrice;
     private int quantity;
     private  LocalDate startDate;
     private boolean needPrescription;
 
-    public Medicament( String name, String category, float price, int quantity, LocalDate startDate, boolean needPrescription) throws InvalidInputException, InvalidDateException {
-        setName(name);
+    public Medicament(String title, String category, float price, int quantity, LocalDate startDate, boolean needPrescription) throws InvalidInputException, InvalidDateException {
+        setTitle(title);
         setCategory(category);
         setPrice(price);
         setQuantity(quantity);
@@ -30,10 +31,9 @@ public class Medicament {
         setNeedPrescription(needPrescription);
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
-
 
     public String getCategory() {
         return category;
@@ -55,10 +55,15 @@ public class Medicament {
         return quantity;
     }
 
-    public void setName(String name) throws InvalidInputException {
+    public float getTotalPrice() {
+        return price*quantity;
+    }
 
-        if ( (name != null) && name.trim().matches("^[\\da-zA-Z\\s]+$") ) {
-            this.name = name;
+
+    public void setTitle(String title) throws InvalidInputException {
+
+        if ( (title != null) && title.trim().matches("^[\\da-zA-Z\\s]+$") ) {
+            this.title = title;
         }
         else{
             throw new InvalidInputException("Le nom de médicament n'est pas valable");
@@ -108,12 +113,13 @@ public class Medicament {
         }
     }
 
-    public float calculatePrice(){
-        return price * quantity;
-    }
-
     @Override
     public String toString() {
-        return name + " - " + category ;
+        if (needPrescription){
+            return title + " - " + category ;
+        } else{
+            return title + " - " + category ;
+        }
+
     }
 }

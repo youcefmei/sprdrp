@@ -13,6 +13,7 @@ public class Purchase {
 
     private String id = UUID.randomUUID().toString();
     private LocalDate date;
+    private String dateStr;
     private List<Medicament> medicaments = new ArrayList<Medicament>();
     private boolean isPaid;
     private Prescription prescription;
@@ -63,18 +64,21 @@ public class Purchase {
         float totalPrice = 0;
         if ( prescription == null ) {
             for (Medicament medicament : medicaments) {
-                totalPrice += medicament.getPrice();
+                totalPrice += medicament.getTotalPrice();
             }
         } else{
             HealthMutual healthMutual = prescription.getPatient().getHealthMutual();
             float rate =  (healthMutual!=null) ? healthMutual.getHealthCareRate():0;
             for (Medicament medicament : medicaments) {
-                totalPrice += medicament.getPrice() * ( 1 - rate);
+                totalPrice += medicament.getTotalPrice() * ( 1 - rate);
             }
         }
         return totalPrice;
     }
 
+    public String getDateStr() {
+        return dateStr;
+    }
 
     public void setDate(LocalDate date) throws InvalidDateException {
         if ( (date== null)  ) {
@@ -82,7 +86,9 @@ public class Purchase {
         }else if ( date.isAfter(LocalDate.now() )) {
             throw new InvalidDateException("La date de facturation ne peut etre postérieur à aujourd'hui");
         }else{
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
             this.date = date;
+            dateStr = date.format(formatter);
         }
     }
 
@@ -96,19 +102,29 @@ public class Purchase {
         } else {
             // Check if medicament is in the list
             List<Medicament> medicamentFound = medicaments.stream().filter(
-                    medicamentTemp -> medicamentTemp.getName().equals(medicament.getName())
+                    medicamentTemp -> medicamentTemp.getTitle().equals(medicament.getTitle())
             ).toList();
             if ( medicamentFound.size() > 0 ) {
+
                 // Change the quantity if is in the list
-                medicamentFound.getFirst().setQuantity(medicamentFound.getFirst().getQuantity() + medicament.getQuantity());
-                medicaments.add(medicamentFound.getFirst());
+//                medicamentFound.getFirst().setQuantity(medicamentFound.getFirst().getQuantity() + medicament.getQuantity());
+//                for (Medicament medicamentTemp : this.medicaments) {
+//                    System.out.println(medicamentTemp.getQuantity());
+//                     medicamentTemp.setQuantity(medicamentTemp.getQuantity() + medicament.getQuantity());
+
+//                }
+
+//                System.out.println(me);
+//                System.out.println(medicamentFound.getFirst().getQuantity());
+//                medicaments.add(medicamentFound.getFirst());
             } else {
                 // Add if not in the list
                 if ( prescription != null ) {
                     // With prescription add
                     List<Medicament> medicamentFoundInPrescription = prescription.getMedicaments().stream().filter(
-                            medicamentTemp -> medicamentTemp.getName().equals(medicament.getName())
+                            medicamentTemp -> medicamentTemp.getTitle().equals(medicament.getTitle())
                     ).toList();
+
                     if ( medicamentFoundInPrescription.size() > 0 ) {
                         medicaments.add(medicament);
                     } else {
@@ -118,18 +134,20 @@ public class Purchase {
                     // Without prescription add
                    medicaments.add(medicament);
                 }
-
             }
         }
+        System.out.println("Purchase amount: " + getTotalAmount());
     }
 
 
-    public void removeMedicament(Medicament medicament) throws Exception {
+    public void removeMedicament(Medicament medicament){
         if ( medicament != null ) {
-            medicaments.remove(medicament);
+            this.medicaments =  medicaments.stream().filter(
+                    medicamentTemp -> !medicamentTemp.getTitle().equals(medicament.getTitle())
+            ).toList();
+
         }
     }
-
 
     public void setMedicaments(List<Medicament> medicaments) throws NullPointerException, InvalidInputException {
         if ( medicaments == null){
@@ -148,7 +166,6 @@ public class Purchase {
             }
         }
     }
-
 
     public void setPrescription(Prescription prescription) throws NullPointerException, InvalidInputException {
         if (prescription == null){
