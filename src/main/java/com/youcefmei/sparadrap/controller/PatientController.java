@@ -25,6 +25,11 @@ import java.util.function.Predicate;
 
 public class PatientController implements Initializable {
 
+    @FXML
+    private Accordion patientAccordionPane;
+
+    @FXML
+    private TitledPane createOrUpdatePatientTitledPane, listPatientTitledPane ;
 
     @FXML
     private TextField patientSearchTextField,patientLastNameRegisterTextField,patientFirstNameRegisterTextField,patientMailRegisterTextField;
@@ -189,5 +194,16 @@ public class PatientController implements Initializable {
 //            });
 //        }
 //        System.out.println(library.getCustomers());
+    }
+
+    @FXML
+    private void handleEditPatient(ActionEvent event) {
+        if (patientTable.getSelectionModel().getSelectedItem() != null){
+            createOrUpdatePatientTitledPane.setText("Editer");
+            patientAccordionPane.setExpandedPane(createOrUpdatePatientTitledPane);
+        }
+        else{
+
+        }
     }
 }

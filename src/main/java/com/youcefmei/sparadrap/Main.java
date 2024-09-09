@@ -12,10 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
-import java.time.LocalDate;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main extends Application {
     public static void main(String[] args) throws InvalidInputException, DuplicateException, InvalidDateException, PaymentException {
         Pharmacy pharmacy = Pharmacy.getInstance();
@@ -23,6 +20,7 @@ public class Main extends Application {
         System.out.println(pharmacy.getDoctorGenerals());
 //        Main main = new Main();
 //        main.start();
+
         launch();
     }
 

@@ -4,6 +4,8 @@ import com.youcefmei.sparadrap.exception.InvalidDateException;
 import com.youcefmei.sparadrap.exception.InvalidInputException;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,39 +14,43 @@ import java.util.UUID;
 public class Purchase {
 
     private String id = UUID.randomUUID().toString();
-    private LocalDate date;
-    private String dateStr;
+    private LocalDateTime datetime;
+    private String datetimeStr;
     private List<Medicament> medicaments = new ArrayList<Medicament>();
     private boolean isPaid;
     private Prescription prescription;
-    private float totalAmount = 0.0f;
-
+//    private float totalAmount = 0.0f;
+    private float totalAmount;
 
 
     public Purchase () throws InvalidDateException {
-        setDate(LocalDate.now());
+        setDatetime(LocalDateTime.now());
+
     }
 
-    public Purchase(LocalDate date) throws NullPointerException, InvalidDateException {
-        setDate(date);
+    public Purchase(LocalDateTime datetime) throws  InvalidDateException {
+        setDatetime(datetime);
     }
 
-    public Purchase(Prescription prescription) throws NullPointerException, InvalidDateException, InvalidInputException {
-        setDate(LocalDate.now());
+    public Purchase(Prescription prescription) throws  InvalidDateException, InvalidInputException {
+        setDatetime(LocalDateTime.now());
         setPrescription(prescription);
     }
 
-    public Purchase(LocalDate date,Prescription prescription) throws NullPointerException, InvalidDateException, InvalidInputException {
-        setDate(date);
+    public Purchase(LocalDateTime datetime,Prescription prescription) throws  InvalidDateException, InvalidInputException {
+        setDatetime(datetime.plusDays(1));
         setPrescription(prescription);
     }
+
+
+
 
      public boolean isPaid() {
         return isPaid;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public LocalDateTime getDatetime() {
+        return datetime;
     }
 
     public String getId() {
@@ -62,62 +68,54 @@ public class Purchase {
 
     public float getTotalAmount(){
         float totalPrice = 0;
-        if ( prescription == null ) {
+        if ( prescription == null ||  (prescription.getPatient().getHealthMutual() == null) ) {
             for (Medicament medicament : medicaments) {
                 totalPrice += medicament.getTotalPrice();
             }
         } else{
             HealthMutual healthMutual = prescription.getPatient().getHealthMutual();
-            float rate =  (healthMutual!=null) ? healthMutual.getHealthCareRate():0;
+            float rate =  healthMutual.getHealthCareRate();
             for (Medicament medicament : medicaments) {
-                totalPrice += medicament.getTotalPrice() * ( 1 - rate);
+                totalPrice += medicament.getTotalPrice() * ( (100 - rate)/100);
             }
         }
         return totalPrice;
     }
 
-    public String getDateStr() {
-        return dateStr;
+    public String getDatetimeStr() {
+        return datetimeStr;
     }
 
-    public void setDate(LocalDate date) throws InvalidDateException {
-        if ( (date== null)  ) {
+    public void setDatetime(LocalDateTime datetime) throws InvalidDateException {
+        if ( (datetime== null)  ) {
             throw new InvalidDateException("La date de facturation ne peut etre null");
-        }else if ( date.isAfter(LocalDate.now() )) {
+        }else if ( datetime.isAfter(LocalDateTime.now() )) {
             throw new InvalidDateException("La date de facturation ne peut etre postérieur à aujourd'hui");
         }else{
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-            this.date = date;
-            dateStr = date.format(formatter);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+            System.out.println(datetime);
+            this.datetime = datetime;
+            datetimeStr = datetime.format(formatter);
         }
     }
 
 
-    public void addMedicament(Medicament medicament) throws NullPointerException, InvalidInputException {
+    public void addMedicament(Medicament medicament) throws  InvalidInputException {
 
         if ( medicament == null ) {
-            throw  new NullPointerException("Le mediacament ne peut etre nulle");
+            throw  new InvalidInputException("Le mediacament ne peut etre nul");
         } else if (  (prescription == null)  && medicament.isNeedPrescription()   ){
             throw new InvalidInputException("Ce medicament a besoin d'une ordonnance");
         } else {
             // Check if medicament is in the list
             List<Medicament> medicamentFound = medicaments.stream().filter(
-                    medicamentTemp -> medicamentTemp.getTitle().equals(medicament.getTitle())
+                    medicamentTemp -> medicamentTemp.getTitle().equals(medicament.getTitle()) && ( medicamentTemp.getQuantity() == medicament.getQuantity() )
             ).toList();
-            if ( medicamentFound.size() > 0 ) {
-
-                // Change the quantity if is in the list
-//                medicamentFound.getFirst().setQuantity(medicamentFound.getFirst().getQuantity() + medicament.getQuantity());
-//                for (Medicament medicamentTemp : this.medicaments) {
-//                    System.out.println(medicamentTemp.getQuantity());
-//                     medicamentTemp.setQuantity(medicamentTemp.getQuantity() + medicament.getQuantity());
-
-//                }
-
-//                System.out.println(me);
-//                System.out.println(medicamentFound.getFirst().getQuantity());
-//                medicaments.add(medicamentFound.getFirst());
-            } else {
+//            if ( !medicamentFound.isEmpty() ) {
+////                throw new InvalidInputException("Déja dans le panier, vous pouvez changer la quantité\n pour modifier la commande");
+////
+//            } else {
+            if ( medicamentFound.isEmpty() ) {
                 // Add if not in the list
                 if ( prescription != null ) {
                     // With prescription add
@@ -125,7 +123,7 @@ public class Purchase {
                             medicamentTemp -> medicamentTemp.getTitle().equals(medicament.getTitle())
                     ).toList();
 
-                    if ( medicamentFoundInPrescription.size() > 0 ) {
+                    if (!medicamentFoundInPrescription.isEmpty()) {
                         medicaments.add(medicament);
                     } else {
                         throw new InvalidInputException("Ce medicament n'est pas dans l'ordonnance");
@@ -149,14 +147,14 @@ public class Purchase {
         }
     }
 
-    public void setMedicaments(List<Medicament> medicaments) throws NullPointerException, InvalidInputException {
+    public void setMedicaments(List<Medicament> medicaments) throws  InvalidInputException {
         if ( medicaments == null){
-            throw new NullPointerException("La liste de médicament ne peut etre null");
+            throw new InvalidInputException("La liste de médicament ne peut etre null");
         } else if ( medicaments.isEmpty() ) {
-            throw new NullPointerException("La liste de médicament ne peut etre vide");
+            throw new InvalidInputException("La liste de médicament ne peut etre vide");
         } else if ( prescription != null ) {
 
-            throw new NullPointerException("La liste de médicament ne peut etre modifier car il s'agit d'un achat avec ordonnance");
+            throw new InvalidInputException("La liste de médicament ne peut etre modifier car il s'agit d'un achat avec ordonnance");
         }else{
             this.medicaments.clear();
             for(Medicament medicament : medicaments){
@@ -167,13 +165,13 @@ public class Purchase {
         }
     }
 
-    public void setPrescription(Prescription prescription) throws NullPointerException, InvalidInputException {
+    public void setPrescription(Prescription prescription) throws  InvalidInputException {
         if (prescription == null){
-            throw new NullPointerException("L'ordonnance ne peut pas etre null");
+            throw new InvalidInputException("L'ordonnance ne peut pas etre null");
         } else if (  prescription.getMedicaments().isEmpty() ) {
-            throw new NullPointerException("Cette ordonnance ne contient pas de médicaments");
+            throw new InvalidInputException("Cette ordonnance ne contient pas de médicaments");
         } else if ( this.prescription == null && !getMedicaments().isEmpty() ){
-            throw new NullPointerException("Il est impossible d'ajouter une ordonnance si un achat sans ordonnance est en cours");
+            throw new InvalidInputException("Il est impossible d'ajouter une ordonnance si un achat sans ordonnance est en cours");
         } else{
             this.prescription = prescription;
             for (Medicament medicament : prescription.getMedicaments()) {
@@ -183,7 +181,7 @@ public class Purchase {
     }
 
     public void setPaid(boolean paid) throws InvalidInputException {
-        if ( paid == true && medicaments.size() == 0 ) {
+        if ( paid && medicaments.isEmpty()) {
             throw new InvalidInputException("La liste de medicament est vide");
         }else{
             isPaid = paid;
@@ -195,12 +193,10 @@ public class Purchase {
     public String toString() {
         String title ;
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        String dateStr = date.format(formatter);
         if (prescription != null) {
-            title = "Achat avec ordonnance - " + id + " - " + dateStr;
+            title = "Achat avec ordonnance - " + id + " - " + getDatetimeStr();
         }else{
-            title = "Achat sans ordonnance - " + id + " - " + dateStr;
+            title = "Achat sans ordonnance - " + id + " - " + getDatetimeStr();
         }
         return title;
     }

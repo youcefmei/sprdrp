@@ -1,6 +1,7 @@
 package com.youcefmei.sparadrap.model;
 
 import com.youcefmei.sparadrap.exception.InvalidDateException;
+import com.youcefmei.sparadrap.exception.InvalidInputException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -13,7 +14,7 @@ public class Prescription {
     private float priceWithoutMutual;
     private float priceWithMutual;
 
-    public Prescription(LocalDate date, Patient patient, Doctor doctor, List<Medicament> medicaments) throws NullPointerException, InvalidDateException {
+    public Prescription(LocalDate date, Patient patient, Doctor doctor, List<Medicament> medicaments) throws InvalidDateException, InvalidInputException {
         setDate(date);
         setPatient(patient);
         setDoctor(doctor);
@@ -66,18 +67,18 @@ public class Prescription {
         }
     }
 
-    public void setPatient(Patient patient) throws NullPointerException {
+    public void setPatient(Patient patient) throws InvalidInputException {
         if (patient == null) {
-            throw new NullPointerException("Le patient ne peut pas etre null");
+            throw new InvalidInputException("Veuillez sélectionner un patient");
         } else{
             this.patient = patient;
         }
 
     }
 
-    public void setDoctor(Doctor doctor) throws NullPointerException {
+    public void setDoctor(Doctor doctor) throws InvalidInputException {
         if (doctor == null) {
-            throw new NullPointerException("Le docteur ne peut pas etre null");
+            throw new InvalidInputException("Veuillez sélectionner un docteur");
         } else{
             this.doctor = doctor;
         }

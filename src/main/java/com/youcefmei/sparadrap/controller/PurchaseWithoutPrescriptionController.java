@@ -61,10 +61,11 @@ public class PurchaseWithoutPrescriptionController implements Initializable {
     @FXML
     private TableColumn<Medicament, Integer> medicamentQuantityCol;
 
-    private Pharmacy pharmacy = Pharmacy.getInstance();
+    private Purchase purchase;
+    private final Pharmacy pharmacy = Pharmacy.getInstance();
 
-    private Alert alertDelete = new Alert(Alert.AlertType.CONFIRMATION, "Etes-vous certains de vouloir supprimer ?");
-    private Alert alertInfo = new Alert(Alert.AlertType.INFORMATION, "Veuillez selectionner un medicament");
+    private final Alert alertDelete = new Alert(Alert.AlertType.CONFIRMATION, "Etes-vous certains de vouloir supprimer ?");
+    private final Alert alertInfo = new Alert(Alert.AlertType.INFORMATION, "Veuillez selectionner un medicament");
     private FilteredList<Medicament> filteredMedicaments;
     private ObservableList<Medicament> medicamentTableItems;
     private ObservableList<Medicament> medicamentComboItems;
@@ -87,10 +88,9 @@ public class PurchaseWithoutPrescriptionController implements Initializable {
                         50
                 )
         );
-
         try {
-            Purchase purchase = new Purchase();
-            pharmacy.setCurrentPurchase(purchase);
+            purchase = new Purchase();
+//            pharmacy.setCurrentPurchase(purchase);
         } catch (InvalidDateException e) {
             alertInfo.setContentText(e.getMessage());
             alertInfo.showAndWait();
@@ -105,23 +105,24 @@ public class PurchaseWithoutPrescriptionController implements Initializable {
     private void handleClearPurchase(ActionEvent event) throws InvalidInputException {
         medicamentSearchTextField.setText("");
         medicamentQuantitySpinner.getValueFactory().setValue(1);
-        pharmacy.getCurrentPurchase().getMedicaments().clear();
-        purchaseTotalPriceText.setText( pharmacy.getCurrentPurchase().getTotalAmount() + " €");
+        purchase.getMedicaments().clear();
+        purchaseTotalPriceText.setText( purchase.getTotalAmount() + " €");
         populateMedicamentTable();
     }
 
     @FXML
     private void handleRegisterPurchase(ActionEvent event)  {
         try {
-            pharmacy.getCurrentPurchase().setPaid(true);
-            pharmacy.addCurrentPurchase();
+            purchase.setPaid(true);
+            pharmacy.addPurchase(purchase);
             alertInfo.setContentText("L'achat a bien été enregistré: "
-                    + pharmacy.getCurrentPurchase().getTotalAmount()
-                    + "€\nId: " + pharmacy.getCurrentPurchase().getId()
-                    + "\nLe: " + pharmacy.getCurrentPurchase().getDateStr()
+                    + purchase.getTotalAmount()
+                    + "€\nId: " + purchase.getId()
+                    + "\nDate: " + purchase.getDatetimeStr()
             );
             alertInfo.showAndWait();
-            pharmacy.setCurrentPurchase(new Purchase());
+            purchase = new Purchase();
+            pharmacy.setCurrentPurchase( purchase);
             handleClearPurchase(null);
         } catch ( PaymentException | DuplicateException| InvalidInputException | InvalidDateException e) {
             alertInfo.setContentText(e.getMessage());
@@ -159,35 +160,35 @@ public class PurchaseWithoutPrescriptionController implements Initializable {
 
         try {
             medicament.setQuantity(medicamentQuantitySpinner.getValue());
-            pharmacy.getCurrentPurchase().addMedicament(medicament);
+            purchase.addMedicament(medicament);
         } catch (InvalidInputException e) {
             alertInfo.setContentText(e.getMessage());
             alertInfo.showAndWait();
         }
-        for (Medicament med : pharmacy.getCurrentPurchase().getMedicaments()) {
+        for (Medicament med : purchase.getMedicaments()) {
             System.out.println(med + " - " + med.getQuantity() + "\n");
         }
         populateMedicamentTable();
 
-        purchaseTotalPriceText.setText(pharmacy.getCurrentPurchase().getTotalAmount() + " €");
+        purchaseTotalPriceText.setText(purchase.getTotalAmount() + " €");
     }
 
     @FXML
     private void handleDeleteMedicament(ActionEvent event) {
-        System.out.println(pharmacy.getCurrentPurchase().getMedicaments());
+        System.out.println(purchase.getMedicaments());
         if (medicamentTable.getSelectionModel().getSelectedItem() == null){
             alertInfo.showAndWait();
         }
         else{
             alertDelete.showAndWait().ifPresent(response -> {
                 if (response == ButtonType.OK){
-                    pharmacy.getCurrentPurchase().removeMedicament((Medicament) medicamentTable.getSelectionModel().getSelectedItem());
-                    purchaseTotalPriceText.setText(pharmacy.getCurrentPurchase().getTotalAmount() + " €");
+                    purchase.removeMedicament((Medicament) medicamentTable.getSelectionModel().getSelectedItem());
+                    purchaseTotalPriceText.setText(purchase.getTotalAmount() + " €");
                     populateMedicamentTable();
                 }
             });
         }
-        System.out.println(pharmacy.getCurrentPurchase().getMedicaments());
+        System.out.println(purchase.getMedicaments());
 
     }
 
@@ -214,7 +215,7 @@ public class PurchaseWithoutPrescriptionController implements Initializable {
     private void populateMedicamentTable() {
         medicamentTableItems =
                 FXCollections.observableArrayList(
-                        pharmacy.getCurrentPurchase().getMedicaments()
+                        purchase.getMedicaments()
                 );
         medicamentTable.setItems(medicamentTableItems);
         medicamentTable.refresh();

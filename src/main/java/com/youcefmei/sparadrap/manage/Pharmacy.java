@@ -205,9 +205,6 @@ public class Pharmacy {
         }
     }
 
-
-
-
     private void checkDoctorDuplicate(String doctorRegistrationNb) throws DuplicateException {
         for (Doctor doctorTemp : doctorGenerals) {
             if (doctorTemp.getRegistrationNb().equals(doctorRegistrationNb)) {
@@ -269,7 +266,7 @@ public class Pharmacy {
         doctorSpecializeds.add(doctor);
         doctors.add( doctor);
     }
-
+    
 
     public void addMedicament(Medicament medicament) throws DuplicateException {
         checkMedicamentDuplicate(medicament.getTitle());

@@ -60,7 +60,7 @@
                   <Font name="Dubai Bold" size="16.0" />
                </font>
             </Button>
-            <Text layoutX="664.0" layoutY="542.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0.0€" textAlignment="CENTER" wrappingWidth="115.0">
+            <Text fx:id="purchaseTotalPriceWithMutualText" layoutX="664.0" layoutY="542.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0.0 €" textAlignment="CENTER" wrappingWidth="115.0">
                <font>
                   <Font size="36.0" />
                </font>
