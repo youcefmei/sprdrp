@@ -7,6 +7,7 @@ import java.util.List;
 
 public abstract class Doctor extends  User {
 
+
     private String registrationNb;
     private List<Patient> patients = new ArrayList<Patient>();
 

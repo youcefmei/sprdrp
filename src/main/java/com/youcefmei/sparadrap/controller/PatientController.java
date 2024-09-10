@@ -4,24 +4,24 @@ package com.youcefmei.sparadrap.controller;
 import com.youcefmei.sparadrap.exception.DuplicateException;
 import com.youcefmei.sparadrap.exception.InvalidDateException;
 import com.youcefmei.sparadrap.exception.InvalidInputException;
-import com.youcefmei.sparadrap.exception.PaymentException;
 import com.youcefmei.sparadrap.manage.Pharmacy;
+import com.youcefmei.sparadrap.model.Doctor;
+import com.youcefmei.sparadrap.model.DoctorGeneral;
+import com.youcefmei.sparadrap.model.HealthMutual;
 import com.youcefmei.sparadrap.model.Patient;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Pane;
+
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.function.Predicate;
 
 public class PatientController implements Initializable {
 
@@ -32,26 +32,50 @@ public class PatientController implements Initializable {
     private TitledPane createOrUpdatePatientTitledPane, listPatientTitledPane ;
 
     @FXML
-    private TextField patientSearchTextField,patientLastNameRegisterTextField,patientFirstNameRegisterTextField,patientMailRegisterTextField;
+    private TextField patientLastNameTextField,patientFirstNameTextField,patientMailTextField,patientPhoneTextField,
+            patientAddressTextField,patientCityTextField,patientAreacodeTextField,patientSecuNumTextField;
+
+//    @FXML
+    private DatePicker patientBirthDatePicker;
+
+    @FXML
+    private Pane birthDatePane;
+
+    @FXML
+    private ComboBox<Doctor> familyDoctorCombo;
+
+    @FXML
+    private ComboBox<HealthMutual> healthMutualCombo;
+
+    @FXML
+    private Button patientCancelEditButton;
 
     @FXML
     private TableView patientTable;
-//
+
     @FXML
     private TableColumn<Patient, String> patientSecuNumCol, patientMailCol,patientFirstnameCol,patientLastnameCol,patientBirthdateCol;
-//
+
+    private final Alert alertDelete = new Alert(Alert.AlertType.CONFIRMATION, "Etes-vous certains de vouloir supprimer ?");
+    private final Alert alertInfo = new Alert(Alert.AlertType.INFORMATION, "Veuillez selectionner un patient");
+
     private Pharmacy pharmacy = Pharmacy.getInstance();;
 
     private List<Patient> patients = pharmacy.getPatients();
 
+    private Patient currentPatient;
 
-//    private Alert alertDelete = new Alert(Alert.AlertType.CONFIRMATION, "Etes-vous certains de vouloir supprimer ?");
-//    private Alert alertInfo = new Alert(Alert.AlertType.INFORMATION, "Veuillez selectionner un utilisateur");
-//
+    private ObservableList<Doctor> doctorComboItems;
+    private ObservableList<HealthMutual> healthMutualItems;
+    private ObservableList<Patient> patientTableItems;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initPatientTable();
         populatePatientTable();
+        patientBirthDatePicker = new DatePicker();
+        birthDatePane.getChildren().add(patientBirthDatePicker);
+        patientCancelEditButton.setVisible(false);
     }
 
 
@@ -61,6 +85,7 @@ public class PatientController implements Initializable {
 //        populatePatientTable();
     }
 //
+
     @FXML
     private void handleFilterSelectedPatient(ActionEvent event) {
 //        populatePatientTable();
@@ -68,34 +93,43 @@ public class PatientController implements Initializable {
 
     @FXML
     private void handleClearPatient(ActionEvent event) {
-//        patientFirstNameRegisterTextField.clear();
-//        patientLastNameRegisterTextField.clear();
-//        patientMailRegisterTextField.clear();
-//        populatePatientTable();
+        clearInputs();
     }
 //
     @FXML
     private void handleRegisterPatient(ActionEvent event) {
-//        System.out.println(library.getCustomers());
-//        String patientFirstName = patientFirstNameRegisterTextField.getText();
-//        String patientLastName = patientLastNameRegisterTextField.getText();
-//        String patientMail = patientMailRegisterTextField.getText();
-//
-//        try {
-//            Customer customer = new Customer(patientFirstName,patientLastName,patientMail);
-//            try {
-//                library.addCustomer(customer);
-//            } catch (DuplicateException e) {
-//                Alert alert = new Alert(Alert.AlertType.WARNING,e.getMessage());
-//                alert.showAndWait();
-//            }
-//            populatePatientTable();
-//
-//        } catch (InvalidInputException e) {
-//            Alert alert = new Alert(Alert.AlertType.WARNING,e.getMessage());
-//            alert.showAndWait();
-//        }
-//        populatePatientTable();
+        Patient patient;
+        String confirmUpdateOrCreate;
+        try {
+            patient = new Patient(
+                    patientFirstNameTextField.getText(),
+                    patientLastNameTextField.getText(),
+                    patientPhoneTextField.getText(),
+                    patientMailTextField.getText(),
+                    patientAddressTextField.getText(),
+                    patientCityTextField.getText(),
+                    patientAreacodeTextField.getText(),
+                    patientSecuNumTextField.getText(),
+                    patientBirthDatePicker.getValue(),
+                    (DoctorGeneral) familyDoctorCombo.getSelectionModel().getSelectedItem()
+            );
+            if ( currentPatient != null) {
+                patientTableItems.remove(currentPatient);
+                pharmacy.removePatient(patient);
+                confirmUpdateOrCreate = "Le patient a été modifié";
+            }else{
+                confirmUpdateOrCreate = "Le patient a été ajouté";
+            }
+
+            pharmacy.addPatient(patient);
+            patientTableItems.add(patient);
+            alertInfo.setContentText(confirmUpdateOrCreate);
+            alertInfo.showAndWait();
+
+        } catch (InvalidInputException | InvalidDateException | DuplicateException e) {
+            alertInfo.setContentText(e.getMessage());
+            alertInfo.showAndWait();
+        }
     }
 
     private void initPatientTable(){
@@ -154,10 +188,9 @@ public class PatientController implements Initializable {
     }
 //
     private void populatePatientTable() {
-        ObservableList<Patient> customerTableItems =
+        patientTableItems =
                 FXCollections.observableArrayList(
-                        patients
-                );
+                        patients);
 //        filteredCustomers = new FilteredList<>(customerTableItems);
 //        String selectedItem = patientNameMailCombo.getSelectionModel().getSelectedItem();
 //
@@ -174,36 +207,96 @@ public class PatientController implements Initializable {
 //                    }
 //                }
 //        );
-        patientTable.setItems(customerTableItems);
+        patientTable.setItems(patientTableItems);
 //        patientTable.setItems(filteredCustomers);
     }
 //
 //
+
+    @FXML
+    private void handleCancelEditPatient(ActionEvent event) {
+        currentPatient = null;
+        createOrUpdatePatientTitledPane.setText("Créer");
+        patientAccordionPane.setExpandedPane(listPatientTitledPane);
+
+        clearInputs();
+        patientCancelEditButton.setVisible(false);
+    }
+
+    private void clearInputs() {
+        patientLastNameTextField.setText("");
+        patientFirstNameTextField.setText("");
+        patientAddressTextField.setText("");
+        patientCityTextField.setText("");
+        patientAreacodeTextField.setText("");
+        patientSecuNumTextField.setText("");
+        patientMailTextField.setText("");
+        patientPhoneTextField.setText("");
+        patientBirthDatePicker.setValue(null);
+        familyDoctorCombo.getSelectionModel().clearSelection();
+        healthMutualCombo.getSelectionModel().clearSelection();
+    }
+
+
     @FXML
     private void handleDeletePatient(ActionEvent event) {
-//        System.out.println(library.getCustomers());
-//        if (patientTable.getSelectionModel().getSelectedItem() == null){
-//            alertInfo.showAndWait();
-//        }
-//        else{
-//            alertDelete.showAndWait().ifPresent(response -> {
-//                if (response == ButtonType.OK){
-//                    customers.remove(patientTable.getSelectionModel().getSelectedItem());
-//                    populatePatientTable();
-//                }
-//            });
-//        }
-//        System.out.println(library.getCustomers());
+
+        if (patientTable.getSelectionModel().getSelectedItem() == null){
+            alertInfo.showAndWait();
+        }
+        else{
+            alertDelete.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK){
+                    Patient patient = patientTableItems.get(patientTable.getSelectionModel().getSelectedIndex());
+                    System.out.println(pharmacy.getPatients());
+                    pharmacy.removePatient(patient);
+                    patientTableItems.remove(patient);
+                }
+            });
+        }
+
     }
 
     @FXML
     private void handleEditPatient(ActionEvent event) {
-        if (patientTable.getSelectionModel().getSelectedItem() != null){
-            createOrUpdatePatientTitledPane.setText("Editer");
+        currentPatient = (Patient) patientTable.getSelectionModel().getSelectedItem();
+        if (currentPatient != null){
+            createOrUpdatePatientTitledPane.setText("Modifier");
+            patientCancelEditButton.setVisible(true);
             patientAccordionPane.setExpandedPane(createOrUpdatePatientTitledPane);
+
+
+            patientLastNameTextField.setText(currentPatient.getLastName());
+            patientFirstNameTextField.setText(currentPatient.getFirstName());
+            patientAddressTextField.setText(currentPatient.getAddress());
+            patientCityTextField.setText(currentPatient.getCity());
+            patientAreacodeTextField.setText(currentPatient.getAreaCode());
+            patientSecuNumTextField.setText(currentPatient.getSecuId());
+            patientMailTextField.setText(currentPatient.getMail());
+            patientPhoneTextField.setText(currentPatient.getPhone());
+
+            doctorComboItems = FXCollections.observableArrayList(
+                            pharmacy.getDoctors()
+                    );
+            familyDoctorCombo.setItems(doctorComboItems);
+            familyDoctorCombo.getSelectionModel().select(currentPatient.getFamilyDoctor());
+
+
+            healthMutualItems = FXCollections.observableArrayList(
+                    pharmacy.getHealthMutuals()
+            );
+            healthMutualCombo.setItems(healthMutualItems);
+            healthMutualCombo.getSelectionModel().select(currentPatient.getHealthMutual());
+
+            patientBirthDatePicker.setEditable(true);
+            patientBirthDatePicker.setValue(currentPatient.getBirthDate());
+
+            System.out.println(currentPatient.getBirthDate());
+
+            System.out.println(patientBirthDatePicker.getValue());
         }
         else{
-
+            alertInfo.showAndWait();
         }
     }
 }

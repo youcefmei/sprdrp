@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="629.0" prefWidth="808.0" stylesheets="@dashboard.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.youcefmei.sparadrap.controller.PurchaseHistoryController">
+         <children>
+      <TableView fx:id="patientTable" layoutX="22.0" layoutY="97.0" prefHeight="383.0" prefWidth="780.0" stylesheets="@dashboard.css">
+         <columns>
+            <TableColumn fx:id="patientSecuNumCol" minWidth="0.0" prefWidth="172.0" text="Num secu" />
+            <TableColumn fx:id="patientLastnameCol" prefWidth="170.0" text="Nom patient" />
+            <TableColumn fx:id="doctorRegistrationNbCol" minWidth="0.0" prefWidth="120.0" text="Dr. num agréement" />
+            <TableColumn fx:id="patientMailCol" prefWidth="150.0" text="Dr. Nom" />
+            <TableColumn fx:id="purchaseDateCol" minWidth="0.0" prefWidth="120.0" text="Date d'achat" />
+            <TableColumn fx:id="patientPhoneCol" prefWidth="100.0" text="Prix" />
+            <TableColumn fx:id="patientAddressCol" prefWidth="100.0" text="Prix avec mutuel" />
+            <TableColumn fx:id="patientAreaCodeCol" prefWidth="100.0" text="Code postale" visible="false" />
+            <TableColumn fx:id="patientCityCol" prefWidth="100.0" text="Ville" visible="false" />
+         </columns>
+      </TableView>
+      <Button fx:id="patientEditButton" layoutX="693.0" layoutY="31.0" mnemonicParsing="false" onAction="#handleEditPatient" prefHeight="10.0" prefWidth="101.0" styleClass="clear" stylesheets="@dashboard.css" text="Editer">
+         <font>
+            <Font name="Dubai Bold" size="16.0" />
+         </font>
+      </Button>
+         </children>
+      </AnchorPane>

@@ -82,10 +82,10 @@ public abstract class User {
     }
 
     public void setCity(String city) throws InvalidInputException {
-        if ( (city != null)  && city.matches("^[a-zA-Z ]*[-a-zA-Z ]*$")){
+        if ( (city != null)  && ( !city.isBlank() )  && city.matches("^[a-zA-Z ]*[-a-zA-Z ]*$")){
             this.city = city;
         }else{
-            throw new InvalidInputException("L'addresse email n'est pas valide");
+            throw new InvalidInputException("La ville n'est pas valide");
         }
     }
     private void setPhone(String phone) throws InvalidInputException {

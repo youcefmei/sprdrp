@@ -55,6 +55,7 @@ public class DashboardController implements Initializable {
             anchorPanePurchaseHistory.setVisible(false);
         }
         else if (event.getSource()==dashboardPurchaseHistoryButton){
+//            System.out.println("rezer");
             anchorPanePurchaseHistory.setVisible(true);
             anchorPaneDoctor.setVisible(false);
             anchorPaneWithoutPrescription.setVisible(false);

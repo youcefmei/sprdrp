@@ -7,6 +7,7 @@ import org.apache.commons.validator.GenericValidator;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 
 
 public class Patient extends User{
@@ -109,4 +110,6 @@ public class Patient extends User{
     public String toString() {
         return  getLastName() + " - " + secuId ;
     }
+
+
 }
