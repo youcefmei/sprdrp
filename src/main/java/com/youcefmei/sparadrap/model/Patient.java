@@ -51,7 +51,8 @@ public class Patient extends User{
     }
 
     public String getBirthDateStr() {
-        return birthDateStr;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        return  formatter.format(birthDate);
     }
 
     public DoctorGeneral getFamilyDoctor() {

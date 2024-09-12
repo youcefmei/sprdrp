@@ -8,7 +8,6 @@ import com.youcefmei.sparadrap.exception.PaymentException;
 import com.youcefmei.sparadrap.manage.Pharmacy;
 import com.youcefmei.sparadrap.model.*;
 import javafx.beans.property.SimpleFloatProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -23,13 +22,10 @@ import javafx.scene.text.Text;
 import javafx.util.converter.FloatStringConverter;
 import javafx.util.converter.IntegerStringConverter;
 
-import java.math.RoundingMode;
 import java.net.URL;
-import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 
 public class PurchaseWithPrescriptionController implements Initializable {
@@ -74,9 +70,6 @@ public class PurchaseWithPrescriptionController implements Initializable {
     private FilteredList<Doctor> filteredDoctors;
     private FilteredList<Patient> filteredPatients;
     private ObservableList<Medicament> medicamentTableItems;
-    private ObservableList<Medicament> medicamentComboItems;
-    private ObservableList<Doctor> doctorComboItems;
-    private ObservableList<Patient> patientComboItems;
     private Patient patient;
     private Doctor doctor;
     private float healthMutualRate;
@@ -85,27 +78,18 @@ public class PurchaseWithPrescriptionController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         // Patient combo init
-        patientComboItems =
-                FXCollections.observableArrayList(
-                        pharmacy.getPatients()
-                );
-        patientNameSecuCombo.setItems(patientComboItems);
+
+        patientNameSecuCombo.setItems(pharmacy.getPatients());
 //        patientNameSecuCombo.getSelectionModel().selectFirst();
 
         // Doctor combo init
-        doctorComboItems =
-                FXCollections.observableArrayList(
-                        pharmacy.getDoctors()
-                );
-        doctorNameRegistrationNbCombo.setItems(doctorComboItems);
+
+        doctorNameRegistrationNbCombo.setItems(pharmacy.getDoctors());
 
         // Medicament init
             // combo init
-        medicamentComboItems =
-                FXCollections.observableArrayList(
-                        pharmacy.getMedicaments()
-                );
-        medicamentNameCombo.setItems(medicamentComboItems);
+
+        medicamentNameCombo.setItems(pharmacy.getMedicaments());
             // spinner init
         medicamentQuantitySpinner.setValueFactory(
                 new SpinnerValueFactory.IntegerSpinnerValueFactory(
@@ -122,7 +106,7 @@ public class PurchaseWithPrescriptionController implements Initializable {
     @FXML
     private void handleSearchPatient(KeyEvent event) {
 
-        filteredPatients = new FilteredList<>(patientComboItems);
+        filteredPatients = new FilteredList<>(pharmacy.getPatients());
         filteredPatients.setPredicate(
                 new Predicate<Patient>() {
                     @Override
@@ -147,14 +131,13 @@ public class PurchaseWithPrescriptionController implements Initializable {
 
     @FXML
     private void handleRegisterPurchase(ActionEvent event) {
-
         try {
             prescription = new Prescription(LocalDate.now(),patient,doctor,medicamentTable.getItems());
             Purchase purchase = new Purchase(prescription);
             purchase.setPaid(true);
             pharmacy.setCurrentPurchase(purchase);
             alertInfo.setContentText("L'achat a bien été enregistré: "
-                    + pharmacy.getCurrentPurchase().getTotalAmount()
+                    + pharmacy.getCurrentPurchase().getTotalAmountWithMutual()
                     + "€\nId: " + pharmacy.getCurrentPurchase().getId()
                     + "\nDate: " + pharmacy.getCurrentPurchase().getDatetimeStr()
             );
@@ -171,7 +154,7 @@ public class PurchaseWithPrescriptionController implements Initializable {
 
     @FXML
     private void handleSearchDoctor(KeyEvent event) {
-        filteredDoctors = new FilteredList<>(doctorComboItems);
+        filteredDoctors = new FilteredList<>(pharmacy.getDoctors());
         filteredDoctors.setPredicate(
                 new Predicate<Doctor>() {
                     @Override
@@ -203,7 +186,7 @@ public class PurchaseWithPrescriptionController implements Initializable {
 
     @FXML
     private void handleSearchMedicament(KeyEvent event) {
-        filteredMedicaments = new FilteredList<>(medicamentComboItems);
+        filteredMedicaments = new FilteredList<>(pharmacy.getMedicaments());
         filteredMedicaments.setPredicate(
                 new Predicate<Medicament>() {
                     @Override
@@ -289,6 +272,15 @@ public class PurchaseWithPrescriptionController implements Initializable {
         if ( ( patient != null ) && ( doctor != null )){
             patientNameSecuCombo.setDisable(true);
             doctorNameRegistrationNbCombo.setDisable(true);
+            patient = patientNameSecuCombo.getSelectionModel().getSelectedItem();
+            doctor = doctorNameRegistrationNbCombo.getSelectionModel().getSelectedItem();
+            if ( patient.getHealthMutual() != null){
+
+                healthMutualRate = patient.getHealthMutual().getHealthCareRate();
+            } else {
+                healthMutualRate = 0;
+            }
+
             initMedicamentTable();
         }
     }

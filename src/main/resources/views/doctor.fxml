@@ -1,30 +1,161 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Group?>
+<?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="629.0" prefWidth="808.0" stylesheets="@dashboard.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.youcefmei.sparadrap.controller.DoctorController">
          <children>
-      <TableView fx:id="patientTable" layoutX="22.0" layoutY="97.0" prefHeight="383.0" prefWidth="780.0" stylesheets="@dashboard.css">
-         <columns>
-            <TableColumn fx:id="patientSecuNumCol" minWidth="0.0" prefWidth="172.0" text="Num secu" />
-            <TableColumn fx:id="patientLastnameCol" prefWidth="170.0" text="Nom patient" />
-            <TableColumn fx:id="doctorRegistrationNbCol" minWidth="0.0" prefWidth="120.0" text="Dr. num agréement" />
-            <TableColumn fx:id="patientMailCol" prefWidth="150.0" text="Dr. Nom" />
-            <TableColumn fx:id="purchaseDateCol" minWidth="0.0" prefWidth="120.0" text="Date d'achat" />
-            <TableColumn fx:id="patientPhoneCol" prefWidth="100.0" text="Prix" />
-            <TableColumn fx:id="patientAddressCol" prefWidth="100.0" text="Prix avec mutuel" />
-            <TableColumn fx:id="patientAreaCodeCol" prefWidth="100.0" text="Code postale" visible="false" />
-            <TableColumn fx:id="patientCityCol" prefWidth="100.0" text="Ville" visible="false" />
-         </columns>
-      </TableView>
-      <Button fx:id="patientEditButton" layoutX="693.0" layoutY="31.0" mnemonicParsing="false" onAction="#handleEditPatient" prefHeight="10.0" prefWidth="101.0" styleClass="clear" stylesheets="@dashboard.css" text="Editer">
-         <font>
-            <Font name="Dubai Bold" size="16.0" />
-         </font>
-      </Button>
+      <Accordion fx:id="patientAccordionPane" layoutY="30.0" prefHeight="579.0" prefWidth="819.0">
+         <panes>
+            <TitledPane fx:id="createOrUpdateDoctorTitledPane" animated="false" styleClass="navbar" text="Creer">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Label layoutX="89.0" layoutY="118.0" prefHeight="32.0" prefWidth="61.0" text="Prénom:">
+                           <font>
+                              <Font name="Dubai Bold" size="15.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="490.0" layoutY="67.0" prefHeight="32.0" prefWidth="59.0" text="Tel:">
+                           <font>
+                              <Font name="Dubai Bold" size="15.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="89.0" layoutY="68.0" prefHeight="32.0" prefWidth="59.0" text="Nom:">
+                           <font>
+                              <Font name="Dubai Bold" size="15.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="485.0" layoutY="170.0" prefHeight="32.0" prefWidth="56.0" text="Ville:">
+                           <font>
+                              <Font name="Dubai Bold" size="15.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="89.0" layoutY="169.0" prefHeight="32.0" prefWidth="54.0" text="Mail:">
+                           <font>
+                              <Font name="Dubai Bold" size="15.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="patientLastNameTextField" layoutX="157.0" layoutY="72.0" promptText="nom" styleClass="textfield" stylesheets="@dashboard.css" />
+                        <TextField fx:id="patientFirstNameTextField" layoutX="157.0" layoutY="122.0" promptText="prénom" styleClass="textfield" stylesheets="@dashboard.css" />
+                        <TextField fx:id="patientMailTextField" layoutX="157.0" layoutY="173.0" promptText="mail" styleClass="textfield" stylesheets="@dashboard.css" />
+                        <Separator layoutX="417.0" layoutY="61.0" orientation="VERTICAL" prefHeight="197.0" prefWidth="13.0" />
+                        <TextField fx:id="patientPhoneTextField" layoutX="573.0" layoutY="72.0" promptText="tel" styleClass="textfield" stylesheets="@dashboard.css" />
+                        <TextField fx:id="patientCityTextField" layoutX="573.0" layoutY="174.0" promptText="ville" styleClass="textfield" stylesheets="@dashboard.css" />
+                        <Label layoutX="485.0" layoutY="119.0" prefHeight="32.0" prefWidth="75.0" text="Adresse:">
+                           <font>
+                              <Font name="Dubai Bold" size="15.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="patientAddressTextField" layoutX="573.0" layoutY="123.0" promptText="adresse" styleClass="textfield" stylesheets="@dashboard.css" />
+                        <Button fx:id="doctorClearButton" layoutX="260.0" layoutY="424.0" mnemonicParsing="false" onAction="#handleClearDoctor" prefHeight="38.0" prefWidth="115.0" styleClass="clear" stylesheets="@dashboard.css" text="Effacer">
+                           <font>
+                              <Font name="Dubai Bold" size="16.0" />
+                           </font>
+                        </Button>
+                        <Button fx:id="doctorRegisterButton" alignment="CENTER" layoutX="410.0" layoutY="424.0" mnemonicParsing="false" onAction="#handleRegisterDoctor" prefHeight="39.0" prefWidth="102.0" styleClass="add" stylesheets="@dashboard.css" text="Enregistrer">
+                           <font>
+                              <Font name="Dubai Bold" size="16.0" />
+                           </font>
+                        </Button>
+                        <Label layoutX="485.0" layoutY="221.0" prefHeight="32.0" prefWidth="81.0" text="Code postal:">
+                           <font>
+                              <Font name="Dubai Bold" size="15.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="patientAreacodeTextField" layoutX="571.0" layoutY="224.0" promptText="code postal" styleClass="textfield" stylesheets="@dashboard.css" />
+                        <Pane fx:id="birthDatePane" layoutX="494.0" layoutY="159.0" />
+                        <Label layoutX="85.0" layoutY="221.0" prefHeight="32.0" prefWidth="139.0" text="Numero d'agéement:">
+                           <font>
+                              <Font name="Dubai Bold" size="15.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="patientSecuNumTextField" layoutX="240.0" layoutY="225.0" prefHeight="25.0" prefWidth="136.0" promptText="numéro d'agréement" styleClass="textfield" stylesheets="@dashboard.css" />
+                        <Button fx:id="doctorCancelEditButton" alignment="CENTER" layoutX="544.0" layoutY="424.0" mnemonicParsing="false" onAction="#handleCancelEditDoctor" prefHeight="39.0" prefWidth="102.0" styleClass="add" stylesheets="@dashboard.css" text="Annuler">
+                           <font>
+                              <Font name="Dubai Bold" size="16.0" />
+                           </font>
+                        </Button>
+                        <Label layoutX="185.0" layoutY="304.0" text="Type de médecin:">
+                           <font>
+                              <Font name="Dubai Bold" size="15.0" />
+                           </font>
+                        </Label>
+                        <Group layoutX="224.0" layoutY="280.0">
+                           <children>
+                              <RadioButton fx:id="doctorSpecialistRadio" layoutX="92.0" layoutY="30.0" mnemonicParsing="false" onAction="#handleDoctorType" styleClass="clear" text="Spécialiste">
+                                 <padding>
+                                    <Insets bottom="3.0" left="4.0" right="4.0" top="3.0" />
+                                 </padding>
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="doctorType" />
+                                 </toggleGroup>
+                              </RadioButton>
+                              <RadioButton fx:id="doctorGeneralRadio" layoutX="90.0" layoutY="66.0" mnemonicParsing="false" onAction="#handleDoctorType" prefHeight="23.0" prefWidth="92.0" selected="true" styleClass="clear" text="Généraliste" toggleGroup="$doctorType">
+                                 <padding>
+                                    <Insets bottom="3.0" left="4.0" right="4.0" top="3.0" />
+                                 </padding>
+                              </RadioButton>
+                           </children>
+                        </Group>
+                        <ComboBox fx:id="doctorSpecialityCombo" disable="true" layoutX="523.0" layoutY="310.0" prefHeight="25.0" prefWidth="178.0" />
+                        <Separator layoutX="66.0" layoutY="271.0" prefHeight="5.0" prefWidth="725.0" />
+                        <Label layoutX="450.0" layoutY="309.0" text="Spécialité:">
+                           <font>
+                              <Font name="Dubai Bold" size="15.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+               </content>
+            </TitledPane>
+            <TitledPane fx:id="listDoctorTitledPane" animated="false" text="Lister | Editer | Supprimer">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TableView fx:id="doctorTable" layoutX="20.0" layoutY="90.0" prefHeight="383.0" prefWidth="780.0" stylesheets="@dashboard.css">
+                           <columns>
+                              <TableColumn fx:id="doctorRegistrationNbCol" minWidth="0.0" prefWidth="120.0" text="Num agréement" />
+                              <TableColumn fx:id="doctorLastnameCol" prefWidth="150.0" text="Dr. Nom" />
+                              <TableColumn fx:id="doctorFirstnameCol" prefWidth="170.0" text="Dr. Prénom" />
+                              <TableColumn fx:id="doctorSpecialityCol" prefWidth="170.0" text="Specialité" />
+                              <TableColumn fx:id="doctorMailCol" minWidth="0.0" prefWidth="200.0" text="Mail" />
+                              <TableColumn fx:id="doctorPhoneCol" prefWidth="100.0" text="Tel" />
+                              <TableColumn fx:id="doctorAddressCol" prefWidth="200.0" text="Adresse" />
+                              <TableColumn fx:id="doctorAreaCodeCol" prefWidth="100.0" text="Code postale" />
+                              <TableColumn fx:id="doctorCityCol" prefWidth="100.0" text="Ville" />
+                           </columns>
+                        </TableView>
+                        <TextField fx:id="docotorSearchTextField" layoutX="15.0" layoutY="22.0" onKeyTyped="#handleSearchDoctor" prefHeight="36.0" prefWidth="236.0" promptText="Rechercher agréement" styleClass="search-billing" stylesheets="@dashboard.css" />
+                        <Button fx:id="doctortDeleteButton" layoutX="702.0" layoutY="25.0" mnemonicParsing="false" onAction="#handleDeleteDoctor" prefHeight="10.0" prefWidth="101.0" styleClass="clear" stylesheets="@dashboard.css" text="Supprimer">
+                           <font>
+                              <Font name="Dubai Bold" size="16.0" />
+                           </font>
+                        </Button>
+                        <Button fx:id="doctorEditButton" layoutX="568.0" layoutY="25.0" mnemonicParsing="false" onAction="#handleEditDoctor" prefHeight="10.0" prefWidth="101.0" styleClass="clear" stylesheets="@dashboard.css" text="Editer">
+                           <font>
+                              <Font name="Dubai Bold" size="16.0" />
+                           </font>
+                        </Button>
+                     </children>
+                  </AnchorPane>
+               </content>
+            </TitledPane>
+         </panes>
+      </Accordion>
          </children>
       </AnchorPane>

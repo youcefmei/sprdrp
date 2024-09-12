@@ -2,12 +2,11 @@ package com.youcefmei.sparadrap.model;
 
 import com.youcefmei.sparadrap.exception.InvalidDateException;
 import com.youcefmei.sparadrap.exception.InvalidInputException;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,16 +15,15 @@ public class Purchase {
     private String id = UUID.randomUUID().toString();
     private LocalDateTime datetime;
     private String datetimeStr;
-    private List<Medicament> medicaments = new ArrayList<Medicament>();
+    private ObservableList<Medicament> medicaments = FXCollections.observableArrayList();
     private boolean isPaid;
     private Prescription prescription;
-//    private float totalAmount = 0.0f;
-    private float totalAmount;
+    private float totalAmountWithMutual;
+    private float totalAmountWithoutMutual;
 
 
     public Purchase () throws InvalidDateException {
         setDatetime(LocalDateTime.now());
-
     }
 
     public Purchase(LocalDateTime datetime) throws  InvalidDateException {
@@ -38,11 +36,9 @@ public class Purchase {
     }
 
     public Purchase(LocalDateTime datetime,Prescription prescription) throws  InvalidDateException, InvalidInputException {
-        setDatetime(datetime.plusDays(1));
+        setDatetime(datetime);
         setPrescription(prescription);
     }
-
-
 
 
      public boolean isPaid() {
@@ -57,7 +53,7 @@ public class Purchase {
         return id;
     }
 
-    public List<Medicament> getMedicaments() {
+    public ObservableList<Medicament> getMedicaments() {
         return medicaments;
     }
 
@@ -66,7 +62,9 @@ public class Purchase {
         return prescription;
     }
 
-    public float getTotalAmount(){
+
+    public float getTotalAmountWithMutual() {
+
         float totalPrice = 0;
         if ( prescription == null ||  (prescription.getPatient().getHealthMutual() == null) ) {
             for (Medicament medicament : medicaments) {
@@ -76,11 +74,23 @@ public class Purchase {
             HealthMutual healthMutual = prescription.getPatient().getHealthMutual();
             float rate =  healthMutual.getHealthCareRate();
             for (Medicament medicament : medicaments) {
-                totalPrice += medicament.getTotalPrice() * ( (100 - rate)/100);
+                totalPrice += medicament.getTotalPrice() * ( ( 100 - rate )/100 );
             }
         }
         return totalPrice;
     }
+
+
+    public float getTotalAmountWithoutMutual(){
+        float totalPrice = 0;
+        for (Medicament medicament : medicaments) {
+                totalPrice += medicament.getTotalPrice();
+        }
+        return totalPrice;
+    }
+
+
+
 
     public String getDatetimeStr() {
         return datetimeStr;
@@ -134,15 +144,17 @@ public class Purchase {
                 }
             }
         }
-        System.out.println("Purchase amount: " + getTotalAmount());
+        System.out.println("Purchase amount: " + getTotalAmountWithoutMutual());
     }
 
 
     public void removeMedicament(Medicament medicament){
         if ( medicament != null ) {
-            this.medicaments =  medicaments.stream().filter(
+            this.medicaments =  FXCollections.observableArrayList(
+                medicaments.stream().filter(
                     medicamentTemp -> !medicamentTemp.getTitle().equals(medicament.getTitle())
-            ).toList();
+                ).toList()
+            );
 
         }
     }
@@ -188,6 +200,9 @@ public class Purchase {
         }
     }
 
+//    public void setTotalAmountWithoutMutual(float totalAmountWithoutMutual) {
+//        this.totalAmountWithoutMutual = totalAmountWithoutMutual;
+//    }
 
     @Override
     public String toString() {

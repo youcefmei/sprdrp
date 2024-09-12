@@ -1,34 +1,40 @@
 package com.youcefmei.sparadrap.manage;
 
 import com.youcefmei.sparadrap.exception.DuplicateException;
-import com.youcefmei.sparadrap.exception.InvalidDateException;
-import com.youcefmei.sparadrap.exception.InvalidInputException;
 import com.youcefmei.sparadrap.exception.PaymentException;
 import com.youcefmei.sparadrap.model.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Pharmacy {
     private static Pharmacy INSTANCE;
 
-    private List<DoctorGeneral> doctorGenerals = new ArrayList<>();
-    private List<DoctorSpecialized> doctorSpecializeds = new ArrayList<>();
-    private List<HealthMutual> healthMutuals = new ArrayList<>();
-    private List<Medicament> medicaments = new ArrayList<>();
-    private List<Patient> patients = new ArrayList<>();
-    private List<Purchase> purchases = new ArrayList<>();
+    private ObservableList<DoctorGeneral> doctorGenerals = FXCollections.observableArrayList();
+    private ObservableList<DoctorSpecialized> doctorSpecializeds = FXCollections.observableArrayList();
+    private ObservableList<HealthMutual> healthMutuals = FXCollections.observableArrayList();
+    private ObservableList<Medicament> medicaments = FXCollections.observableArrayList();
+    private ObservableList<Patient> patients = FXCollections.observableArrayList();
+//    private List<Purchase> purchases = new ArrayList<>();
+    private ObservableList<Purchase> purchases = FXCollections.observableArrayList();
+//    private CopyOnWriteArrayList<Purchase> purchases = new CopyOnWriteArrayList<Purchase>();
     private Patient currentPatientEdit;
 
-    private List<Doctor> doctors = new ArrayList<>();
+    private ObservableList<Doctor> doctors = FXCollections.observableArrayList();
     private Purchase currentPurchase;
 
+    static {
+        INSTANCE = new Pharmacy();
+    }
+
+    private Pharmacy(){
+
+    }
+
+
     public static Pharmacy getInstance() {
-        if(INSTANCE == null) {
-            INSTANCE = new Pharmacy();
-        }
         return INSTANCE;
     }
 
@@ -36,27 +42,27 @@ public class Pharmacy {
         return currentPurchase;
     }
 
-    public List<DoctorGeneral> getDoctorGenerals() {
+    public ObservableList<DoctorGeneral> getDoctorGenerals() {
         return doctorGenerals;
     }
 
-    public List<DoctorSpecialized> getDoctorSpecializeds() {
+    public ObservableList<DoctorSpecialized> getDoctorSpecializeds() {
         return doctorSpecializeds;
     }
 
-    public List<HealthMutual> getHealthMutuals() {
+    public ObservableList<HealthMutual> getHealthMutuals() {
         return healthMutuals;
     }
 
-    public List<Medicament> getMedicaments() {
+    public ObservableList<Medicament> getMedicaments() {
         return medicaments;
     }
 
-    public List<Patient> getPatients() {
+    public ObservableList<Patient> getPatients() {
         return patients;
     }
 
-    public List<Doctor> getDoctors() {
+    public ObservableList<Doctor> getDoctors() {
         return doctors;
     }
 
@@ -69,7 +75,7 @@ public class Pharmacy {
         this.currentPatientEdit = currentPatientEdit;
     }
 
-    public List<Purchase> getPurchases() {
+    public ObservableList<Purchase> getPurchases() {
         return purchases;
     }
 
@@ -80,15 +86,19 @@ public class Pharmacy {
 
 
 
-    private void checkDoctorDuplicate(String doctorRegistrationNb) throws DuplicateException {
-        for (Doctor doctorTemp : doctorGenerals) {
-            if (doctorTemp.getRegistrationNb().equals(doctorRegistrationNb)) {
-                throw new DuplicateException("Il y a déja un docteur ayant ce numero d'agrement");
+    private void checkDoctorDuplicate(Doctor doctor) throws DuplicateException {
+        if (doctor == null && doctors.contains(null)) {
+            throw new DuplicateException("Il y a déja un docteur vide");
+        } else if (doctor != null) {
+            for (Doctor doctorTemp : doctorGenerals) {
+                if ((doctorTemp !=null) && (doctorTemp.getRegistrationNb().equals(doctor.getRegistrationNb())) ) {
+                    throw new DuplicateException("Il y a déja un docteur ayant ce numero d'agrement");
+                }
             }
-        }
-        for (Doctor doctorTemp : doctorGenerals) {
-            if (doctorTemp.getRegistrationNb().equals(doctorRegistrationNb)) {
-                throw new DuplicateException("Il y a déja un docteur ayant ce numero d'agrement");
+            for (Doctor doctorTemp : doctorGenerals) {
+                if ((doctorTemp !=null) && (doctorTemp.getRegistrationNb().equals(doctor.getRegistrationNb()))) {
+                    throw new DuplicateException("Il y a déja un docteur ayant ce numero d'agrement");
+                }
             }
         }
     }
@@ -117,10 +127,14 @@ public class Pharmacy {
         }
     }
 
-    private void checkHealthMutualDuplicate(String name ) throws DuplicateException {
-        for ( HealthMutual healthMutualTemp : healthMutuals) {
-            if (healthMutualTemp.getName().equals(name)) {
-                throw new DuplicateException("Il y a déja une mutuelle nommée ainsi");
+    private void checkHealthMutualDuplicate(HealthMutual healthMutual ) throws DuplicateException {
+        if (healthMutual == null && healthMutuals.contains(null)) {
+            throw new DuplicateException("Il y a déja une mutuelle vide");
+        } else if (healthMutual != null) {
+            for ( HealthMutual healthMutualTemp : healthMutuals) {
+                if (healthMutualTemp.getName().equals(healthMutual.getName())) {
+                    throw new DuplicateException("Il y a déja une mutuelle nommée ainsi");
+                }
             }
         }
     }
@@ -131,13 +145,13 @@ public class Pharmacy {
     }
 
     public void addDoctorGeneral(DoctorGeneral doctor) throws DuplicateException {
-        checkDoctorDuplicate(doctor.getRegistrationNb());
+        checkDoctorDuplicate(doctor);
         doctorGenerals.add(doctor);
         doctors.add( doctor);
     }
 
     public void addDoctorSpecialized(DoctorSpecialized doctor) throws DuplicateException {
-        checkDoctorDuplicate(doctor.getRegistrationNb());
+        checkDoctorDuplicate(doctor);
         doctorSpecializeds.add(doctor);
         doctors.add( doctor);
     }
@@ -163,17 +177,17 @@ public class Pharmacy {
     }
 
     public void addHealthMutual(HealthMutual healthMutual) throws DuplicateException {
-        checkHealthMutualDuplicate(healthMutual.getName());
+        checkHealthMutualDuplicate(healthMutual);
         healthMutuals.add(healthMutual);
     }
 
     public void removePatient(Patient patient) {
-        patients =  new ArrayList<>(
-                patients.stream().filter(
-                        patientTemp -> !patientTemp.getSecuId().equals(patient.getSecuId())
-                ).toList()
-
-        );
+//        patients =  FXCollections.observableArrayList(
+//                patients.stream().filter(
+//                        patientTemp -> !patientTemp.getSecuId().equals( patient.getSecuId() )
+//                ).toList()
+//        );
+        patients.remove(patient);
 
     }
 

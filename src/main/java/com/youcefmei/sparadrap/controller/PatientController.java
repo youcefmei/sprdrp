@@ -42,7 +42,7 @@ public class PatientController implements Initializable {
     private Pane birthDatePane;
 
     @FXML
-    private ComboBox<Doctor> familyDoctorCombo;
+    private ComboBox<DoctorGeneral> familyDoctorCombo;
 
     @FXML
     private ComboBox<HealthMutual> healthMutualCombo;
@@ -61,21 +61,18 @@ public class PatientController implements Initializable {
 
     private Pharmacy pharmacy = Pharmacy.getInstance();;
 
-    private List<Patient> patients = pharmacy.getPatients();
-
     private Patient currentPatient;
-
-    private ObservableList<Doctor> doctorComboItems;
-    private ObservableList<HealthMutual> healthMutualItems;
-    private ObservableList<Patient> patientTableItems;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initPatientTable();
-        populatePatientTable();
+//        populatePatientTable();
         patientBirthDatePicker = new DatePicker();
         birthDatePane.getChildren().add(patientBirthDatePicker);
         patientCancelEditButton.setVisible(false);
+
+        healthMutualCombo.setItems(pharmacy.getHealthMutuals());
+        familyDoctorCombo.setItems(  pharmacy.getDoctorGenerals() );
     }
 
 
@@ -111,21 +108,25 @@ public class PatientController implements Initializable {
                     patientAreacodeTextField.getText(),
                     patientSecuNumTextField.getText(),
                     patientBirthDatePicker.getValue(),
-                    (DoctorGeneral) familyDoctorCombo.getSelectionModel().getSelectedItem()
+                    (DoctorGeneral) familyDoctorCombo.getSelectionModel().getSelectedItem(),
+                    healthMutualCombo.getValue()
             );
             if ( currentPatient != null) {
-                patientTableItems.remove(currentPatient);
-                pharmacy.removePatient(patient);
+                pharmacy.removePatient(currentPatient);
                 confirmUpdateOrCreate = "Le patient a été modifié";
             }else{
                 confirmUpdateOrCreate = "Le patient a été ajouté";
             }
 
             pharmacy.addPatient(patient);
-            patientTableItems.add(patient);
             alertInfo.setContentText(confirmUpdateOrCreate);
             alertInfo.showAndWait();
 
+            createOrUpdatePatientTitledPane.setText("Créer");
+            listPatientTitledPane.setVisible(true);
+            patientAccordionPane.setExpandedPane(listPatientTitledPane);
+            clearInputs();
+            patientCancelEditButton.setVisible(false);
         } catch (InvalidInputException | InvalidDateException | DuplicateException e) {
             alertInfo.setContentText(e.getMessage());
             alertInfo.showAndWait();
@@ -136,13 +137,14 @@ public class PatientController implements Initializable {
         patientFirstnameCol.setCellValueFactory(new PropertyValueFactory<>("firstName"));
         patientLastnameCol.setCellValueFactory(new PropertyValueFactory<>("lastName"));
         patientMailCol.setCellValueFactory(new PropertyValueFactory<>("mail"));
-        patientBirthdateCol.setCellValueFactory(new PropertyValueFactory<>("birthDate"));
+        patientBirthdateCol.setCellValueFactory(new PropertyValueFactory<>("birthDateStr"));
         patientSecuNumCol.setCellValueFactory(new PropertyValueFactory<>("secuId"));
         patientFirstnameCol.setEditable(true);
         patientLastnameCol.setEditable(true);
         patientBirthdateCol.setEditable(true);
         patientSecuNumCol.setEditable(true);
         patientTable.setEditable(true);
+        patientTable.setItems(pharmacy.getPatients());
 //
 //        patientFirstnameCol.setCellFactory(TextFieldTableCell.forTableColumn());
 //        patientLastnameCol.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -188,9 +190,9 @@ public class PatientController implements Initializable {
     }
 //
     private void populatePatientTable() {
-        patientTableItems =
-                FXCollections.observableArrayList(
-                        patients);
+//        patientTableItems =
+//                FXCollections.observableArrayList(
+//                        patients);
 //        filteredCustomers = new FilteredList<>(customerTableItems);
 //        String selectedItem = patientNameMailCombo.getSelectionModel().getSelectedItem();
 //
@@ -207,7 +209,7 @@ public class PatientController implements Initializable {
 //                    }
 //                }
 //        );
-        patientTable.setItems(patientTableItems);
+//        patientTable.setItems(pharmacy.getPatients());
 //        patientTable.setItems(filteredCustomers);
     }
 //
@@ -217,6 +219,7 @@ public class PatientController implements Initializable {
     private void handleCancelEditPatient(ActionEvent event) {
         currentPatient = null;
         createOrUpdatePatientTitledPane.setText("Créer");
+        listPatientTitledPane.setVisible(true);
         patientAccordionPane.setExpandedPane(listPatientTitledPane);
 
         clearInputs();
@@ -247,14 +250,13 @@ public class PatientController implements Initializable {
         else{
             alertDelete.showAndWait().ifPresent(response -> {
                 if (response == ButtonType.OK){
-                    Patient patient = patientTableItems.get(patientTable.getSelectionModel().getSelectedIndex());
+                    Patient patient = pharmacy.getPatients().get(patientTable.getSelectionModel().getSelectedIndex());
                     System.out.println(pharmacy.getPatients());
                     pharmacy.removePatient(patient);
-                    patientTableItems.remove(patient);
+                    pharmacy.getPatients().remove(patient);
                 }
             });
         }
-
     }
 
     @FXML
@@ -264,7 +266,7 @@ public class PatientController implements Initializable {
             createOrUpdatePatientTitledPane.setText("Modifier");
             patientCancelEditButton.setVisible(true);
             patientAccordionPane.setExpandedPane(createOrUpdatePatientTitledPane);
-
+            listPatientTitledPane.setVisible(false);
 
             patientLastNameTextField.setText(currentPatient.getLastName());
             patientFirstNameTextField.setText(currentPatient.getFirstName());
@@ -275,17 +277,12 @@ public class PatientController implements Initializable {
             patientMailTextField.setText(currentPatient.getMail());
             patientPhoneTextField.setText(currentPatient.getPhone());
 
-            doctorComboItems = FXCollections.observableArrayList(
-                            pharmacy.getDoctors()
-                    );
-            familyDoctorCombo.setItems(doctorComboItems);
+//            doctorComboItems = FXCollections.observableArrayList(
+//                            pharmacy.getDoctorGenerals()
+//                    );
             familyDoctorCombo.getSelectionModel().select(currentPatient.getFamilyDoctor());
 
 
-            healthMutualItems = FXCollections.observableArrayList(
-                    pharmacy.getHealthMutuals()
-            );
-            healthMutualCombo.setItems(healthMutualItems);
             healthMutualCombo.getSelectionModel().select(currentPatient.getHealthMutual());
 
             patientBirthDatePicker.setEditable(true);

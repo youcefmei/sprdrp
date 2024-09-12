@@ -14,6 +14,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -35,6 +36,7 @@ public class Main extends Application {
 //        Main main = new Main();
 //        main.start();
 
+
         launch();
     }
 
@@ -51,6 +53,7 @@ public class Main extends Application {
                     "maildoctorb@free.fr","18 impasse Herzog","Frouard","54420",
                     "5540384872")
             );
+//            pharmacy.addDoctorGeneral(null);
         } catch (DuplicateException e) {
             throw new RuntimeException(e);
         } catch (InvalidInputException e) {
@@ -76,16 +79,17 @@ public class Main extends Application {
     }
 
     private void initPatient(Pharmacy pharmacy)  {
-
         try {
             pharmacy.addPatient(new Patient("firstnamepatienta","lastnamepatienta","0101010101",
                     "mailpatienta@gmail.com","12 rue des lilas","citypatienta","54000",
                     "2810254019021", LocalDate.now().minusYears(30),pharmacy.getDoctorGenerals().getFirst(),pharmacy.getHealthMutuals().getFirst())
             );
+
             pharmacy.addPatient(new Patient("firstnamepatientb","lastnamepatientb","0202020202",
                     "mailpatientb@gmail.com","14 rue des lilas","citypatientb","54222",
                     "2810257019021", LocalDate.now().minusYears(35),pharmacy.getDoctorGenerals().get(1),null)
             );
+
         } catch (DuplicateException e) {
             throw new RuntimeException(e);
         } catch (InvalidInputException e) {
@@ -128,7 +132,7 @@ public class Main extends Application {
             pharmacy.addHealthMutual(new HealthMutual("France Mutuelle","0606060606","heathmutual7@gmail.com","12 rue blabla","75000","Paris","75",66));
             pharmacy.addHealthMutual(new HealthMutual("GFP","0606060606","heathmutual8@gmail.com","12 rue blabla","75000","Paris","75",44));
             pharmacy.addHealthMutual(new HealthMutual("Harmonie Mutuelle","0606060606","heathmutual9@gmail.com","12 rue blabla","75000","Paris","75",70));
-
+            pharmacy.addHealthMutual(null);
         } catch (DuplicateException e) {
             throw new RuntimeException(e);
         } catch (InvalidInputException e) {
@@ -140,12 +144,15 @@ public class Main extends Application {
     private void initPurchase(Pharmacy pharmacy)  {
         Prescription prescription = null;
         try {
-            prescription = new Prescription(LocalDate.now().minusMonths(1),
+            LocalDateTime dateBuy = LocalDateTime.now().minusMonths(2);
+//            System.out.println("dateBuy: " + dateBuy);
+            prescription = new Prescription( LocalDate.now().minusMonths(1),
                     pharmacy.getPatients().getFirst(),pharmacy.getDoctorGenerals().getFirst(),
-                    List.of(pharmacy.getMedicaments().get(0),pharmacy.getMedicaments().get(1))
+                    List.of( pharmacy.getMedicaments().get(0),pharmacy.getMedicaments().get(1) )
             );
-            System.out.println(prescription.getMedicaments());
-            Purchase purchase = new Purchase(prescription);
+            System.out.println( prescription.getMedicaments() );
+            System.out.println( prescription.getPatient().getHealthMutual().getHealthCareRate() );
+            Purchase purchase = new Purchase( dateBuy, prescription );
             purchase.setPaid(true);
             pharmacy.addPurchase(purchase);
         } catch (InvalidDateException e) {

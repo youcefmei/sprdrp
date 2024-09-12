@@ -40,11 +40,10 @@ public class Prescription {
     public float getPriceWithoutMutual() {
         float totalPrice = 0;
         for (Medicament medicament : medicaments) {
-            totalPrice += medicament.getPrice();
+            totalPrice += medicament.getTotalPrice();
         }
         return totalPrice;
     }
-
 
     public float getPriceWithMutual() {
         if (patient.getHealthMutual() == null){
@@ -52,11 +51,10 @@ public class Prescription {
         }else{
             float totalPrice = 0;
             for (Medicament medicament : medicaments) {
-                totalPrice += medicament.getPrice() * ( 100 - patient.getHealthMutual().getHealthCareRate() ) / 100;
+                totalPrice +=  medicament.getTotalPrice() * ( 100 - patient.getHealthMutual().getHealthCareRate() ) / 100 ;
             }
             return totalPrice;
         }
-
     }
 
     public void setDate(LocalDate date) throws InvalidDateException {

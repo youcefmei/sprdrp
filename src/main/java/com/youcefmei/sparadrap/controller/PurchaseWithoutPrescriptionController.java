@@ -8,8 +8,6 @@ import com.youcefmei.sparadrap.exception.PaymentException;
 import com.youcefmei.sparadrap.manage.Pharmacy;
 import com.youcefmei.sparadrap.model.Medicament;
 import com.youcefmei.sparadrap.model.Purchase;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -23,8 +21,6 @@ import javafx.util.converter.FloatStringConverter;
 import javafx.util.converter.IntegerStringConverter;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Predicate;
 
@@ -67,19 +63,17 @@ public class PurchaseWithoutPrescriptionController implements Initializable {
     private final Alert alertDelete = new Alert(Alert.AlertType.CONFIRMATION, "Etes-vous certains de vouloir supprimer ?");
     private final Alert alertInfo = new Alert(Alert.AlertType.INFORMATION, "Veuillez selectionner un medicament");
     private FilteredList<Medicament> filteredMedicaments;
-    private ObservableList<Medicament> medicamentTableItems;
-    private ObservableList<Medicament> medicamentComboItems;
 
     //
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // combo init
-        medicamentComboItems =
-                FXCollections.observableArrayList(
-                        pharmacy.getMedicaments()
-                );
+//        medicamentComboItems =
+//                FXCollections.observableArrayList(
+//                        pharmacy.getMedicaments()
+//                );
 
-        medicamentNameCombo.setItems(medicamentComboItems);
+        medicamentNameCombo.setItems(pharmacy.getMedicaments());
         medicamentNameCombo.getSelectionModel().selectFirst();
         // spinner init
         medicamentQuantitySpinner.setValueFactory(
@@ -106,7 +100,7 @@ public class PurchaseWithoutPrescriptionController implements Initializable {
         medicamentSearchTextField.setText("");
         medicamentQuantitySpinner.getValueFactory().setValue(1);
         purchase.getMedicaments().clear();
-        purchaseTotalPriceText.setText( purchase.getTotalAmount() + " €");
+        purchaseTotalPriceText.setText( purchase.getTotalAmountWithoutMutual() + " €");
         populateMedicamentTable();
     }
 
@@ -116,7 +110,7 @@ public class PurchaseWithoutPrescriptionController implements Initializable {
             purchase.setPaid(true);
             pharmacy.addPurchase(purchase);
             alertInfo.setContentText("L'achat a bien été enregistré: "
-                    + purchase.getTotalAmount()
+                    + purchase.getTotalAmountWithoutMutual()
                     + "€\nId: " + purchase.getId()
                     + "\nDate: " + purchase.getDatetimeStr()
             );
@@ -132,7 +126,7 @@ public class PurchaseWithoutPrescriptionController implements Initializable {
 
     @FXML
     private void handleSearchMedicament(KeyEvent event) {
-        filteredMedicaments = new FilteredList<>(medicamentComboItems);
+        filteredMedicaments = new FilteredList<>(pharmacy.getMedicaments());
         filteredMedicaments.setPredicate(
                 new Predicate<Medicament>() {
                     @Override
@@ -170,7 +164,7 @@ public class PurchaseWithoutPrescriptionController implements Initializable {
         }
         populateMedicamentTable();
 
-        purchaseTotalPriceText.setText(purchase.getTotalAmount() + " €");
+        purchaseTotalPriceText.setText(purchase.getTotalAmountWithoutMutual() + " €");
     }
 
     @FXML
@@ -183,7 +177,7 @@ public class PurchaseWithoutPrescriptionController implements Initializable {
             alertDelete.showAndWait().ifPresent(response -> {
                 if (response == ButtonType.OK){
                     purchase.removeMedicament((Medicament) medicamentTable.getSelectionModel().getSelectedItem());
-                    purchaseTotalPriceText.setText(purchase.getTotalAmount() + " €");
+                    purchaseTotalPriceText.setText(purchase.getTotalAmountWithoutMutual() + " €");
                     populateMedicamentTable();
                 }
             });
@@ -213,11 +207,7 @@ public class PurchaseWithoutPrescriptionController implements Initializable {
 
 
     private void populateMedicamentTable() {
-        medicamentTableItems =
-                FXCollections.observableArrayList(
-                        purchase.getMedicaments()
-                );
-        medicamentTable.setItems(medicamentTableItems);
+        medicamentTable.setItems(purchase.getMedicaments());
         medicamentTable.refresh();
     }
 }

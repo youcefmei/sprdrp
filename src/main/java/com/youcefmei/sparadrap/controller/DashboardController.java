@@ -4,10 +4,12 @@ package com.youcefmei.sparadrap.controller;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class DashboardController implements Initializable {
@@ -55,7 +57,11 @@ public class DashboardController implements Initializable {
             anchorPanePurchaseHistory.setVisible(false);
         }
         else if (event.getSource()==dashboardPurchaseHistoryButton){
-//            System.out.println("rezer");
+//            Optional<Node> refreshButton = anchorPanePurchaseHistory.getChildren().stream().filter(
+//                    node -> node.getId().equals("refreshButton")
+//            ).findFirst();
+//            refreshButton.ifPresent(node -> node.fireEvent(new ActionEvent()));
+
             anchorPanePurchaseHistory.setVisible(true);
             anchorPaneDoctor.setVisible(false);
             anchorPaneWithoutPrescription.setVisible(false);
@@ -63,7 +69,6 @@ public class DashboardController implements Initializable {
             anchorPanePatient.setVisible(false);
         }
 
-//        anchorPaneLibrarian.toFront();
     }
 
 

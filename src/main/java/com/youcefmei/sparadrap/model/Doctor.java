@@ -9,7 +9,7 @@ public abstract class Doctor extends  User {
 
 
     private String registrationNb;
-    private List<Patient> patients = new ArrayList<Patient>();
+    private List<Patient> patients = new ArrayList<>();
 
     public Doctor(String firstName, String lastName, String phone, String mail, String address, String city, String areaCode, String registrationNb) throws InvalidInputException {
         super(firstName, lastName, phone, mail, address, city, areaCode);
@@ -43,10 +43,6 @@ public abstract class Doctor extends  User {
         if (patientFounds.isEmpty()) {
             this.patients.add(patient);
         }
-    }
-
-    public Patient getPatientBySecuId(int index) throws IndexOutOfBoundsException {
-        return null;
     }
 
     @Override
