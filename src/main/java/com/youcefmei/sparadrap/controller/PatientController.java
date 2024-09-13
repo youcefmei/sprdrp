@@ -5,12 +5,10 @@ import com.youcefmei.sparadrap.exception.DuplicateException;
 import com.youcefmei.sparadrap.exception.InvalidDateException;
 import com.youcefmei.sparadrap.exception.InvalidInputException;
 import com.youcefmei.sparadrap.manage.Pharmacy;
-import com.youcefmei.sparadrap.model.Doctor;
 import com.youcefmei.sparadrap.model.DoctorGeneral;
 import com.youcefmei.sparadrap.model.HealthMutual;
 import com.youcefmei.sparadrap.model.Patient;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -18,11 +16,12 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
-
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 
+/**
+ * The type Patient controller.
+ */
 public class PatientController implements Initializable {
 
     @FXML

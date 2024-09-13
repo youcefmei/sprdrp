@@ -6,9 +6,9 @@ import com.youcefmei.sparadrap.model.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.util.ArrayList;
-import java.util.List;
-
+/**
+ * The type Pharmacy.
+ */
 public class Pharmacy {
     private static Pharmacy INSTANCE;
 
@@ -17,12 +17,9 @@ public class Pharmacy {
     private ObservableList<HealthMutual> healthMutuals = FXCollections.observableArrayList();
     private ObservableList<Medicament> medicaments = FXCollections.observableArrayList();
     private ObservableList<Patient> patients = FXCollections.observableArrayList();
-//    private List<Purchase> purchases = new ArrayList<>();
     private ObservableList<Purchase> purchases = FXCollections.observableArrayList();
-//    private CopyOnWriteArrayList<Purchase> purchases = new CopyOnWriteArrayList<Purchase>();
-    private Patient currentPatientEdit;
-
     private ObservableList<Doctor> doctors = FXCollections.observableArrayList();
+    private Patient currentPatientEdit;
     private Purchase currentPurchase;
 
     static {
@@ -34,57 +31,115 @@ public class Pharmacy {
     }
 
 
+    /**
+     * Gets instance.
+     *
+     * @return the instance
+     */
     public static Pharmacy getInstance() {
         return INSTANCE;
     }
 
+    /**
+     * Gets current purchase.
+     *
+     * @return the current purchase
+     */
     public Purchase getCurrentPurchase() {
         return currentPurchase;
     }
 
+    /**
+     * Gets doctor generals.
+     *
+     * @return the doctor generals
+     */
     public ObservableList<DoctorGeneral> getDoctorGenerals() {
         return doctorGenerals;
     }
 
+    /**
+     * Gets doctor specializeds.
+     *
+     * @return the doctor specializeds
+     */
     public ObservableList<DoctorSpecialized> getDoctorSpecializeds() {
         return doctorSpecializeds;
     }
 
+    /**
+     * Gets health mutuals.
+     *
+     * @return the health mutuals
+     */
     public ObservableList<HealthMutual> getHealthMutuals() {
         return healthMutuals;
     }
 
+    /**
+     * Gets medicaments.
+     *
+     * @return the medicaments
+     */
     public ObservableList<Medicament> getMedicaments() {
         return medicaments;
     }
 
+    /**
+     * Gets patients.
+     *
+     * @return the patients
+     */
     public ObservableList<Patient> getPatients() {
         return patients;
     }
 
+    /**
+     * Gets doctors.
+     *
+     * @return the doctors
+     */
     public ObservableList<Doctor> getDoctors() {
         return doctors;
     }
 
 
+    /**
+     * Gets current patient edit.
+     *
+     * @return the current patient edit
+     */
     public Patient getCurrentPatientEdit() {
         return currentPatientEdit;
     }
 
+    /**
+     * Sets current patient edit.
+     *
+     * @param currentPatientEdit the current patient edit
+     */
     public void setCurrentPatientEdit(Patient currentPatientEdit) {
         this.currentPatientEdit = currentPatientEdit;
     }
 
+    /**
+     * Gets purchases.
+     *
+     * @return the purchases
+     */
     public ObservableList<Purchase> getPurchases() {
         return purchases;
     }
 
 
+    /**
+     * Sets current purchase.
+     *
+     * @param purchase the purchase
+     */
     public void setCurrentPurchase(Purchase purchase) {
         this.currentPurchase = purchase;
     }
-
-
 
     private void checkDoctorDuplicate(Doctor doctor) throws DuplicateException {
         if (doctor == null && doctors.contains(null)) {
@@ -139,29 +194,60 @@ public class Pharmacy {
         }
     }
 
+    /**
+     * Add patient.
+     *
+     * @param patient the patient
+     * @throws DuplicateException the duplicate exception
+     */
     public void addPatient(Patient patient) throws DuplicateException {
         checkPatientDuplicate(patient.getSecuId());
         patients.add(patient);
     }
 
+    /**
+     * Add doctor general.
+     *
+     * @param doctor the doctor
+     * @throws DuplicateException the duplicate exception
+     */
     public void addDoctorGeneral(DoctorGeneral doctor) throws DuplicateException {
         checkDoctorDuplicate(doctor);
         doctorGenerals.add(doctor);
         doctors.add( doctor);
     }
 
+    /**
+     * Add doctor specialized.
+     *
+     * @param doctor the doctor
+     * @throws DuplicateException the duplicate exception
+     */
     public void addDoctorSpecialized(DoctorSpecialized doctor) throws DuplicateException {
         checkDoctorDuplicate(doctor);
         doctorSpecializeds.add(doctor);
         doctors.add( doctor);
     }
-    
 
+
+    /**
+     * Add medicament.
+     *
+     * @param medicament the medicament
+     * @throws DuplicateException the duplicate exception
+     */
     public void addMedicament(Medicament medicament) throws DuplicateException {
         checkMedicamentDuplicate(medicament.getTitle());
         medicaments.add(medicament);
     }
 
+    /**
+     * Add purchase.
+     *
+     * @param purchase the purchase
+     * @throws DuplicateException the duplicate exception
+     * @throws PaymentException   the payment exception
+     */
     public void addPurchase(Purchase purchase) throws DuplicateException, PaymentException {
         checkPurchaseDuplicate(purchase.getId());
         if (purchase.isPaid() ){
@@ -172,15 +258,32 @@ public class Pharmacy {
         }
     }
 
+    /**
+     * Add current purchase.
+     *
+     * @throws DuplicateException the duplicate exception
+     * @throws PaymentException   the payment exception
+     */
     public void addCurrentPurchase() throws DuplicateException, PaymentException {
         addPurchase(currentPurchase);
     }
 
+    /**
+     * Add health mutual.
+     *
+     * @param healthMutual the health mutual
+     * @throws DuplicateException the duplicate exception
+     */
     public void addHealthMutual(HealthMutual healthMutual) throws DuplicateException {
         checkHealthMutualDuplicate(healthMutual);
         healthMutuals.add(healthMutual);
     }
 
+    /**
+     * Remove patient.
+     *
+     * @param patient the patient
+     */
     public void removePatient(Patient patient) {
 //        patients =  FXCollections.observableArrayList(
 //                patients.stream().filter(

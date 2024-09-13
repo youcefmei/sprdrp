@@ -8,6 +8,7 @@ import com.youcefmei.sparadrap.exception.PaymentException;
 import com.youcefmei.sparadrap.manage.Pharmacy;
 import com.youcefmei.sparadrap.model.Medicament;
 import com.youcefmei.sparadrap.model.Purchase;
+
 import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -24,6 +25,9 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.function.Predicate;
 
+/**
+ * The type Purchase without prescription controller.
+ */
 public class PurchaseWithoutPrescriptionController implements Initializable {
 
     @FXML

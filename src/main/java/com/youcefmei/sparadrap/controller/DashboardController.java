@@ -4,14 +4,14 @@ package com.youcefmei.sparadrap.controller;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
-
 import java.net.URL;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
+/**
+ * The type Dashboard controller.
+ */
 public class DashboardController implements Initializable {
 
     @FXML
@@ -57,11 +57,6 @@ public class DashboardController implements Initializable {
             anchorPanePurchaseHistory.setVisible(false);
         }
         else if (event.getSource()==dashboardPurchaseHistoryButton){
-//            Optional<Node> refreshButton = anchorPanePurchaseHistory.getChildren().stream().filter(
-//                    node -> node.getId().equals("refreshButton")
-//            ).findFirst();
-//            refreshButton.ifPresent(node -> node.fireEvent(new ActionEvent()));
-
             anchorPanePurchaseHistory.setVisible(true);
             anchorPaneDoctor.setVisible(false);
             anchorPaneWithoutPrescription.setVisible(false);

@@ -7,6 +7,7 @@ import com.youcefmei.sparadrap.exception.InvalidInputException;
 import com.youcefmei.sparadrap.exception.PaymentException;
 import com.youcefmei.sparadrap.manage.Pharmacy;
 import com.youcefmei.sparadrap.model.*;
+
 import javafx.beans.property.SimpleFloatProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -28,6 +29,9 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.function.Predicate;
 
+/**
+ * The type Purchase with prescription controller.
+ */
 public class PurchaseWithPrescriptionController implements Initializable {
 
     @FXML

@@ -2,14 +2,17 @@ package com.youcefmei.sparadrap.model;
 
 import com.youcefmei.sparadrap.exception.InvalidDateException;
 import com.youcefmei.sparadrap.exception.InvalidInputException;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * The type Purchase.
+ */
 public class Purchase {
 
     private String id = UUID.randomUUID().toString();
@@ -22,47 +25,103 @@ public class Purchase {
     private float totalAmountWithoutMutual;
 
 
+    /**
+     * Instantiates a new Purchase.
+     *
+     * @throws InvalidDateException the invalid date exception
+     */
     public Purchase () throws InvalidDateException {
         setDatetime(LocalDateTime.now());
     }
 
+    /**
+     * Instantiates a new Purchase.
+     *
+     * @param datetime the datetime
+     * @throws InvalidDateException the invalid date exception
+     */
     public Purchase(LocalDateTime datetime) throws  InvalidDateException {
         setDatetime(datetime);
     }
 
+    /**
+     * Instantiates a new Purchase.
+     *
+     * @param prescription the prescription
+     * @throws InvalidDateException  the invalid date exception
+     * @throws InvalidInputException the invalid input exception
+     */
     public Purchase(Prescription prescription) throws  InvalidDateException, InvalidInputException {
         setDatetime(LocalDateTime.now());
         setPrescription(prescription);
     }
 
+    /**
+     * Instantiates a new Purchase.
+     *
+     * @param datetime     the datetime
+     * @param prescription the prescription
+     * @throws InvalidDateException  the invalid date exception
+     * @throws InvalidInputException the invalid input exception
+     */
     public Purchase(LocalDateTime datetime,Prescription prescription) throws  InvalidDateException, InvalidInputException {
         setDatetime(datetime);
         setPrescription(prescription);
     }
 
 
-     public boolean isPaid() {
+    /**
+     * Is paid boolean.
+     *
+     * @return the boolean
+     */
+    public boolean isPaid() {
         return isPaid;
     }
 
+    /**
+     * Gets datetime.
+     *
+     * @return the datetime
+     */
     public LocalDateTime getDatetime() {
         return datetime;
     }
 
+    /**
+     * Gets id.
+     *
+     * @return the id
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Gets medicaments.
+     *
+     * @return the medicaments
+     */
     public ObservableList<Medicament> getMedicaments() {
         return medicaments;
     }
 
 
+    /**
+     * Gets prescription.
+     *
+     * @return the prescription
+     */
     public Prescription getPrescription() {
         return prescription;
     }
 
 
+    /**
+     * Gets total amount with mutual.
+     *
+     * @return the total amount with mutual
+     */
     public float getTotalAmountWithMutual() {
 
         float totalPrice = 0;
@@ -81,6 +140,11 @@ public class Purchase {
     }
 
 
+    /**
+     * Get total amount without mutual.
+     *
+     * @return the float
+     */
     public float getTotalAmountWithoutMutual(){
         float totalPrice = 0;
         for (Medicament medicament : medicaments) {
@@ -90,12 +154,21 @@ public class Purchase {
     }
 
 
-
-
+    /**
+     * Gets datetime "French" formatted .
+     *
+     * @return the datetime str
+     */
     public String getDatetimeStr() {
         return datetimeStr;
     }
 
+    /**
+     * Sets datetime.
+     *
+     * @param datetime the datetime
+     * @throws InvalidDateException the invalid date exception
+     */
     public void setDatetime(LocalDateTime datetime) throws InvalidDateException {
         if ( (datetime== null)  ) {
             throw new InvalidDateException("La date de facturation ne peut etre null");
@@ -110,6 +183,12 @@ public class Purchase {
     }
 
 
+    /**
+     * Add medicament.
+     *
+     * @param medicament the medicament
+     * @throws InvalidInputException the invalid input exception
+     */
     public void addMedicament(Medicament medicament) throws  InvalidInputException {
 
         if ( medicament == null ) {
@@ -148,6 +227,11 @@ public class Purchase {
     }
 
 
+    /**
+     * Remove medicament.
+     *
+     * @param medicament the medicament
+     */
     public void removeMedicament(Medicament medicament){
         if ( medicament != null ) {
             this.medicaments =  FXCollections.observableArrayList(
@@ -159,6 +243,12 @@ public class Purchase {
         }
     }
 
+    /**
+     * Sets medicaments.
+     *
+     * @param medicaments the medicaments
+     * @throws InvalidInputException the invalid input exception
+     */
     public void setMedicaments(List<Medicament> medicaments) throws  InvalidInputException {
         if ( medicaments == null){
             throw new InvalidInputException("La liste de médicament ne peut etre null");
@@ -177,6 +267,12 @@ public class Purchase {
         }
     }
 
+    /**
+     * Sets prescription.
+     *
+     * @param prescription the prescription
+     * @throws InvalidInputException the invalid input exception
+     */
     public void setPrescription(Prescription prescription) throws  InvalidInputException {
         if (prescription == null){
             throw new InvalidInputException("L'ordonnance ne peut pas etre null");
@@ -192,6 +288,12 @@ public class Purchase {
         }
     }
 
+    /**
+     * Sets paid.
+     *
+     * @param paid the paid
+     * @throws InvalidInputException the invalid input exception
+     */
     public void setPaid(boolean paid) throws InvalidInputException {
         if ( paid && medicaments.isEmpty()) {
             throw new InvalidInputException("La liste de medicament est vide");
@@ -200,9 +302,6 @@ public class Purchase {
         }
     }
 
-//    public void setTotalAmountWithoutMutual(float totalAmountWithoutMutual) {
-//        this.totalAmountWithoutMutual = totalAmountWithoutMutual;
-//    }
 
     @Override
     public String toString() {

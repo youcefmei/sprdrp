@@ -1,0 +1,156 @@
+@startuml
+Class01 "1" *-- "many" Class02 : contains
+
+Class03 o-- Class04 : aggregation
+
+Class05 --> "1" Class06
+@enduml
+
+
+
+@startuml
+Class00 "1" *-- "many" Class02 : contains
+
+Class03 o-- Class04 : aggregation
+
+Class05 --> "1" Class06
+
+
+@enduml
+
+
+
+
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype polyline
+
+abstract class User {
+ - string firstname
+ - string lastname
+ - string address
+ - string areacode
+ - string city
+ - string phone
+ - string mail
+}
+
+abstract class Doctor extends User {
+ - String registrationNb
+ - List<Patient> patients
+}
+
+
+class Patient extends User{
+ - String secuId
+ - LocalDate birthDate 
+ - HealMutual healthMutual
+ - DoctorGeneral familyDoctor
+ - List<DoctorSpecialized> doctorSpecializeds
+}
+
+class DoctorSpecialized extends Doctor {
+ - String speciality
+}
+
+
+class DoctorGeneral extends Doctor {
+}
+
+class Medicament {
+    - String name
+    - String category
+    - float price
+    - int quantity
+    - LocalDate startDate
+    - bool needPrescription
+    + getAmount()
+}
+
+class Prescription{
+    - LocalDate date 
+    - Patient patient 
+    - Doctor doctor 
+    - List<Medicament> medicaments
+    + getPrescriptionAmount()
+}
+
+class Purchase{
+    - LocalDate date 
+    - List<Medicament> medicaments
+    - Prescription prescription
+    - bool isPaid()
+    + addMedicament()
+    + getTotalAmount()
+}
+
+class HealthMutual{
+  - String name
+  - String address
+  - String areaCode
+  - String city
+  - String phone
+  - String mail
+  - String state
+  - float healthCareRate
+}
+
+class DrugStore{
+  - Purchase currentPurchase
+  - List<Purchase> purchaseHistory
+  - List<Patient> patients
+  - List<Doctor> doctors
+  - List<Medicament> medicaments
+  - List<HealthMutual> healthMutuals
+}
+
+
+Prescription::medicamentList "1" *-- "many" Medicament  
+Prescription::doctor "1" *-- "1" Doctor  
+Prescription::patient "1" *-- "1" Patient
+Patient::healthMutual "0" *-- "1" HealthMutual
+Patient::familyDoctor "0" *-- "1" DoctorGeneral
+Patient::doctorSpecializeds "0" *-- "*" DoctorSpecialized
+
+
+DrugStore::doctors "0" *-- "*" Doctor
+DrugStore::patients "0" *-- "*" Patient
+DrugStore::medicaments "0" *-- "*" Medicament
+DrugStore::healthMutuals "0" *-- "*" HealthMutual
+
+Purchase::medicaments "1" *-- "*" Medicament
+Purchase::prescription "1" *-- "*" Prescription
+
+@enduml
+
+
+
+@startuml
+class Machin {
+ -champ1
+ #champ2
+ ~methode1()
+ +methode2()
+}
+
+
+
+@enduml
+
+
+@startwbs
+* Sparadrap
+** Effectuer un achat
+*** Achat direct
+*** Achat via ordonnance
+** historique des achats
+*** liste des achats de la journee ou une journee specifique
+*** modification possible
+** detail medecin / specialiste
+*** liste deroulante medecin
+** detail client
+*** liste deroulante client
+*** crud
+@endwbs

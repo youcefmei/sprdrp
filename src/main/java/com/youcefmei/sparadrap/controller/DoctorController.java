@@ -3,7 +3,7 @@ package com.youcefmei.sparadrap.controller;
 import com.youcefmei.sparadrap.manage.Pharmacy;
 import com.youcefmei.sparadrap.model.Doctor;
 import com.youcefmei.sparadrap.model.DoctorSpecialized;
-import com.youcefmei.sparadrap.model.Prescription;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -11,12 +11,13 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * The type Doctor controller.
+ */
 public class DoctorController implements Initializable {
-
 
     @FXML
     private TableView doctorTable;

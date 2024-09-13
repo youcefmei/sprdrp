@@ -1,24 +1,17 @@
 package com.youcefmei.sparadrap.controller;
 
 import com.youcefmei.sparadrap.manage.Pharmacy;
-import com.youcefmei.sparadrap.model.Medicament;
 import com.youcefmei.sparadrap.model.Prescription;
 import com.youcefmei.sparadrap.model.Purchase;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.layout.Pane;
 
 import java.net.URL;
 import java.time.LocalDate;
@@ -26,6 +19,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 import java.util.function.Predicate;
 
+/**
+ * The type Purchase history controller.
+ */
 public class PurchaseHistoryController implements Initializable {
 
     @FXML
@@ -95,6 +91,11 @@ public class PurchaseHistoryController implements Initializable {
         purchaseHistoryTable.setItems(pharmacy.getPurchases());
     }
 
+    /**
+     * Handle date picker.
+     *
+     * @param event the event
+     */
     @FXML
     public void handleDatePicker(ActionEvent event) {
 
