@@ -1,0 +1,100 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class Doctor {
+   patients: List<Patient>
+   registrationNb: String
+}
+class DoctorGeneral
+class DoctorSpecialized {
+   speciality: String
+}
+class DuplicateException
+class HealthMutual {
+   name: String
+   healthCareRate: float
+   phone: String
+   city: String
+   state: String
+   areaCode: String
+   address: String
+   mail: String
+}
+class InvalidDateException
+class InvalidInputException
+class Main
+class Medicament {
+   name: String
+   startDate: LocalDate
+   quantity: int
+   categories: List<String>
+   category: String
+   price: float
+   needPrescription: boolean
+}
+class Patient {
+   healthMutual: HealthMutual
+   familyDoctor: DoctorGeneral
+   secuId: String
+   birthDate: LocalDate
+   birthDateStr: String
+   doctorSpecializeds: List<DoctorSpecialized>
+}
+class PaymentException
+class Pharmacy {
+   medicaments: List<Medicament>
+   purchases: List<Purchase>
+   doctorSpecializeds: List<DoctorSpecialized>
+   healthMutuals: List<HealthMutual>
+   patients: List<Patient>
+   currentPurchase: Purchase
+   doctorGenerals: List<DoctorGeneral>
+   instance: Pharmacy
+}
+class Prescription {
+   date: LocalDate
+   medicaments: List<Medicament>
+   patient: Patient
+   doctor: Doctor
+}
+class Purchase {
+   date: LocalDate
+   totalAmount: float
+   isPaid: boolean
+   medicaments: List<Medicament>
+   id: String
+   prescription: Prescription
+}
+class User {
+   lastName: String
+   phone: String
+   city: String
+   firstName: String
+   areaCode: String
+   address: String
+   mail: String
+}
+
+Doctor                "1" *-[#595959,plain]-> "patients\n*" Patient               
+Doctor                 -[#000082,plain]-^  User                  
+DoctorGeneral          -[#000082,plain]-^  Doctor                
+DoctorSpecialized      -[#000082,plain]-^  Doctor                
+Patient               "1" *-[#595959,plain]-> "familyDoctor\n1" DoctorGeneral         
+Patient               "1" *-[#595959,plain]-> "doctorSpecializeds\n*" DoctorSpecialized     
+Patient               "1" *-[#595959,plain]-> "healthMutual\n1" HealthMutual          
+Patient                -[#000082,plain]-^  User                  
+Pharmacy              "1" *-[#595959,plain]-> "doctorGenerals\n*" DoctorGeneral         
+Pharmacy              "1" *-[#595959,plain]-> "doctorSpecializeds\n*" DoctorSpecialized     
+Pharmacy              "1" *-[#595959,plain]-> "healthMutuals\n*" HealthMutual          
+Pharmacy              "1" *-[#595959,plain]-> "medicaments\n*" Medicament            
+Pharmacy              "1" *-[#595959,plain]-> "patients\n*" Patient               
+Pharmacy              "1" *-[#595959,plain]-> "purchases\n*" Purchase              
+Prescription          "1" *-[#595959,plain]-> "doctor\n1" Doctor                
+Prescription          "1" *-[#595959,plain]-> "medicaments\n*" Medicament            
+Prescription          "1" *-[#595959,plain]-> "patient\n1" Patient               
+Purchase              "1" *-[#595959,plain]-> "medicaments\n*" Medicament            
+Purchase              "1" *-[#595959,plain]-> "prescription\n1" Prescription          
+@enduml

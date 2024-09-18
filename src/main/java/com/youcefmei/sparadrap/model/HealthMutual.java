@@ -14,6 +14,7 @@ public class HealthMutual {
      * The constant mutualNames.
      */
     public final static String[] mutualNames = {"Acoris Mutuelles","ADREA Mutuelle","APREVA","Avenir Mutuelle","Avenir Santé Mutuelle","CCMO","France Mutuelle","GFP","Harmonie Mutuelle"};
+
     private String name;
     private String phone;
     private String mail;
@@ -229,7 +230,7 @@ public class HealthMutual {
         ).toList();
 
         if (mutualNameFound.isEmpty() ) {
-            throw  new InvalidInputException("Veuillez saisir une mutuelle valide ! \nVeuillez choisir entre:" + mutualNames.toString());
+            throw  new InvalidInputException("Veuillez saisir une mutuelle valide ! \nVeuillez choisir entre:" + Arrays.stream(mutualNames).toList());
         }else{
             this.name = name;
         }

@@ -20,10 +20,10 @@ public class Medicament {
             "Cardiologie","Dermatologie","Endocrinologie","Gastro-entérologie","Hématologie",
             "Neurologie","Oncologie","Psychiatrie","Rhumatologie","Urologie"
     };
+
     private String title;
     private String category;
     private float price;
-    private float totalPrice;
     private int quantity;
     private  LocalDate startDate;
     private boolean needPrescription;
@@ -109,7 +109,7 @@ public class Medicament {
      * @return the total price
      */
     public float getTotalPrice() {
-        return price*quantity;
+        return price * quantity;
     }
 
 
@@ -121,7 +121,7 @@ public class Medicament {
      */
     public void setTitle(String title) throws InvalidInputException {
 
-        if ( (title != null) && title.trim().matches("^[\\da-zA-Z\\s]+$") ) {
+        if ( (title != null) && title.trim().matches("^[\\da-zA-Z\\séèïçôûàäâê&]{2,}$") ) {
             this.title = title;
         }
         else{
@@ -136,7 +136,7 @@ public class Medicament {
      * @throws InvalidInputException the invalid input exception
      */
     public void setPrice(float price) throws InvalidInputException {
-        if (price >= 0){
+        if (price > 0){
             this.price = price;
         }else{
             throw  new InvalidInputException("Le prix n'est pas valide");
@@ -171,7 +171,7 @@ public class Medicament {
         if (!categoryFounds.isEmpty()) {
             this.category = category;
         } else{
-            throw new InvalidInputException("La catégorie n'est pas valide, veuillez choisir entre :" + categories );
+            throw new InvalidInputException("La catégorie n'est pas valide, veuillez choisir entre :" + Arrays.stream(categories).toList() );
         }
     }
 
@@ -192,10 +192,10 @@ public class Medicament {
      */
     public void setStartDate(LocalDate startDate) throws InvalidDateException {
         if (startDate == null) {
-            throw new InvalidDateException("La date de mise en service doit etre antérieur à aujourd'hui");
+            throw new InvalidDateException("La date de mise en service ne peut etre null");
 
         } else if (startDate.isAfter(LocalDate.now() )) {
-            throw new InvalidDateException("La date de naissance doit etre antérieur à aujourd'hui");
+            throw new InvalidDateException("La date de mise en service doit etre antérieur à aujourd'hui");
         }else{
             this.startDate = startDate;
         }

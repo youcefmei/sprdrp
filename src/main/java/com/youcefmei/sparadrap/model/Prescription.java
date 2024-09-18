@@ -10,6 +10,7 @@ import java.util.List;
  * The type Prescription.
  */
 public class Prescription {
+
     private LocalDate date;
     private Patient patient;
     private Doctor doctor;

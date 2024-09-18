@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -9,7 +10,7 @@
 
 <AnchorPane prefHeight="629.0" prefWidth="808.0" stylesheets="@dashboard.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.youcefmei.sparadrap.controller.PurchaseHistoryController">
          <children>
-      <TableView fx:id="purchaseHistoryTable" layoutX="22.0" layoutY="97.0" prefHeight="383.0" prefWidth="780.0" stylesheets="@dashboard.css">
+      <TableView fx:id="purchaseHistoryTable" layoutX="15.0" layoutY="203.0" prefHeight="383.0" prefWidth="780.0" stylesheets="@dashboard.css">
          <columns>
             <TableColumn fx:id="purchaseIdCol" minWidth="0.0" prefWidth="250.0" text="Id" />
             <TableColumn fx:id="purchaseDateCol" minWidth="0.0" prefWidth="120.0" text="Date d'achat" />
@@ -23,11 +24,16 @@
             <TableColumn fx:id="patientCityCol" prefWidth="100.0" text="Ville" visible="false" />
          </columns>
       </TableView>
-      <Button fx:id="purchaseEditButton" layoutX="693.0" layoutY="31.0" mnemonicParsing="false" onAction="#handleEditPurchase" prefHeight="10.0" prefWidth="101.0" styleClass="clear" stylesheets="@dashboard.css" text="Editer">
+      <Button fx:id="purchaseEditButton" layoutX="686.0" layoutY="137.0" mnemonicParsing="false" onAction="#handleEditPurchase" prefHeight="10.0" prefWidth="101.0" styleClass="clear" stylesheets="@dashboard.css" text="Editer">
          <font>
             <Font name="Dubai Bold" size="16.0" />
          </font>
       </Button>
-      <DatePicker fx:id="purchaseDatePicker" layoutX="22.0" layoutY="38.0" onAction="#handleDatePicker" />
+      <DatePicker fx:id="purchaseDatePicker" layoutX="15.0" layoutY="144.0" onAction="#handleDatePicker" />
+      <Label layoutX="313.0" layoutY="42.0" text="Historique">
+         <font>
+            <Font size="33.0" />
+         </font>
+      </Label>
          </children>
       </AnchorPane>

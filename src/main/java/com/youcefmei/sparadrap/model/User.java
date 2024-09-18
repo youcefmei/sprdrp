@@ -183,7 +183,7 @@ public abstract class User {
      */
     public void setFirstName(String firstName) throws InvalidInputException {
         if ( ( firstName != null ) && ( !firstName.isBlank() ) && ( firstName.matches(
-                "^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžæÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČ" +
+                "^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçšžæÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆ" +
                         "ŠŽ∂ð ,.'-]+$") )) {
             this.firstName = WordUtils.capitalize(firstName.toLowerCase().trim()) ;
         }else{
@@ -199,7 +199,7 @@ public abstract class User {
      */
     public void setLastName(String lastName) throws InvalidInputException {
         if ( ( lastName != null ) && ( !lastName.isBlank() ) && ( lastName.matches(
-                "^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžæÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČ" +
+                "^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçšžæÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆ" +
                         "ŠŽ∂ð ,.'-]+$") )) {
             this.lastName = WordUtils.capitalize(lastName.toLowerCase().trim()) ;
 

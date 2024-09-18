@@ -37,7 +37,7 @@ public class PurchaseHistoryController implements Initializable {
 
     private FilteredList<Purchase> purchaseInDate  = new FilteredList<>(pharmacy.getPurchases());
 
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {

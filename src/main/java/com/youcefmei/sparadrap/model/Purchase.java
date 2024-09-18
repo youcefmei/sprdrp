@@ -15,7 +15,7 @@ import java.util.UUID;
  */
 public class Purchase {
 
-    private String id = UUID.randomUUID().toString();
+    private final String id = UUID.randomUUID().toString();
     private LocalDateTime datetime;
     private String datetimeStr;
     private ObservableList<Medicament> medicaments = FXCollections.observableArrayList();

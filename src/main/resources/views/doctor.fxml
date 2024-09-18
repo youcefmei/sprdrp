@@ -19,7 +19,7 @@
 
 <AnchorPane prefHeight="629.0" prefWidth="808.0" stylesheets="@dashboard.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.youcefmei.sparadrap.controller.DoctorController">
          <children>
-      <Accordion fx:id="patientAccordionPane" layoutY="30.0" prefHeight="579.0" prefWidth="819.0">
+      <Accordion fx:id="patientAccordionPane" layoutY="60.0" prefHeight="560.0" prefWidth="819.0">
          <panes>
             <TitledPane fx:id="createOrUpdateDoctorTitledPane" animated="false" styleClass="navbar" text="Creer">
                <content>
@@ -157,5 +157,10 @@
             </TitledPane>
          </panes>
       </Accordion>
+      <Label layoutX="331.0" layoutY="14.0" text="Medecins">
+         <font>
+            <Font size="33.0" />
+         </font>
+      </Label>
          </children>
       </AnchorPane>

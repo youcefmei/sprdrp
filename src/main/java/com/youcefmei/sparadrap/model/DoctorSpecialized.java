@@ -2,6 +2,7 @@ package com.youcefmei.sparadrap.model;
 
 import com.youcefmei.sparadrap.exception.InvalidInputException;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -9,11 +10,11 @@ import java.util.List;
  */
 public class DoctorSpecialized extends Doctor{
 
-    private String speciality;
-    private  List<String> specialties = List.of("Andrologie","Urologie","Cardiologie","Gynécologie","Obstétrique","Pédiatrie",
+    private  static final String[] specialities = {"Andrologie","Urologie","Cardiologie","Gynécologie","Obstétrique","Pédiatrie",
             "Otorhinolaryngologie","Neurologie","Dermatologie","Gastro-entérologie","Rhumatologie","Néphrologie",
-            "Hématologie","Ophtalmologie","Pneumologie","Psychiatrie"
-    );
+            "Hématologie","Ophtalmologie","Pneumologie","Psychiatrie"};
+
+    private String speciality;
 
     /**
      * Instantiates a new Doctor specialized.
@@ -50,14 +51,13 @@ public class DoctorSpecialized extends Doctor{
      * @throws InvalidInputException the invalid input exception
      */
     public void setSpeciality(String speciality) throws InvalidInputException {
-        List<String> specialityFounds = specialties.stream().filter(
-                specialityTemp -> specialityTemp.equals(speciality)
-        ).toList();
+        boolean isSpecialityFound =  Arrays.asList(specialities).contains(speciality);
 
-        if (!specialityFounds.isEmpty()) {
+
+        if (isSpecialityFound) {
             this.speciality = speciality;
         } else{
-            throw new InvalidInputException("La spécialité n'est pas valide");
+            throw new InvalidInputException("La spécialité n'est pas valide, veuillez choisir entre: " + Arrays.stream(specialities).toList());
         }
 
     }
