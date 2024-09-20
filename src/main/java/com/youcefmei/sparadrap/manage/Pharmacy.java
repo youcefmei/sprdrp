@@ -19,17 +19,11 @@ public class Pharmacy {
     private ObservableList<Patient> patients = FXCollections.observableArrayList();
     private ObservableList<Purchase> purchases = FXCollections.observableArrayList();
     private ObservableList<Doctor> doctors = FXCollections.observableArrayList();
-    private Patient currentPatientEdit;
     private Purchase currentPurchase;
 
     static {
         INSTANCE = new Pharmacy();
     }
-
-    private Pharmacy(){
-
-    }
-
 
     /**
      * Gets instance.
@@ -104,23 +98,6 @@ public class Pharmacy {
     }
 
 
-    /**
-     * Gets current patient edit.
-     *
-     * @return the current patient edit
-     */
-    public Patient getCurrentPatientEdit() {
-        return currentPatientEdit;
-    }
-
-    /**
-     * Sets current patient edit.
-     *
-     * @param currentPatientEdit the current patient edit
-     */
-    public void setCurrentPatientEdit(Patient currentPatientEdit) {
-        this.currentPatientEdit = currentPatientEdit;
-    }
 
     /**
      * Gets purchases.
@@ -176,7 +153,7 @@ public class Pharmacy {
 
     private void checkPurchaseDuplicate(String purchaseId ) throws DuplicateException {
         for (Purchase purchaseTemp : purchases) {
-            if (purchaseTemp.getId().equals(purchaseId)) {
+            if (purchaseTemp.getID().equals(purchaseId)) {
                 throw new DuplicateException("Il y a déja une facture avec ce numéro");
             }
         }
@@ -224,9 +201,11 @@ public class Pharmacy {
      * @throws DuplicateException the duplicate exception
      */
     public void addDoctorSpecialized(DoctorSpecialized doctor) throws DuplicateException {
-        checkDoctorDuplicate(doctor);
-        doctorSpecializeds.add(doctor);
-        doctors.add( doctor);
+        if (doctor != null) {
+            checkDoctorDuplicate(doctor);
+            doctorSpecializeds.add(doctor);
+            doctors.add(doctor);
+        }
     }
 
 
@@ -249,7 +228,7 @@ public class Pharmacy {
      * @throws PaymentException   the payment exception
      */
     public void addPurchase(Purchase purchase) throws DuplicateException, PaymentException {
-        checkPurchaseDuplicate(purchase.getId());
+        checkPurchaseDuplicate(purchase.getID());
         if (purchase.isPaid() ){
             purchases.add(purchase);
         }
@@ -285,13 +264,18 @@ public class Pharmacy {
      * @param patient the patient
      */
     public void removePatient(Patient patient) {
-//        patients =  FXCollections.observableArrayList(
-//                patients.stream().filter(
-//                        patientTemp -> !patientTemp.getSecuId().equals( patient.getSecuId() )
-//                ).toList()
-//        );
         patients.remove(patient);
 
+    }
+
+
+    public void removeDoctor(Doctor doctor) {
+        if (doctor instanceof DoctorSpecialized){
+            doctorSpecializeds.remove(doctor);
+        }else if (doctor instanceof Doctor){
+            doctorGenerals.remove(doctor);
+        }
+        doctors.remove( doctor);
     }
 
 

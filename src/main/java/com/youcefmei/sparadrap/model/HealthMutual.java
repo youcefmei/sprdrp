@@ -13,7 +13,7 @@ public class HealthMutual {
     /**
      * The constant mutualNames.
      */
-    public final static String[] mutualNames = {"Acoris Mutuelles","ADREA Mutuelle","APREVA","Avenir Mutuelle","Avenir Santé Mutuelle","CCMO","France Mutuelle","GFP","Harmonie Mutuelle"};
+    public final static String[] MUTUAL_NAMES = {"Acoris Mutuelles","ADREA Mutuelle","APREVA","Avenir Mutuelle","Avenir Santé Mutuelle","CCMO","France Mutuelle","GFP","Harmonie Mutuelle"};
 
     private String name;
     private String phone;
@@ -225,12 +225,12 @@ public class HealthMutual {
      * @throws InvalidInputException the invalid input exception
      */
     public void setName(String name) throws InvalidInputException {
-        List<String>  mutualNameFound = Arrays.asList(mutualNames).stream().filter(
+        List<String>  mutualNameFound = Arrays.asList(MUTUAL_NAMES).stream().filter(
                 mutualNameTemp -> mutualNameTemp.toLowerCase().equals(name.trim().toLowerCase())
         ).toList();
 
         if (mutualNameFound.isEmpty() ) {
-            throw  new InvalidInputException("Veuillez saisir une mutuelle valide ! \nVeuillez choisir entre:" + Arrays.stream(mutualNames).toList());
+            throw  new InvalidInputException("Veuillez saisir une mutuelle valide ! \nVeuillez choisir entre:" + Arrays.stream(MUTUAL_NAMES).toList());
         }else{
             this.name = name;
         }

@@ -25,7 +25,7 @@ import java.util.ResourceBundle;
 public class PatientController implements Initializable {
 
     @FXML
-    private Accordion patientAccordionPane;
+    private Accordion patientAccordion;
 
     @FXML
     private TitledPane createOrUpdatePatientTitledPane, listPatientTitledPane ;
@@ -107,7 +107,7 @@ public class PatientController implements Initializable {
                     patientAreacodeTextField.getText(),
                     patientSecuNumTextField.getText(),
                     patientBirthDatePicker.getValue(),
-                    (DoctorGeneral) familyDoctorCombo.getSelectionModel().getSelectedItem(),
+                    familyDoctorCombo.getSelectionModel().getSelectedItem(),
                     healthMutualCombo.getValue()
             );
             if ( currentPatient != null) {
@@ -123,7 +123,7 @@ public class PatientController implements Initializable {
 
             createOrUpdatePatientTitledPane.setText("Créer");
             listPatientTitledPane.setVisible(true);
-            patientAccordionPane.setExpandedPane(listPatientTitledPane);
+            patientAccordion.setExpandedPane(listPatientTitledPane);
             clearInputs();
             patientCancelEditButton.setVisible(false);
         } catch (InvalidInputException | InvalidDateException | DuplicateException e) {
@@ -219,7 +219,7 @@ public class PatientController implements Initializable {
         currentPatient = null;
         createOrUpdatePatientTitledPane.setText("Créer");
         listPatientTitledPane.setVisible(true);
-        patientAccordionPane.setExpandedPane(listPatientTitledPane);
+        patientAccordion.setExpandedPane(listPatientTitledPane);
 
         clearInputs();
         patientCancelEditButton.setVisible(false);
@@ -264,7 +264,7 @@ public class PatientController implements Initializable {
         if (currentPatient != null){
             createOrUpdatePatientTitledPane.setText("Modifier");
             patientCancelEditButton.setVisible(true);
-            patientAccordionPane.setExpandedPane(createOrUpdatePatientTitledPane);
+            patientAccordion.setExpandedPane(createOrUpdatePatientTitledPane);
             listPatientTitledPane.setVisible(false);
 
             patientLastNameTextField.setText(currentPatient.getLastName());

@@ -15,7 +15,7 @@ import java.util.UUID;
  */
 public class Purchase {
 
-    private final String id = UUID.randomUUID().toString();
+    private final String ID = UUID.randomUUID().toString();
     private LocalDateTime datetime;
     private String datetimeStr;
     private ObservableList<Medicament> medicaments = FXCollections.observableArrayList();
@@ -93,8 +93,8 @@ public class Purchase {
      *
      * @return the id
      */
-    public String getId() {
-        return id;
+    public String getID() {
+        return ID;
     }
 
     /**
@@ -308,9 +308,9 @@ public class Purchase {
         String title ;
 
         if (prescription != null) {
-            title = "Achat avec ordonnance - " + id + " - " + getDatetimeStr();
+            title = "Achat avec ordonnance - " + ID + " - " + getDatetimeStr();
         }else{
-            title = "Achat sans ordonnance - " + id + " - " + getDatetimeStr();
+            title = "Achat sans ordonnance - " + ID + " - " + getDatetimeStr();
         }
         return title;
     }

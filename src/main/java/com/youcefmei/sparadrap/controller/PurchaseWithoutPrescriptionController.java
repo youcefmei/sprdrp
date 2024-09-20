@@ -115,7 +115,7 @@ public class PurchaseWithoutPrescriptionController implements Initializable {
             pharmacy.addPurchase(purchase);
             alertInfo.setContentText("L'achat a bien été enregistré: "
                     + purchase.getTotalAmountWithoutMutual()
-                    + "€\nId: " + purchase.getId()
+                    + "€\nId: " + purchase.getID()
                     + "\nDate: " + purchase.getDatetimeStr()
             );
             alertInfo.showAndWait();

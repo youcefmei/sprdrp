@@ -3,14 +3,13 @@ package com.youcefmei.sparadrap.model;
 import com.youcefmei.sparadrap.exception.InvalidInputException;
 
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * The type Doctor specialized.
  */
 public class DoctorSpecialized extends Doctor{
 
-    private  static final String[] specialities = {"Andrologie","Urologie","Cardiologie","Gynécologie","Obstétrique","Pédiatrie",
+    public  static final String[] SPECIALITIES = {"Andrologie","Urologie","Cardiologie","Gynécologie","Obstétrique","Pédiatrie",
             "Otorhinolaryngologie","Neurologie","Dermatologie","Gastro-entérologie","Rhumatologie","Néphrologie",
             "Hématologie","Ophtalmologie","Pneumologie","Psychiatrie"};
 
@@ -51,13 +50,13 @@ public class DoctorSpecialized extends Doctor{
      * @throws InvalidInputException the invalid input exception
      */
     public void setSpeciality(String speciality) throws InvalidInputException {
-        boolean isSpecialityFound =  Arrays.asList(specialities).contains(speciality);
+        boolean isSpecialityFound =  Arrays.asList(SPECIALITIES).contains(speciality);
 
 
         if (isSpecialityFound) {
             this.speciality = speciality;
         } else{
-            throw new InvalidInputException("La spécialité n'est pas valide, veuillez choisir entre: " + Arrays.stream(specialities).toList());
+            throw new InvalidInputException("La spécialité n'est pas valide, veuillez choisir entre: " + Arrays.stream(SPECIALITIES).toList());
         }
 
     }

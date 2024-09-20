@@ -15,6 +15,7 @@ import javafx.stage.Stage;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Properties;
 
 
@@ -45,12 +46,22 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/dashboard.fxml"));
+
+//        URL url = getClass().getResource("/views/dashboard.fxml");
+        URL url = Main.class.getResource("/views/dashboard.fxml");
+        if (url == null) {
+            System.err.println("Resource not found!");
+        } else {
+            System.out.println("Resource found: " + url);
+        }
+
+        FXMLLoader loader = new FXMLLoader( url );
 
         Parent root = loader.load();
 
         Scene scene = new Scene(root);
-        stage.getIcons().add(new Image(getClass().getResourceAsStream("/views/asset/icon.png")));
+//        stage.getIcons().add(new Image(getClass().getResourceAsStream("/views/asset/icon.png")));
+        stage.getIcons().add(new Image(Main.class.getResourceAsStream("/views/asset/icon.png")));
 
         stage.setTitle("Sparadrap");
         stage.setScene(scene);

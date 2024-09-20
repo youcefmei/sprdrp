@@ -18,7 +18,7 @@
          <children>
             <AnchorPane fx:id="billing_pane" layoutX="-1.0" layoutY="20.0" prefHeight="674.0" prefWidth="820.0" stylesheets="@dashboard.css">
          <children>
-            <Accordion fx:id="patientAccordionPane" layoutY="60.0" prefHeight="579.0" prefWidth="819.0">
+            <Accordion fx:id="patientAccordion" layoutY="60.0" prefHeight="579.0" prefWidth="819.0">
               <panes>
                 <TitledPane fx:id="createOrUpdatePatientTitledPane" animated="false" styleClass="navbar" text="Creer">
                   <content>

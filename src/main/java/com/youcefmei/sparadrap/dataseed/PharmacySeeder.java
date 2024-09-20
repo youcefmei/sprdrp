@@ -105,7 +105,7 @@ public class PharmacySeeder {
     }
 
     private void initHealthMutual()  {
-        System.out.println(Arrays.asList(HealthMutual.mutualNames));
+        System.out.println(Arrays.asList(HealthMutual.MUTUAL_NAMES));
         try {
             pharmacy.addHealthMutual(new HealthMutual("Acoris Mutuelles","0606060606","heathmutual1@gmail.com","10 rue blabla","75000","Paris","75",80));
             pharmacy.addHealthMutual(new HealthMutual("ADREA Mutuelle","0606060606","heathmutual2@gmail.com","12 rue blabla","75000","Paris","75",60));

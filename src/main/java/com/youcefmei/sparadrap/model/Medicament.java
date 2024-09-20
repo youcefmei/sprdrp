@@ -15,7 +15,7 @@ public class Medicament {
     /**
      * The Categories.
      */
-    public final static String[] categories = {"Analgésiques","Antibiotiques","Antituberculeux","Antimycosiques",
+    public final static String[] CATEGORIES = {"Analgésiques","Antibiotiques","Antituberculeux","Antimycosiques",
             "Antiviraux","Antihistaminiques","Antipyrétiques","Antispasmodiques",
             "Cardiologie","Dermatologie","Endocrinologie","Gastro-entérologie","Hématologie",
             "Neurologie","Oncologie","Psychiatrie","Rhumatologie","Urologie"
@@ -164,14 +164,14 @@ public class Medicament {
      * @throws InvalidInputException the invalid input exception
      */
     public void setCategory(String category) throws InvalidInputException {
-        List<String> categoryFounds = Arrays.asList(categories).stream().filter(
+        List<String> categoryFounds = Arrays.asList(CATEGORIES).stream().filter(
                 specialityTemp -> specialityTemp.equals(category)
         ).toList();
 
         if (!categoryFounds.isEmpty()) {
             this.category = category;
         } else{
-            throw new InvalidInputException("La catégorie n'est pas valide, veuillez choisir entre :" + Arrays.stream(categories).toList() );
+            throw new InvalidInputException("La catégorie n'est pas valide, veuillez choisir entre :" + Arrays.stream(CATEGORIES).toList() );
         }
     }
 

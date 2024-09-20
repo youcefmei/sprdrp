@@ -142,7 +142,7 @@ public class PurchaseWithPrescriptionController implements Initializable {
             pharmacy.setCurrentPurchase(purchase);
             alertInfo.setContentText("L'achat a bien été enregistré: "
                     + pharmacy.getCurrentPurchase().getTotalAmountWithMutual()
-                    + "€\nId: " + pharmacy.getCurrentPurchase().getId()
+                    + "€\nId: " + pharmacy.getCurrentPurchase().getID()
                     + "\nDate: " + pharmacy.getCurrentPurchase().getDatetimeStr()
             );
             alertInfo.showAndWait();

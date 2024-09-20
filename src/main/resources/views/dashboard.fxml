@@ -73,11 +73,11 @@
                </children></AnchorPane>
             <AnchorPane layoutX="275.0" prefHeight="694.0" prefWidth="805.0">
                <children>
-                  <fx:include fx:id="anchorPanePurchaseHistory" source="purchase_history.fxml" visible="false" />
-                  <fx:include fx:id="anchorPaneDoctor" source="doctor.fxml" visible="false" />
-                  <fx:include fx:id="anchorPaneWithPrescription" source="purchase_with_prescription.fxml" visible="false" />
-                  <fx:include fx:id="anchorPanePatient" source="patient.fxml" visible="false" />
-                  <fx:include fx:id="anchorPaneWithoutPrescription" source="purchase_without_prescription.fxml" visible="false" />
+                  <fx:include fx:id="anchorPanePurchaseHistory" source="./purchase_history.fxml" visible="false" />
+                  <fx:include fx:id="anchorPaneDoctor" source="./doctor.fxml" visible="false" />
+                  <fx:include fx:id="anchorPaneWithPrescription" source="./purchase_with_prescription.fxml" visible="false" />
+                  <fx:include fx:id="anchorPanePatient" source="./patient.fxml" visible="false" />
+                  <fx:include fx:id="anchorPaneWithoutPrescription" source="./purchase_without_prescription.fxml" visible="false" />
                </children>
             </AnchorPane>
          </children>
