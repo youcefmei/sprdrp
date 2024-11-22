@@ -1,6 +1,8 @@
 package com.youcefmei.sparadrap.controller;
 
 
+import com.youcefmei.sparadrap.dao.MedicamentDAO;
+import com.youcefmei.sparadrap.dao.PurchaseDAO;
 import com.youcefmei.sparadrap.exception.DuplicateException;
 import com.youcefmei.sparadrap.exception.InvalidDateException;
 import com.youcefmei.sparadrap.exception.InvalidInputException;
@@ -9,6 +11,9 @@ import com.youcefmei.sparadrap.manage.Pharmacy;
 import com.youcefmei.sparadrap.model.Medicament;
 import com.youcefmei.sparadrap.model.Purchase;
 
+import com.youcefmei.sparadrap.model.PurchaseItem;
+import javafx.beans.property.SimpleFloatProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -53,21 +58,24 @@ public class PurchaseWithoutPrescriptionController implements Initializable {
 
     //
     @FXML
-    private TableColumn<Medicament, String> medicamentTitleCol  ;
+    private TableColumn<PurchaseItem, String> medicamentTitleCol  ;
 
     @FXML
-    private TableColumn<Medicament, Float> medicamentPriceCol,medicamentTotalPriceCol;
+    private TableColumn<PurchaseItem, Float> medicamentPriceCol,medicamentTotalPriceCol;
 
     @FXML
-    private TableColumn<Medicament, Integer> medicamentQuantityCol;
+    private TableColumn<PurchaseItem, Integer> medicamentQuantityCol;
 
     private Purchase purchase;
-    private final Pharmacy pharmacy = Pharmacy.getInstance();
+//    private final Pharmacy pharmacy = Pharmacy.getInstance();
+
 
     private final Alert alertDelete = new Alert(Alert.AlertType.CONFIRMATION, "Etes-vous certains de vouloir supprimer ?");
     private final Alert alertInfo = new Alert(Alert.AlertType.INFORMATION, "Veuillez selectionner un medicament");
     private FilteredList<Medicament> filteredMedicaments;
 
+    private PurchaseDAO purchaseDAO = new PurchaseDAO();
+    private MedicamentDAO medicamentDAO = new MedicamentDAO();
     //
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -77,7 +85,8 @@ public class PurchaseWithoutPrescriptionController implements Initializable {
 //                        pharmacy.getMedicaments()
 //                );
 
-        medicamentNameCombo.setItems(pharmacy.getMedicaments());
+//        medicamentNameCombo.setItems(pharmacy.getMedicaments());
+        medicamentNameCombo.setItems(medicamentDAO.findAllObservable());
         medicamentNameCombo.getSelectionModel().selectFirst();
         // spinner init
         medicamentQuantitySpinner.setValueFactory(
@@ -87,7 +96,7 @@ public class PurchaseWithoutPrescriptionController implements Initializable {
                 )
         );
         try {
-            purchase = new Purchase();
+            purchase = new Purchase(null);
 //            pharmacy.setCurrentPurchase(purchase);
         } catch (InvalidDateException e) {
             alertInfo.setContentText(e.getMessage());
@@ -103,7 +112,7 @@ public class PurchaseWithoutPrescriptionController implements Initializable {
     private void handleClearPurchase(ActionEvent event) throws InvalidInputException {
         medicamentSearchTextField.setText("");
         medicamentQuantitySpinner.getValueFactory().setValue(1);
-        purchase.getMedicaments().clear();
+        purchase.getPurchaseItems().clear();
         purchaseTotalPriceText.setText( purchase.getTotalAmountWithoutMutual() + " €");
         populateMedicamentTable();
     }
@@ -112,17 +121,21 @@ public class PurchaseWithoutPrescriptionController implements Initializable {
     private void handleRegisterPurchase(ActionEvent event)  {
         try {
             purchase.setPaid(true);
-            pharmacy.addPurchase(purchase);
+//            pharmacy.addPurchase(purchase);
+            Integer purchaseId =  purchaseDAO.create(purchase);
+            Purchase purchaseTemp = purchaseDAO.findById(purchaseId);
+            purchase.setPurchaseId(purchaseTemp.getPurchaseId());
+            purchase.setRef(purchaseTemp.getRef());
             alertInfo.setContentText("L'achat a bien été enregistré: "
                     + purchase.getTotalAmountWithoutMutual()
-                    + "€\nId: " + purchase.getID()
+                    + "€\nId: " + purchase.getRef()
                     + "\nDate: " + purchase.getDatetimeStr()
             );
             alertInfo.showAndWait();
-            purchase = new Purchase();
-            pharmacy.setCurrentPurchase( purchase);
+            purchase = new Purchase(null);
+//            pharmacy.setCurrentPurchase( purchase);
             handleClearPurchase(null);
-        } catch ( PaymentException | DuplicateException| InvalidInputException | InvalidDateException e) {
+        } catch ( InvalidInputException | InvalidDateException e) {
             alertInfo.setContentText(e.getMessage());
             alertInfo.showAndWait();
         }
@@ -130,7 +143,7 @@ public class PurchaseWithoutPrescriptionController implements Initializable {
 
     @FXML
     private void handleSearchMedicament(KeyEvent event) {
-        filteredMedicaments = new FilteredList<>(pharmacy.getMedicaments());
+        filteredMedicaments = new FilteredList<>( medicamentDAO.findAllObservable() );
         filteredMedicaments.setPredicate(
                 new Predicate<Medicament>() {
                     @Override
@@ -157,14 +170,18 @@ public class PurchaseWithoutPrescriptionController implements Initializable {
         }
 
         try {
-            medicament.setQuantity(medicamentQuantitySpinner.getValue());
-            purchase.addMedicament(medicament);
+            PurchaseItem purchaseItem = new PurchaseItem(
+                    null,
+                    medicamentQuantitySpinner.getValue(),
+                    medicament
+            );
+            purchase.addPurchaseItem(purchaseItem);
         } catch (InvalidInputException e) {
             alertInfo.setContentText(e.getMessage());
             alertInfo.showAndWait();
         }
-        for (Medicament med : purchase.getMedicaments()) {
-            System.out.println(med + " - " + med.getQuantity() + "\n");
+        for ( PurchaseItem purchaseItem : purchase.getPurchaseItems()) {
+            System.out.println(purchaseItem.getMedicament() + " - " + purchaseItem.getQuantity() + "\n");
         }
         populateMedicamentTable();
 
@@ -173,27 +190,41 @@ public class PurchaseWithoutPrescriptionController implements Initializable {
 
     @FXML
     private void handleDeleteMedicament(ActionEvent event) {
-        System.out.println(purchase.getMedicaments());
+        System.out.println(purchase.getPurchaseItems());
         if (medicamentTable.getSelectionModel().getSelectedItem() == null){
             alertInfo.showAndWait();
         }
         else{
             alertDelete.showAndWait().ifPresent(response -> {
                 if (response == ButtonType.OK){
-                    purchase.removeMedicament((Medicament) medicamentTable.getSelectionModel().getSelectedItem());
+                    purchase.removePurchaseItem((PurchaseItem) medicamentTable.getSelectionModel().getSelectedItem());
                     purchaseTotalPriceText.setText(purchase.getTotalAmountWithoutMutual() + " €");
                     populateMedicamentTable();
                 }
             });
         }
-        System.out.println(purchase.getMedicaments());
+        System.out.println(purchase.getPurchaseItems());
 
     }
 
     private void initMedicamentTable() {
-        medicamentTitleCol.setCellValueFactory(new PropertyValueFactory<>("title"));
-        medicamentPriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
-        medicamentTotalPriceCol.setCellValueFactory(new PropertyValueFactory<>("totalPrice"));
+//        medicamentTitleCol.setCellValueFactory(new PropertyValueFactory<>("medicament"));
+
+        medicamentTitleCol.setCellValueFactory(
+                cellData -> new SimpleStringProperty( cellData.getValue().getMedicament().getTitle() )
+        );
+
+
+        medicamentPriceCol.setCellValueFactory(
+                cellData ->  new SimpleFloatProperty(  cellData.getValue().getMedicament().getPrice() ).asObject()
+        );
+
+        medicamentTotalPriceCol.setCellValueFactory(
+                cellData ->  new SimpleFloatProperty(  cellData.getValue().getTotalPrice() ).asObject()
+        );
+
+//        medicamentPriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
+//        medicamentTotalPriceCol.setCellValueFactory(new PropertyValueFactory<>("totalPrice"));
         medicamentQuantityCol.setCellValueFactory(new PropertyValueFactory<>("quantity"));
 
         medicamentTitleCol.setEditable(true);
@@ -211,7 +242,7 @@ public class PurchaseWithoutPrescriptionController implements Initializable {
 
 
     private void populateMedicamentTable() {
-        medicamentTable.setItems(purchase.getMedicaments());
+        medicamentTable.setItems(purchase.getPurchaseItems());
         medicamentTable.refresh();
     }
 }

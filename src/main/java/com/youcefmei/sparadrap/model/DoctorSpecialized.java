@@ -9,11 +9,10 @@ import java.util.Arrays;
  */
 public class DoctorSpecialized extends Doctor{
 
-    public  static final String[] SPECIALITIES = {"Andrologie","Urologie","Cardiologie","Gynécologie","Obstétrique","Pédiatrie",
-            "Otorhinolaryngologie","Neurologie","Dermatologie","Gastro-entérologie","Rhumatologie","Néphrologie",
-            "Hématologie","Ophtalmologie","Pneumologie","Psychiatrie"};
 
-    private String speciality;
+    private Integer doctorSpecializedId;
+    private DoctorSpeciality speciality;
+
 
     /**
      * Instantiates a new Doctor specialized.
@@ -29,9 +28,21 @@ public class DoctorSpecialized extends Doctor{
      * @param speciality     the speciality
      * @throws InvalidInputException the invalid input exception
      */
-    public DoctorSpecialized(String firstName, String lastName, String phone, String mail, String address, String city, String areaCode, String registrationNb,String speciality) throws InvalidInputException {
-        super(firstName, lastName, phone, mail, address, city, areaCode, registrationNb);
+
+
+    public DoctorSpecialized(Integer doctorSpecializedId,String firstName, String lastName, String phone, String mail, String address, String city, String areaCode, String registrationNb,DoctorSpeciality speciality) throws InvalidInputException {
+        super(null,firstName, lastName, phone, mail, address, city, areaCode, registrationNb);
+        setDoctorSpecializedId(doctorSpecializedId);
         setSpeciality(speciality);
+    }
+
+
+    public Integer getDoctorSpecializedId() {
+        return doctorSpecializedId;
+    }
+
+    public void setDoctorSpecializedId(Integer doctorSpecializedId) {
+        this.doctorSpecializedId = doctorSpecializedId;
     }
 
     /**
@@ -39,7 +50,7 @@ public class DoctorSpecialized extends Doctor{
      *
      * @return the speciality
      */
-    public String getSpeciality() {
+    public DoctorSpeciality getSpeciality() {
         return speciality;
     }
 
@@ -49,15 +60,11 @@ public class DoctorSpecialized extends Doctor{
      * @param speciality the speciality
      * @throws InvalidInputException the invalid input exception
      */
-    public void setSpeciality(String speciality) throws InvalidInputException {
-        boolean isSpecialityFound =  Arrays.asList(SPECIALITIES).contains(speciality);
+    public void setSpeciality(DoctorSpeciality speciality) throws InvalidInputException {
+       this.speciality = speciality;
 
 
-        if (isSpecialityFound) {
-            this.speciality = speciality;
-        } else{
-            throw new InvalidInputException("La spécialité n'est pas valide, veuillez choisir entre: " + Arrays.stream(SPECIALITIES).toList());
-        }
+
 
     }
 

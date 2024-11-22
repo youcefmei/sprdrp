@@ -15,16 +15,11 @@ public class Medicament {
     /**
      * The Categories.
      */
-    public final static String[] CATEGORIES = {"Analgésiques","Antibiotiques","Antituberculeux","Antimycosiques",
-            "Antiviraux","Antihistaminiques","Antipyrétiques","Antispasmodiques",
-            "Cardiologie","Dermatologie","Endocrinologie","Gastro-entérologie","Hématologie",
-            "Neurologie","Oncologie","Psychiatrie","Rhumatologie","Urologie"
-    };
 
+    private Integer medicamentId;
     private String title;
-    private String category;
+    private MedicamentCategory category;
     private float price;
-    private int quantity;
     private  LocalDate startDate;
     private boolean needPrescription;
 
@@ -34,19 +29,29 @@ public class Medicament {
      * @param title            the title
      * @param category         the category
      * @param price            the price
-     * @param quantity         the quantity
      * @param startDate        the start date
      * @param needPrescription the need prescription
      * @throws InvalidInputException the invalid input exception
      * @throws InvalidDateException  the invalid date exception
      */
-    public Medicament(String title, String category, float price, int quantity, LocalDate startDate, boolean needPrescription) throws InvalidInputException, InvalidDateException {
+
+
+
+    public Medicament(Integer medicamentId,String title, MedicamentCategory category, float price,  LocalDate startDate, boolean needPrescription) throws InvalidInputException, InvalidDateException {
+        setMedicamentId(medicamentId);
         setTitle(title);
         setCategory(category);
         setPrice(price);
-        setQuantity(quantity);
         setStartDate(startDate);
         setNeedPrescription(needPrescription);
+    }
+
+    public Integer getMedicamentId() {
+        return medicamentId;
+    }
+
+    public void setMedicamentId(Integer medicamentId) {
+        this.medicamentId = medicamentId;
     }
 
     /**
@@ -63,7 +68,7 @@ public class Medicament {
      *
      * @return the category
      */
-    public String getCategory() {
+    public MedicamentCategory getCategory() {
         return category;
     }
 
@@ -94,23 +99,6 @@ public class Medicament {
         return needPrescription;
     }
 
-    /**
-     * Gets quantity.
-     *
-     * @return the quantity
-     */
-    public int getQuantity() {
-        return quantity;
-    }
-
-    /**
-     * Gets total price.
-     *
-     * @return the total price
-     */
-    public float getTotalPrice() {
-        return price * quantity;
-    }
 
 
     /**
@@ -143,19 +131,19 @@ public class Medicament {
         }
     }
 
-    /**
-     * Sets quantity.
-     *
-     * @param quantity the quantity
-     * @throws InvalidInputException the invalid input exception
-     */
-    public void setQuantity(int quantity) throws InvalidInputException {
-        if (quantity >= 0){
-            this.quantity = quantity;
-        }else{
-            throw  new InvalidInputException("La quantité n'est pas valide");
-        }
-    }
+//    /**
+//     * Sets quantity.
+//     *
+//     * @param quantity the quantity
+//     * @throws InvalidInputException the invalid input exception
+//     */
+//    public void setQuantity(int quantity) throws InvalidInputException {
+//        if (quantity >= 0){
+//            this.quantity = quantity;
+//        }else{
+//            throw  new InvalidInputException("La quantité n'est pas valide");
+//        }
+//    }
 
     /**
      * Sets category.
@@ -163,16 +151,9 @@ public class Medicament {
      * @param category the category
      * @throws InvalidInputException the invalid input exception
      */
-    public void setCategory(String category) throws InvalidInputException {
-        List<String> categoryFounds = Arrays.asList(CATEGORIES).stream().filter(
-                specialityTemp -> specialityTemp.equals(category)
-        ).toList();
-
-        if (!categoryFounds.isEmpty()) {
+    public void setCategory(MedicamentCategory category)  {
             this.category = category;
-        } else{
-            throw new InvalidInputException("La catégorie n'est pas valide, veuillez choisir entre :" + Arrays.stream(CATEGORIES).toList() );
-        }
+
     }
 
     /**

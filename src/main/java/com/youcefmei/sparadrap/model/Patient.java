@@ -2,6 +2,7 @@ package com.youcefmei.sparadrap.model;
 
 import com.youcefmei.sparadrap.exception.InvalidDateException;
 import com.youcefmei.sparadrap.exception.InvalidInputException;
+import lombok.Builder;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -12,6 +13,8 @@ import java.util.List;
  * The type Patient.
  */
 public class Patient extends User{
+
+    private Integer patientId;
     private String secuId;
     private LocalDate birthDate;
     private String birthDateStr;
@@ -33,46 +36,31 @@ public class Patient extends User{
      * @param secuId       the secu id
      * @param birthDate    the birth date
      * @param familyDoctor the family doctor
-     * @throws InvalidInputException the invalid input exception
-     * @throws InvalidDateException  the invalid date exception
-     */
-    public Patient(String firstName, String lastName, String phone, String mail, String address, String city,
-                   String areaCode, String secuId, LocalDate birthDate, DoctorGeneral familyDoctor
-    ) throws InvalidInputException, InvalidDateException {
-
-        super(firstName, lastName, phone, mail, address, city, areaCode);
-        setSecuId(secuId);
-        setBirthDate(birthDate);
-        setFamilyDoctor(familyDoctor);
-    }
-
-
-    /**
-     * Instantiates a new Patient.
-     *
-     * @param firstName    the first name
-     * @param lastName     the last name
-     * @param phone        the phone
-     * @param mail         the mail
-     * @param address      the address
-     * @param city         the city
-     * @param areaCode     the area code
-     * @param secuId       the secu id
-     * @param birthDate    the birth date
-     * @param familyDoctor the family doctor
      * @param healthMutual the health mutual
      * @throws InvalidInputException the invalid input exception
      * @throws InvalidDateException  the invalid date exception
      */
-    public Patient(String firstName, String lastName, String phone, String mail, String address, String city,
+
+    @Builder
+    public Patient(Integer patientId,String firstName, String lastName, String phone, String mail, String address, String city,
                    String areaCode, String secuId, LocalDate birthDate, DoctorGeneral familyDoctor,HealthMutual healthMutual
     ) throws InvalidInputException, InvalidDateException {
 
-        super(firstName, lastName, phone, mail, address, city, areaCode);
-        setSecuId(secuId);
+        super(null,firstName, lastName, phone, mail, address, city, areaCode);
         setBirthDate(birthDate);
         setFamilyDoctor(familyDoctor);
         setHealthMutual(healthMutual);
+        setPatientId(patientId);
+        setSecuid(secuId);
+    }
+
+
+    public Integer getPatientId() {
+        return patientId;
+    }
+
+    public void setPatientId(Integer patientId) {
+        this.patientId = patientId;
     }
 
     /**
@@ -160,13 +148,13 @@ public class Patient extends User{
      * @param secuId the secu id
      * @throws InvalidInputException the invalid input exception
      */
-    public void setSecuId(String secuId) throws InvalidInputException {
+    public void setSecuid(String secuId) throws InvalidInputException {
 
         String regex = "^(1|2)\\d{2}(0[1-9]|[1-9][0-9]|2[ABab]|97[1-6])\\d{6}\\d{2}$";
         if (secuId != null && ( secuId.matches(regex) ) ) {
             this.secuId = secuId;
         } else{
-            throw new InvalidInputException("Le numéro de sécurité social n'est pas valide");
+            throw new InvalidInputException("Le numéro de sécurité social n'est pas valide: " + secuId);
         }
 
     }

@@ -11,10 +11,11 @@ import java.util.List;
  */
 public class Prescription {
 
+    private Integer prescriptionId;
     private LocalDate date;
     private Patient patient;
     private Doctor doctor;
-    private List<Medicament> medicaments;
+    private List<PrescriptionLine> prescriptionLines;
     private float priceWithoutMutual;
     private float priceWithMutual;
 
@@ -24,15 +25,27 @@ public class Prescription {
      * @param date        the date
      * @param patient     the patient
      * @param doctor      the doctor
-     * @param medicaments the medicaments
+     * @param prescriptionLines the medicaments
      * @throws InvalidDateException  the invalid date exception
      * @throws InvalidInputException the invalid input exception
      */
-    public Prescription(LocalDate date, Patient patient, Doctor doctor, List<Medicament> medicaments) throws InvalidDateException, InvalidInputException {
+
+
+
+    public Prescription(Integer prescriptionId, LocalDate date, Patient patient, Doctor doctor, List<PrescriptionLine> prescriptionLines) throws InvalidDateException, InvalidInputException {
+        setPrescriptionId(prescriptionId);
         setDate(date);
         setPatient(patient);
         setDoctor(doctor);
-        setMedicaments(medicaments);
+    }
+
+
+    public Integer getPrescriptionId() {
+        return prescriptionId;
+    }
+
+    public void setPrescriptionId(Integer prescriptionId) {
+        this.prescriptionId = prescriptionId;
     }
 
     /**
@@ -53,14 +66,7 @@ public class Prescription {
         return doctor;
     }
 
-    /**
-     * Gets medicaments.
-     *
-     * @return the medicaments
-     */
-    public List<Medicament> getMedicaments() {
-        return medicaments;
-    }
+
 
     /**
      * Gets date.
@@ -78,8 +84,8 @@ public class Prescription {
      */
     public float getPriceWithoutMutual() {
         float totalPrice = 0;
-        for (Medicament medicament : medicaments) {
-            totalPrice += medicament.getTotalPrice();
+        for (PrescriptionLine prescriptionLine : prescriptionLines) {
+            totalPrice += prescriptionLine.getMedicament().getPrice() * prescriptionLine.getQuantity();
         }
         return totalPrice;
     }
@@ -94,8 +100,8 @@ public class Prescription {
             return getPriceWithoutMutual();
         }else{
             float totalPrice = 0;
-            for (Medicament medicament : medicaments) {
-                totalPrice +=  medicament.getTotalPrice() * ( 100 - patient.getHealthMutual().getHealthCareRate() ) / 100 ;
+            for (PrescriptionLine prescriptionLine : prescriptionLines) {
+                totalPrice +=  ( prescriptionLine.getMedicament().getPrice() * prescriptionLine.getQuantity() ) * ( 100 - patient.getHealthMutual().getHealthCareRate() ) / 100 ;
             }
             return totalPrice;
         }
@@ -144,15 +150,11 @@ public class Prescription {
         }
     }
 
-    /**
-     * Sets medicaments.
-     *
-     * @param medicaments the medicaments
-     */
-    public void setMedicaments(List<Medicament> medicaments) {
-        this.medicaments = medicaments;
+    public List<PrescriptionLine> getPrescriptionLines() {
+        return prescriptionLines;
     }
 
-
-
+    public void setPrescriptionLines(List<PrescriptionLine> prescriptionLines) {
+        this.prescriptionLines = prescriptionLines;
+    }
 }

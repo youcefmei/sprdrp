@@ -1,5 +1,6 @@
 package com.youcefmei.sparadrap.controller;
 
+import com.youcefmei.sparadrap.dao.PurchaseDAO;
 import com.youcefmei.sparadrap.manage.Pharmacy;
 import com.youcefmei.sparadrap.model.Prescription;
 import com.youcefmei.sparadrap.model.Purchase;
@@ -33,9 +34,12 @@ public class PurchaseHistoryController implements Initializable {
     @FXML
     private DatePicker purchaseDatePicker;
 
-    private Pharmacy pharmacy = Pharmacy.getInstance();
+    private PurchaseDAO purchaseDAO = new PurchaseDAO();
 
-    private FilteredList<Purchase> purchaseInDate  = new FilteredList<>(pharmacy.getPurchases());
+//    private Pharmacy pharmacy = Pharmacy.getInstance();
+
+//    private FilteredList<Purchase> purchaseInDate  = new FilteredList<>(pharmacy.getPurchases());
+    private FilteredList<Purchase> purchaseInDate  = new FilteredList<>(purchaseDAO.findAllObservable());
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
@@ -88,7 +92,8 @@ public class PurchaseHistoryController implements Initializable {
             }
         });
 
-        purchaseHistoryTable.setItems(pharmacy.getPurchases());
+//        purchaseHistoryTable.setItems(pharmacy.getPurchases());
+        purchaseHistoryTable.setItems(purchaseDAO.findAllObservable());
     }
 
     /**

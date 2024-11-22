@@ -18,7 +18,7 @@ class PatientTest {
 
     @BeforeEach
     void setUp() throws InvalidInputException, InvalidDateException {
-        patient = new Patient("firstname","lastname","0606060606","blabla@gmail.com","147 rue machin","cityville","45666","1654250312178", LocalDate.now(),null);
+        patient = new Patient(null,"firstname","lastname","0606060606","blabla@gmail.com","147 rue machin","cityville","45666","1654250312178", LocalDate.now(),null,null);
     }
 
 
@@ -45,8 +45,8 @@ class PatientTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"1845236410147","2845236410147",})
-    void setSecuIdValid(String secId) {
-        assertDoesNotThrow(() -> patient.setSecuId(secId));
+    void setSecuidValid(String secId) {
+        assertDoesNotThrow(() -> patient.setSecuid(secId));
         assertEquals(secId,patient.getSecuId());
     }
 
@@ -54,9 +54,9 @@ class PatientTest {
     @ParameterizedTest
     @ValueSource(strings = {"4845236410147","","00","1*","aeaze"})
     @NullAndEmptySource
-    void setSecuIdThrowInvalidInput(String secId) {
-        Exception ex = assertThrows(InvalidInputException.class, ()  -> patient.setSecuId(secId));
-        assertEquals("Le numéro de sécurité social n'est pas valide", ex.getMessage());
+    void setSecuidThrowInvalidInput(String secId) {
+        Exception ex = assertThrows(InvalidInputException.class, ()  -> patient.setSecuid(secId));
+        assertEquals("Le numéro de sécurité social n'est pas valide: " + secId, ex.getMessage());
     }
 
     @ParameterizedTest

@@ -1,0 +1,66 @@
+- Patient
+  - firstName
+  - lastName
+  - address
+  - areaCode
+  - city
+  - phone
+  - mail
+  - secuId
+  - birthDate
+  - healthMutual
+  - familyDoctor
+  - specializedDoctorList
+- Doctor
+  - firstName
+  - lastName
+  - adress
+  - areaCode
+  - city
+  - phone
+  - mail
+  - registrationNb
+  - patientList
+    - DoctorGeneral
+    - DoctorSpecialized
+        - speciality
+- Medicament
+  - name
+  - category
+  - startDate
+  - needPrescription
+  - quantity
+- Prescription
+  - date
+  - patient
+  - doctor
+  - medicamentList
+<!-- - Purchase
+  - medicamentArray
+  - price -->
+- HealthMutual
+  - name
+  - adress
+  - areaCode
+  - city
+  - phone
+  - mail
+  - state
+  - healthCareRate
+- DrugStore
+  - doctorList
+  - patientList
+  - medicamentList
+  - purchaseList
+
+
+
+- [ ] DAO
+- [ ] test
+- [ ] interface
+
+
+- [ ] doublons achat sans ordonnance
+- [ ] filtre rechercher par client
+- [ ] purchase edit
+- [ ] doctor search

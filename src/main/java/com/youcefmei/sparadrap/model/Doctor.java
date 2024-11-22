@@ -1,6 +1,8 @@
 package com.youcefmei.sparadrap.model;
 
 import com.youcefmei.sparadrap.exception.InvalidInputException;
+import lombok.Builder;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,10 +10,23 @@ import java.util.List;
 /**
  * The type Doctor.
  */
-public abstract class Doctor extends  User {
+@Getter
+public  class Doctor extends  User {
 
-
+    private Integer doctorId;
+    /**
+     * -- GETTER --
+     *  Gets registration number.
+     *
+     * @return the registration number
+     */
     private String registrationNb;
+    /**
+     * -- GETTER --
+     *  Gets patients.
+     *
+     * @return the patients
+     */
     private List<Patient> patients = new ArrayList<>();
 
     /**
@@ -27,27 +42,16 @@ public abstract class Doctor extends  User {
      * @param registrationNb the registration nb
      * @throws InvalidInputException the invalid input exception
      */
-    public Doctor(String firstName, String lastName, String phone, String mail, String address, String city, String areaCode, String registrationNb) throws InvalidInputException {
-        super(firstName, lastName, phone, mail, address, city, areaCode);
+
+
+    public Doctor(Integer doctorId, String firstName, String lastName, String phone, String mail, String address, String city, String areaCode, String registrationNb) throws InvalidInputException {
+        super(null,firstName, lastName, phone, mail, address, city, areaCode);
         setRegistrationNb(registrationNb);
+        setDoctorId(doctorId);
     }
 
-    /**
-     * Gets registration number.
-     *
-     * @return the registration number
-     */
-    public String getRegistrationNb() {
-        return registrationNb;
-    }
-
-    /**
-     * Gets patients.
-     *
-     * @return the patients
-     */
-    public List<Patient> getPatients() {
-        return patients;
+    public void setDoctorId(Integer doctorId) {
+        this.doctorId = doctorId;
     }
 
     /**

@@ -1,6 +1,9 @@
 package com.youcefmei.sparadrap.controller;
 
 
+import com.youcefmei.sparadrap.dao.DoctorGeneralDAO;
+import com.youcefmei.sparadrap.dao.HealthMutualDAO;
+import com.youcefmei.sparadrap.dao.PatientDAO;
 import com.youcefmei.sparadrap.exception.DuplicateException;
 import com.youcefmei.sparadrap.exception.InvalidDateException;
 import com.youcefmei.sparadrap.exception.InvalidInputException;
@@ -58,9 +61,13 @@ public class PatientController implements Initializable {
     private final Alert alertDelete = new Alert(Alert.AlertType.CONFIRMATION, "Etes-vous certains de vouloir supprimer ?");
     private final Alert alertInfo = new Alert(Alert.AlertType.INFORMATION, "Veuillez selectionner un patient");
 
-    private Pharmacy pharmacy = Pharmacy.getInstance();;
+//    private Pharmacy pharmacy = Pharmacy.getInstance();;
 
     private Patient currentPatient;
+
+    private DoctorGeneralDAO doctorGeneralDAO = new DoctorGeneralDAO();
+    private HealthMutualDAO healthMutualDAO = new HealthMutualDAO();
+    private PatientDAO patientDAO = new PatientDAO();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -70,8 +77,11 @@ public class PatientController implements Initializable {
         birthDatePane.getChildren().add(patientBirthDatePicker);
         patientCancelEditButton.setVisible(false);
 
-        healthMutualCombo.setItems(pharmacy.getHealthMutuals());
-        familyDoctorCombo.setItems(  pharmacy.getDoctorGenerals() );
+//        healthMutualCombo.setItems(pharmacy.getHealthMutuals());
+
+        healthMutualCombo.setItems(healthMutualDAO.findAllObservable());
+//        familyDoctorCombo.setItems(  pharmacy.getDoctorGenerals() );
+        familyDoctorCombo.setItems(  doctorGeneralDAO.findAllObservable() );
     }
 
 
@@ -97,7 +107,9 @@ public class PatientController implements Initializable {
         Patient patient;
         String confirmUpdateOrCreate;
         try {
+
             patient = new Patient(
+                    null,
                     patientFirstNameTextField.getText(),
                     patientLastNameTextField.getText(),
                     patientPhoneTextField.getText(),
@@ -111,13 +123,16 @@ public class PatientController implements Initializable {
                     healthMutualCombo.getValue()
             );
             if ( currentPatient != null) {
-                pharmacy.removePatient(currentPatient);
+//                pharmacy.removePatient(currentPatient);
+                patient.setPatientId(currentPatient.getPatientId());
+                patientDAO.update(patient);
                 confirmUpdateOrCreate = "Le patient a été modifié";
             }else{
                 confirmUpdateOrCreate = "Le patient a été ajouté";
+                patientDAO.create(patient);
             }
 
-            pharmacy.addPatient(patient);
+//            pharmacy.addPatient(patient);
             alertInfo.setContentText(confirmUpdateOrCreate);
             alertInfo.showAndWait();
 
@@ -126,7 +141,8 @@ public class PatientController implements Initializable {
             patientAccordion.setExpandedPane(listPatientTitledPane);
             clearInputs();
             patientCancelEditButton.setVisible(false);
-        } catch (InvalidInputException | InvalidDateException | DuplicateException e) {
+            initPatientTable();
+        } catch (InvalidInputException | InvalidDateException e) {
             alertInfo.setContentText(e.getMessage());
             alertInfo.showAndWait();
         }
@@ -143,8 +159,9 @@ public class PatientController implements Initializable {
         patientBirthdateCol.setEditable(true);
         patientSecuNumCol.setEditable(true);
         patientTable.setEditable(true);
-        patientTable.setItems(pharmacy.getPatients());
-//
+//        patientTable.setItems(pharmacy.getPatients());
+        patientTable.setItems(patientDAO.findAllObservable());
+
 //        patientFirstnameCol.setCellFactory(TextFieldTableCell.forTableColumn());
 //        patientLastnameCol.setCellFactory(TextFieldTableCell.forTableColumn());
 //        patientMailCol.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -249,10 +266,14 @@ public class PatientController implements Initializable {
         else{
             alertDelete.showAndWait().ifPresent(response -> {
                 if (response == ButtonType.OK){
-                    Patient patient = pharmacy.getPatients().get(patientTable.getSelectionModel().getSelectedIndex());
-                    System.out.println(pharmacy.getPatients());
-                    pharmacy.removePatient(patient);
-                    pharmacy.getPatients().remove(patient);
+//                    Patient patient = pharmacy.getPatients().get(patientTable.getSelectionModel().getSelectedIndex());
+//                    System.out.println(pharmacy.getPatients());
+//                    pharmacy.removePatient(patient);
+//                    pharmacy.getPatients().remove(patient);
+
+                    Patient patient = patientDAO.findAllObservable().get(patientTable.getSelectionModel().getSelectedIndex());
+                    System.out.println(patientDAO.findAllObservable());
+                    patientDAO.delete(patient.getPatientId());
                 }
             });
         }

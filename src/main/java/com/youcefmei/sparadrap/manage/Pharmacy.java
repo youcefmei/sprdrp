@@ -153,7 +153,7 @@ public class Pharmacy {
 
     private void checkPurchaseDuplicate(String purchaseId ) throws DuplicateException {
         for (Purchase purchaseTemp : purchases) {
-            if (purchaseTemp.getID().equals(purchaseId)) {
+            if (purchaseTemp.getRef().equals(purchaseId)) {
                 throw new DuplicateException("Il y a déja une facture avec ce numéro");
             }
         }
@@ -228,7 +228,7 @@ public class Pharmacy {
      * @throws PaymentException   the payment exception
      */
     public void addPurchase(Purchase purchase) throws DuplicateException, PaymentException {
-        checkPurchaseDuplicate(purchase.getID());
+        checkPurchaseDuplicate(purchase.getRef());
         if (purchase.isPaid() ){
             purchases.add(purchase);
         }

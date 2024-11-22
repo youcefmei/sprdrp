@@ -2,12 +2,14 @@ package com.youcefmei.sparadrap.model;
 
 import com.youcefmei.sparadrap.exception.InvalidInputException;
 
+import lombok.Builder;
 import org.apache.commons.text.WordUtils;
 
 /**
- * Abstract class that represent a user
+ * Class that represent a user
  */
-public abstract class User {
+public class User {
+    private Integer userId;
     private String firstName;
     private String lastName;
     private String phone;
@@ -15,10 +17,10 @@ public abstract class User {
     private String address;
     private String areaCode;
     private String city;
-
     /**
      * Constructs a new User with the specified details.
      *
+     * @param userId the id of the user
      * @param firstName the first name of the user
      * @param lastName  the last name of the user
      * @param phone     the phone number of the user
@@ -28,7 +30,8 @@ public abstract class User {
      * @param areaCode  the area code of the user's address
      * @throws InvalidInputException if any input is invalid
      */
-    public User(String firstName, String lastName,String phone,String mail, String address ,String city, String areaCode) throws InvalidInputException {
+
+    public User(Integer userId, String firstName, String lastName, String phone, String mail, String address , String city, String areaCode) throws InvalidInputException {
         setLastName(lastName);
         setFirstName(firstName);
         setPhone(phone);
@@ -36,6 +39,21 @@ public abstract class User {
         setCity(city);
         setAddress(address);
         setAreaCode(areaCode);
+
+        setUserId(userId);
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        if (userId == null || userId <= 0) {
+            this.userId = null;
+        }
+        else{
+            this.userId = userId;
+        }
     }
 
     /**
@@ -109,7 +127,7 @@ public abstract class User {
      * @throws InvalidInputException the invalid input exception
      */
     public void setAddress(String address) throws InvalidInputException {
-        String regex = "^\\d+\\s+[a-zA-Zéî'çùâûôà\\s]+$";
+        String regex = "^\\d+\\s+[a-zA-Zéî'çùâûôàÉl’'\\s\\-]+$";
         if (address != null && ( address.matches(regex) ) ) {
             this.address = address;
         } else{
@@ -128,7 +146,7 @@ public abstract class User {
         if (areaCode != null && ( areaCode.toLowerCase().matches(regex) ) ) {
             this.areaCode = areaCode.toLowerCase();
         } else{
-            throw new InvalidInputException("Le code postale n'est pas valide");
+            throw new InvalidInputException("Le code postale n'est pas valide: " + this.areaCode );
         }
     }
 
@@ -142,7 +160,7 @@ public abstract class User {
         if ( (mail != null) && mail.trim().toLowerCase().matches("^[\\w.-]+@[\\w.-]+\\.[a-z]{2,}$")){
             this.mail = mail.trim().toLowerCase();
         } else{
-            throw new InvalidInputException("L'addresse mail n'est pas valide");
+            throw new InvalidInputException("L'addresse mail n'est pas valide: " + this.mail);
         }
     }
 
@@ -208,4 +226,17 @@ public abstract class User {
         }
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId=" + userId +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", phone='" + phone + '\'' +
+                ", mail='" + mail + '\'' +
+                ", address='" + address + '\'' +
+                ", areaCode='" + areaCode + '\'' +
+                ", city='" + city + '\'' +
+                '}';
+    }
 }

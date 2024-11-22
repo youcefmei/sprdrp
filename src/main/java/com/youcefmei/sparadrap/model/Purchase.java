@@ -3,10 +3,19 @@ package com.youcefmei.sparadrap.model;
 import com.youcefmei.sparadrap.exception.InvalidDateException;
 import com.youcefmei.sparadrap.exception.InvalidInputException;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.PositiveOrZero;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,23 +24,34 @@ import java.util.UUID;
  */
 public class Purchase {
 
-    private final String ID = UUID.randomUUID().toString();
+    private Integer purchaseId;
+    @Setter
+    @NotNull
+    @Pattern(
+            regexp = "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$",
+            message = "L'identifiant est invalide"
+    )
+    private String ref;
     private LocalDateTime datetime;
     private String datetimeStr;
-    private ObservableList<Medicament> medicaments = FXCollections.observableArrayList();
+    private ObservableList<PurchaseItem> purchaseItems = FXCollections.observableArrayList();
     private boolean isPaid;
     private Prescription prescription;
-    private float totalAmountWithMutual;
-    private float totalAmountWithoutMutual;
-
+    @Setter
+    @PositiveOrZero(message = "Le prix ne peut pas etre inférieur à zero")
+    private Float totalAmountWithMutual;
+    @Setter
+    @PositiveOrZero(message = "Le prix ne peut pas etre inférieur à zero")
+    private Float totalAmountWithoutMutual;
 
     /**
      * Instantiates a new Purchase.
      *
      * @throws InvalidDateException the invalid date exception
      */
-    public Purchase () throws InvalidDateException {
-        setDatetime(LocalDateTime.now());
+
+    public Purchase (Integer purchaseId) throws InvalidDateException {
+        setPurchaseId(purchaseId);
     }
 
     /**
@@ -40,7 +60,10 @@ public class Purchase {
      * @param datetime the datetime
      * @throws InvalidDateException the invalid date exception
      */
-    public Purchase(LocalDateTime datetime) throws  InvalidDateException {
+
+
+    public Purchase(Integer purchaseId,LocalDateTime datetime) throws  InvalidDateException {
+        this(purchaseId);
         setDatetime(datetime);
     }
 
@@ -51,10 +74,12 @@ public class Purchase {
      * @throws InvalidDateException  the invalid date exception
      * @throws InvalidInputException the invalid input exception
      */
-    public Purchase(Prescription prescription) throws  InvalidDateException, InvalidInputException {
-        setDatetime(LocalDateTime.now());
+
+    public Purchase(Integer purchaseId,Prescription prescription) throws  InvalidDateException, InvalidInputException {
+        this(purchaseId,LocalDateTime.now());
         setPrescription(prescription);
     }
+
 
     /**
      * Instantiates a new Purchase.
@@ -64,11 +89,19 @@ public class Purchase {
      * @throws InvalidDateException  the invalid date exception
      * @throws InvalidInputException the invalid input exception
      */
-    public Purchase(LocalDateTime datetime,Prescription prescription) throws  InvalidDateException, InvalidInputException {
-        setDatetime(datetime);
+
+    public Purchase(Integer purchaseId,LocalDateTime datetime,Prescription prescription) throws  InvalidDateException, InvalidInputException {
+        this(purchaseId,datetime);
         setPrescription(prescription);
     }
 
+    public Integer getPurchaseId() {
+        return purchaseId;
+    }
+
+    public void setPurchaseId(Integer purchaseId) {
+        this.purchaseId = purchaseId;
+    }
 
     /**
      * Is paid boolean.
@@ -93,8 +126,8 @@ public class Purchase {
      *
      * @return the id
      */
-    public String getID() {
-        return ID;
+    public String getRef() {
+        return ref;
     }
 
     /**
@@ -102,8 +135,8 @@ public class Purchase {
      *
      * @return the medicaments
      */
-    public ObservableList<Medicament> getMedicaments() {
-        return medicaments;
+    public ObservableList<PurchaseItem> getPurchaseItems() {
+        return purchaseItems;
     }
 
 
@@ -124,19 +157,25 @@ public class Purchase {
      */
     public float getTotalAmountWithMutual() {
 
-        float totalPrice = 0;
-        if ( prescription == null ||  (prescription.getPatient().getHealthMutual() == null) ) {
-            for (Medicament medicament : medicaments) {
-                totalPrice += medicament.getTotalPrice();
-            }
-        } else{
-            HealthMutual healthMutual = prescription.getPatient().getHealthMutual();
-            float rate =  healthMutual.getHealthCareRate();
-            for (Medicament medicament : medicaments) {
-                totalPrice += medicament.getTotalPrice() * ( ( 100 - rate )/100 );
-            }
+        if ( totalAmountWithMutual != null ) {
+            return totalAmountWithMutual;
         }
-        return totalPrice;
+        else{
+            float totalPrice = 0;
+            if ( prescription == null ||  (prescription.getPatient().getHealthMutual() == null) ) {
+                for ( PurchaseItem purchaseItem : purchaseItems) {
+                    totalPrice += purchaseItem.getTotalPrice();
+                }
+            } else{
+                HealthMutual healthMutual = prescription.getPatient().getHealthMutual();
+                float rate =  healthMutual.getHealthCareRate();
+                for (PurchaseItem purchaseItem : purchaseItems) {
+                    totalPrice += purchaseItem.getTotalPrice() * ( ( 100 - rate )/100 );
+                }
+            }
+            return totalPrice;
+
+        }
     }
 
 
@@ -146,11 +185,16 @@ public class Purchase {
      * @return the float
      */
     public float getTotalAmountWithoutMutual(){
-        float totalPrice = 0;
-        for (Medicament medicament : medicaments) {
-                totalPrice += medicament.getTotalPrice();
+        if ( totalAmountWithoutMutual != null ) {
+            return totalAmountWithoutMutual;
         }
-        return totalPrice;
+        else{
+            float totalPrice = 0;
+            for (PurchaseItem purchaseItem : purchaseItems) {
+                    totalPrice += purchaseItem.getTotalPrice();
+            }
+            return totalPrice;
+        }
     }
 
 
@@ -172,8 +216,9 @@ public class Purchase {
     public void setDatetime(LocalDateTime datetime) throws InvalidDateException {
         if ( (datetime== null)  ) {
             throw new InvalidDateException("La date de facturation ne peut etre null");
-        }else if ( datetime.isAfter(LocalDateTime.now() )) {
-            throw new InvalidDateException("La date de facturation ne peut etre postérieur à aujourd'hui");
+        }else if ( datetime.isAfter(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS) )) {
+
+            throw new InvalidDateException("La date de facturation ne peut etre postérieur à aujourd'hui : " + LocalDateTime.now() + " < " + datetime);
         }else{
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
             System.out.println(datetime);
@@ -186,40 +231,53 @@ public class Purchase {
     /**
      * Add medicament.
      *
-     * @param medicament the medicament
+     * @param purchaseItem the purchase item
      * @throws InvalidInputException the invalid input exception
      */
-    public void addMedicament(Medicament medicament) throws  InvalidInputException {
+    public void addPurchaseItem(@NotNull(message = "Le medicament ne peut etre nul") PurchaseItem purchaseItem) throws  InvalidInputException {
 
-        if ( medicament == null ) {
-            throw  new InvalidInputException("Le mediacament ne peut etre nul");
-        } else if (  (prescription == null)  && medicament.isNeedPrescription()   ){
-            throw new InvalidInputException("Ce medicament a besoin d'une ordonnance");
+        if ( (prescription == null)  && purchaseItem.getMedicament().isNeedPrescription() ) {
+            throw new InvalidInputException( "Ce medicament a besoin d'une ordonnance" );
         } else {
-            // Check if medicament is in the list
-            List<Medicament> medicamentFound = medicaments.stream().filter(
-                    medicamentTemp -> medicamentTemp.getTitle().equals(medicament.getTitle()) && ( medicamentTemp.getQuantity() == medicament.getQuantity() )
+            // Check if medicament is in the list with same qty
+            List<PurchaseItem> purchaseItemSFoundSameQty = purchaseItems.stream().filter(
+                    purchaseItemTemp -> purchaseItemTemp.getMedicament().getTitle().equals( purchaseItem.getMedicament().getTitle() ) && ( purchaseItemTemp.getQuantity() == purchaseItem.getQuantity() )
             ).toList();
+
+            List<PurchaseItem> purchaseItemsFound = purchaseItems.stream().filter(
+                    purchaseItemTemp -> purchaseItemTemp.getMedicament().getTitle().equals( purchaseItem.getMedicament().getTitle()  )
+            ).toList();
+
 //            if ( !medicamentFound.isEmpty() ) {
 ////                throw new InvalidInputException("Déja dans le panier, vous pouvez changer la quantité\n pour modifier la commande");
 ////
 //            } else {
-            if ( medicamentFound.isEmpty() ) {
+            if ( purchaseItemSFoundSameQty.isEmpty() ) {
+                if  ( !purchaseItemsFound.isEmpty() ){
+                    purchaseItems.forEach(
+                            purchaseItemTemp -> {
+                                if ( purchaseItemTemp.getMedicament().getTitle().equals(purchaseItem.getMedicament().getTitle())   ) {
+                                    purchaseItemTemp.setQuantity( purchaseItem.getQuantity() );
+                                    purchaseItemTemp.setUnitPrice(purchaseItem.getUnitPrice());
+                                }
+                            }
+                    );
+                }
                 // Add if not in the list
-                if ( prescription != null ) {
+                else if ( prescription != null ) {
                     // With prescription add
-                    List<Medicament> medicamentFoundInPrescription = prescription.getMedicaments().stream().filter(
-                            medicamentTemp -> medicamentTemp.getTitle().equals(medicament.getTitle())
+                    List<PrescriptionLine> prescriptionLineFoundInPrescription = prescription.getPrescriptionLines().stream().filter(
+                            prescriptionLineTemp -> prescriptionLineTemp.getMedicament().getTitle().equals(purchaseItem.getMedicament().getTitle())
                     ).toList();
 
-                    if (!medicamentFoundInPrescription.isEmpty()) {
-                        medicaments.add(medicament);
+                    if (!prescriptionLineFoundInPrescription.isEmpty()) {
+                        purchaseItems.add( purchaseItem);
                     } else {
                         throw new InvalidInputException("Ce medicament n'est pas dans l'ordonnance");
                     }
                 } else{
                     // Without prescription add
-                   medicaments.add(medicament);
+                   purchaseItems.add(purchaseItem);
                 }
             }
         }
@@ -228,41 +286,58 @@ public class Purchase {
 
 
     /**
-     * Remove medicament.
+     * Remove purchase item.
      *
-     * @param medicament the medicament
+     * @param purchaseItem the purchase item
      */
-    public void removeMedicament(Medicament medicament){
-        if ( medicament != null ) {
-            this.medicaments =  FXCollections.observableArrayList(
-                medicaments.stream().filter(
-                    medicamentTemp -> !medicamentTemp.getTitle().equals(medicament.getTitle())
-                ).toList()
-            );
+    public void removePurchaseItem(PurchaseItem purchaseItem){
+        if ( purchaseItem != null ) {
+            this.purchaseItems =  FXCollections.observableArrayList(
+                purchaseItems.stream().filter(
+                    purchaseItemTemp -> !purchaseItemTemp.getMedicament().getTitle().equals(
+                            purchaseItem.getMedicament().getTitle()
+                    )
+                ).toList());
 
         }
     }
 
     /**
+     * Remove purchase item.
+     *
+     * @param medicament the medicament
+     */
+    public void removePurchaseItem(Medicament medicament){
+        if ( medicament != null ) {
+            this.purchaseItems =  FXCollections.observableArrayList(
+                    purchaseItems.stream().filter(
+                            purchaseItemTemp -> !purchaseItemTemp.getMedicament().getTitle().equals(
+                                    medicament.getTitle()
+                            )
+                    ).toList());
+
+        }
+    }
+    /**
      * Sets medicaments.
      *
-     * @param medicaments the medicaments
+     * @param purchaseItems the medicaments
      * @throws InvalidInputException the invalid input exception
      */
-    public void setMedicaments(List<Medicament> medicaments) throws  InvalidInputException {
-        if ( medicaments == null){
+    public void setPurchaseItems(List<PurchaseItem> purchaseItems) throws  InvalidInputException {
+        if ( purchaseItems == null){
             throw new InvalidInputException("La liste de médicament ne peut etre null");
-        } else if ( medicaments.isEmpty() ) {
+        } else if ( purchaseItems.isEmpty() ) {
             throw new InvalidInputException("La liste de médicament ne peut etre vide");
         } else if ( prescription != null ) {
 
             throw new InvalidInputException("La liste de médicament ne peut etre modifier car il s'agit d'un achat avec ordonnance");
         }else{
-            this.medicaments.clear();
-            for(Medicament medicament : medicaments){
-                System.out.println(medicaments);
-                System.out.println(medicament);
-                this.addMedicament(medicament);
+            this.purchaseItems.clear();
+            for(PurchaseItem purchaseItem  : purchaseItems){
+                System.out.println(purchaseItems);
+                System.out.println(purchaseItem);
+//                this.ad(medicament);
             }
         }
     }
@@ -276,14 +351,16 @@ public class Purchase {
     public void setPrescription(Prescription prescription) throws  InvalidInputException {
         if (prescription == null){
             throw new InvalidInputException("L'ordonnance ne peut pas etre null");
-        } else if (  prescription.getMedicaments().isEmpty() ) {
+        } else if (  prescription.getPrescriptionLines().isEmpty() ) {
             throw new InvalidInputException("Cette ordonnance ne contient pas de médicaments");
-        } else if ( this.prescription == null && !getMedicaments().isEmpty() ){
+        } else if ( this.prescription == null && !getPurchaseItems().isEmpty() ){
             throw new InvalidInputException("Il est impossible d'ajouter une ordonnance si un achat sans ordonnance est en cours");
         } else{
             this.prescription = prescription;
-            for (Medicament medicament : prescription.getMedicaments()) {
-                addMedicament(medicament);
+            PurchaseItem purchaseItem = null;
+            for (PrescriptionLine prescriptionLine : prescription.getPrescriptionLines()) {
+                purchaseItem = new PurchaseItem(null,prescriptionLine.getQuantity(),prescriptionLine.getMedicament());
+                addPurchaseItem(purchaseItem);
             }
         }
     }
@@ -295,7 +372,7 @@ public class Purchase {
      * @throws InvalidInputException the invalid input exception
      */
     public void setPaid(boolean paid) throws InvalidInputException {
-        if ( paid && medicaments.isEmpty()) {
+        if ( paid && purchaseItems.isEmpty()) {
             throw new InvalidInputException("La liste de medicament est vide");
         }else{
             isPaid = paid;
@@ -308,9 +385,9 @@ public class Purchase {
         String title ;
 
         if (prescription != null) {
-            title = "Achat avec ordonnance - " + ID + " - " + getDatetimeStr();
+            title = "Achat avec ordonnance - " + ref + " - " + getDatetimeStr();
         }else{
-            title = "Achat sans ordonnance - " + ID + " - " + getDatetimeStr();
+            title = "Achat sans ordonnance - " + ref + " - " + getDatetimeStr();
         }
         return title;
     }

@@ -15,13 +15,14 @@ public class HealthMutual {
      */
     public final static String[] MUTUAL_NAMES = {"Acoris Mutuelles","ADREA Mutuelle","APREVA","Avenir Mutuelle","Avenir Santé Mutuelle","CCMO","France Mutuelle","GFP","Harmonie Mutuelle"};
 
+    private Integer healthMutualId;
     private String name;
     private String phone;
     private String mail;
     private String address;
     private String areaCode;
     private String city;
-    private String state;
+    private State state;
     private float healthCareRate;
 
     /**
@@ -37,7 +38,9 @@ public class HealthMutual {
      * @param healthCareRate the health care rate
      * @throws InvalidInputException the invalid input exception
      */
-    public HealthMutual(String name, String phone, String mail, String address, String areaCode, String city, String state, float healthCareRate) throws InvalidInputException {
+
+    public HealthMutual(Integer healthMutualId,String name, String phone, String mail, String address, String areaCode, String city, State state, float healthCareRate) throws InvalidInputException {
+        setHealthMutualId(healthMutualId);
         setName(name);
         setPhone(phone);
         setMail(mail);
@@ -46,6 +49,14 @@ public class HealthMutual {
         setCity(city);
         setState(state);
         setHealthCareRate(healthCareRate);
+    }
+
+    public Integer getHealthMutualId() {
+        return healthMutualId;
+    }
+
+    public void setHealthMutualId(Integer healthMutualId) {
+        this.healthMutualId = healthMutualId;
     }
 
     /**
@@ -107,7 +118,7 @@ public class HealthMutual {
      *
      * @return the state
      */
-    public String getState() {
+    public State getState() {
         return state;
     }
 
@@ -120,35 +131,6 @@ public class HealthMutual {
         return healthCareRate;
     }
 
-    /**
-     * Sets area code.
-     *
-     * @param areaCode the area code
-     * @throws InvalidInputException the invalid input exception
-     */
-    public void setAreaCode(String areaCode) throws InvalidInputException {
-        String regex = "^(?:0[1-9]|[1-8]\\d|9[0-8]|2[ABab]|97[1-6])\\d{3}$";
-        if (areaCode != null && ( areaCode.toLowerCase().matches(regex) ) ) {
-            this.areaCode = areaCode.toLowerCase();
-        } else{
-            throw new InvalidInputException("Le code postale n'est pas valide");
-        }
-    }
-
-    /**
-     * Sets state.
-     *
-     * @param state the state
-     * @throws InvalidInputException the invalid input exception
-     */
-    public void setState(String state) throws InvalidInputException {
-        String regex = "^(0[1-9]|[1-8][0-9]|9[0-5]|2[ab]|97[1-6])$";
-        if (state != null && ( state.toLowerCase().matches(regex) ) ) {
-            this.state = state.toLowerCase();
-        } else{
-            throw new InvalidInputException("Le département n'est pas valide");
-        }
-    }
 
     /**
      * Sets health care rate.
@@ -196,6 +178,22 @@ public class HealthMutual {
     }
 
     /**
+     * Sets area code.
+     *
+     * @param areaCode the area code
+     * @throws InvalidInputException the invalid input exception
+     */
+    public void setAreaCode(String areaCode) throws InvalidInputException {
+        String regex = "^(?:0[1-9]|[1-8]\\d|9[0-8]|2[ABab]|97[1-6])\\d{3}$";
+        if (areaCode != null && ( areaCode.toLowerCase().matches(regex) ) ) {
+            this.areaCode = areaCode.toLowerCase();
+        } else{
+            throw new InvalidInputException("Le code postale n'est pas valide");
+        }
+    }
+
+
+    /**
      * Sets city.
      *
      * @param city the city
@@ -234,6 +232,13 @@ public class HealthMutual {
         }else{
             this.name = name;
         }
+    }
+
+    public void setState(State state) throws InvalidInputException {
+        if (state == null  ) {
+            throw new InvalidInputException("Le département ne peut pas être nul");
+        }
+        this.state = state;
     }
 
     @Override

@@ -56,13 +56,13 @@ public class PurchaseWithPrescriptionController implements Initializable {
     private TableView medicamentTable;
 //
     @FXML
-    private TableColumn<Medicament, String> medicamentTitleCol  ;
+    private TableColumn<PurchaseItem, String> medicamentTitleCol  ;
 
     @FXML
-    private TableColumn<Medicament, Float> medicamentPriceCol,medicamentTotalPriceCol,medicamentTotalPriceWithMutualCol;
+    private TableColumn<PurchaseItem, Float> medicamentPriceCol,medicamentTotalPriceCol,medicamentTotalPriceWithMutualCol;
 
     @FXML
-    private TableColumn<Medicament, Integer> medicamentQuantityCol;
+    private TableColumn<PurchaseItem, Integer> medicamentQuantityCol;
 
 
     private Pharmacy pharmacy = Pharmacy.getInstance();
@@ -73,7 +73,7 @@ public class PurchaseWithPrescriptionController implements Initializable {
     private FilteredList<Medicament> filteredMedicaments;
     private FilteredList<Doctor> filteredDoctors;
     private FilteredList<Patient> filteredPatients;
-    private ObservableList<Medicament> medicamentTableItems;
+    private ObservableList<PurchaseItem> medicamentTableItems;
     private Patient patient;
     private Doctor doctor;
     private float healthMutualRate;
@@ -136,18 +136,18 @@ public class PurchaseWithPrescriptionController implements Initializable {
     @FXML
     private void handleRegisterPurchase(ActionEvent event) {
         try {
-            prescription = new Prescription(LocalDate.now(),patient,doctor,medicamentTable.getItems());
-            Purchase purchase = new Purchase(prescription);
+            prescription = new Prescription(null,LocalDate.now(),patient,doctor,medicamentTable.getItems());
+            Purchase purchase = new Purchase(null,prescription);
             purchase.setPaid(true);
             pharmacy.setCurrentPurchase(purchase);
             alertInfo.setContentText("L'achat a bien été enregistré: "
                     + pharmacy.getCurrentPurchase().getTotalAmountWithMutual()
-                    + "€\nId: " + pharmacy.getCurrentPurchase().getID()
+                    + "€\nId: " + pharmacy.getCurrentPurchase().getRef()
                     + "\nDate: " + pharmacy.getCurrentPurchase().getDatetimeStr()
             );
             alertInfo.showAndWait();
             pharmacy.addPurchase(purchase);
-            pharmacy.setCurrentPurchase(new Purchase());
+            pharmacy.setCurrentPurchase(new Purchase(null));
 
             handleClearPurchase(new ActionEvent());
         } catch ( InvalidInputException | InvalidDateException | DuplicateException  | PaymentException  e) {
@@ -225,32 +225,26 @@ public class PurchaseWithPrescriptionController implements Initializable {
 
         } else{
             boolean isAddedAlready = false;
-            Medicament medicamentToRemove = null;
+            PurchaseItem purchaseItemToRemove = null;
 
-            for (Medicament medoc : medicamentTableItems){
-                if ((medoc.getTitle().equals(medicament.getTitle())) && (medoc.getQuantity() == medicamentQuantitySpinner.getValue())) {
+            for (PurchaseItem purchaseItem : medicamentTableItems){
+                if ((purchaseItem.getMedicament().getTitle().equals(medicament.getTitle())) && (purchaseItem.getQuantity() == medicamentQuantitySpinner.getValue())) {
                     alertInfo.setContentText("Déjà dans le panier. Vous pouvez changer \nla quantité pour modier la commande");
                     alertInfo.showAndWait();
                     isAddedAlready = true;
-                } else if (medoc.getTitle().equals(medicament.getTitle())) {
-                        medicamentToRemove = medoc;
+                } else if (purchaseItem.getMedicament().getTitle().equals(medicament.getTitle())) {
+                        purchaseItemToRemove = purchaseItem;
                 }
             }
 
-            if (medicamentToRemove != null) {
-                medicamentTableItems.remove(medicamentToRemove);
+            if (purchaseItemToRemove != null) {
+                medicamentTableItems.remove(purchaseItemToRemove);
             }
 
             if (!isAddedAlready){
-                try {
-                    medicament.setQuantity(medicamentQuantitySpinner.getValue());
-                    medicamentTableItems.add(medicament);
-                    medicamentTable.refresh();
-
-                } catch (InvalidInputException e) {
-                    alertInfo.setContentText(e.getMessage());
-                    alertInfo.showAndWait();
-                }
+                PurchaseItem purchaseItem = new PurchaseItem(null,medicamentQuantitySpinner.getValue(),medicament);
+                medicamentTableItems.add(purchaseItem);
+                medicamentTable.refresh();
 
             }
         }
@@ -295,7 +289,7 @@ public class PurchaseWithPrescriptionController implements Initializable {
         medicamentPriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
         medicamentTotalPriceCol.setCellValueFactory(new PropertyValueFactory<>("totalPrice"));
         medicamentTotalPriceWithMutualCol.setCellValueFactory(cellData -> ( new SimpleFloatProperty(
-                cellData.getValue().getTotalPrice() )).multiply( (100-healthMutualRate)/100 ).asObject()
+                cellData.getValue().getTotalPrice() )).multiply( ( 100 - healthMutualRate ) / 100 ).asObject()
         );
         medicamentQuantityCol.setCellValueFactory(new PropertyValueFactory<>("quantity"));
 
@@ -308,7 +302,7 @@ public class PurchaseWithPrescriptionController implements Initializable {
 
         medicamentTableItems =
                 FXCollections.observableArrayList(
-                        new ArrayList<Medicament>()
+                        new ArrayList<PurchaseItem>()
                 );
 
 
@@ -318,8 +312,8 @@ public class PurchaseWithPrescriptionController implements Initializable {
 
     private void calculateDisplayTotalPriceWithMutual() {
         float totalPriceWithMutual = 0.0f;
-        for(Medicament medoc : medicamentTableItems){
-            totalPriceWithMutual += ( medoc.getPrice() * medoc.getQuantity() * (100 - healthMutualRate) ) /100;
+        for(PurchaseItem purchaseItem : medicamentTableItems){
+            totalPriceWithMutual += ( purchaseItem.getTotalPrice()  * (100 - healthMutualRate) ) /100;
         }
         purchaseTotalPriceWithMutualText.setText(totalPriceWithMutual+" €");
     }
