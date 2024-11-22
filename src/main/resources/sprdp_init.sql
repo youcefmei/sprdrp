@@ -9,6 +9,7 @@ USE sprdrp;
 CREATE
 ***************
 */
+
 CREATE TABLE Users(
    Id_Users INT AUTO_INCREMENT,
    firstname VARCHAR(50),
@@ -134,7 +135,7 @@ CREATE TABLE Prescription(
 );
 
 CREATE TABLE Purchase(
-   Id_Purchase INT,
+   Id_Purchase INT AUTO_INCREMENT,
    price DECIMAL(15,2),
    price_mutual DECIMAL(15,2),
    date_buy DATE NOT NULL,
@@ -157,15 +158,14 @@ CREATE TABLE Prescription_line(
 );
 
 CREATE TABLE Purchase_item(
+   Id_Medicament INT,
    Id_Purchase INT,
-   Id_Stock INT,
    qty INT NOT NULL,
    unit_price DECIMAL(15,2) NOT NULL,
-   PRIMARY KEY(Id_Purchase, Id_Stock),
-   FOREIGN KEY(Id_Purchase) REFERENCES Purchase(Id_Purchase),
-   FOREIGN KEY(Id_Stock) REFERENCES Stock(Id_Stock)
+   PRIMARY KEY(Id_Medicament, Id_Purchase),
+   FOREIGN KEY(Id_Medicament) REFERENCES Medicament(Id_Medicament),
+   FOREIGN KEY(Id_Purchase) REFERENCES Purchase(Id_Purchase)
 );
-
 
 /* 
 ***********

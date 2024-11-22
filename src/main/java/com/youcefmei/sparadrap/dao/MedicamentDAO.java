@@ -4,6 +4,8 @@ import com.youcefmei.sparadrap.exception.InvalidDateException;
 import com.youcefmei.sparadrap.exception.InvalidInputException;
 import com.youcefmei.sparadrap.model.Medicament;
 import com.youcefmei.sparadrap.model.MedicamentCategory;
+import com.youcefmei.sparadrap.model.Stock;
+import jakarta.validation.constraints.NotNull;
 
 import java.sql.*;
 import java.time.Instant;
@@ -26,7 +28,7 @@ public class MedicamentDAO implements IDAOObservable<Medicament> {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                int idMedicamentcaregory = resultSet.getInt("id_medicamentcaregory");
+                int idMedicamentcaregory = resultSet.getInt("id_medicamentcategory");
                 String categoryName = resultSet.getString("mc.name");
                 MedicamentCategory medicamentCategory = new MedicamentCategory(idMedicamentcaregory,categoryName);
                 medicament = new Medicament(
@@ -151,5 +153,26 @@ public class MedicamentDAO implements IDAOObservable<Medicament> {
             throw new RuntimeException(e);
         }
         return medicaments;
+    }
+
+    public Stock findStockByMedicament(@NotNull Medicament medicament) {
+        try {
+            Stock stock = null;
+            PreparedStatement preparedStatement = conn.prepareStatement(
+                    "SELECT * FROM medicament m  INNER JOIN stock s ON s.Id_medicament = m.Id_medicament WHERE m.Id_medicament = ?"
+            );
+            preparedStatement.setInt(1, medicament.getMedicamentId());
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                stock = new Stock(
+                        resultSet.getInt("id_stock"),
+                        resultSet.getInt("qty"),
+                        medicament
+                );
+            }
+            return stock;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

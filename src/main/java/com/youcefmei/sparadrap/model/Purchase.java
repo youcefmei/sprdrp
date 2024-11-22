@@ -1,5 +1,6 @@
 package com.youcefmei.sparadrap.model;
 
+import com.youcefmei.sparadrap.dao.MedicamentDAO;
 import com.youcefmei.sparadrap.exception.InvalidDateException;
 import com.youcefmei.sparadrap.exception.InvalidInputException;
 
@@ -213,12 +214,12 @@ public class Purchase {
      * @param datetime the datetime
      * @throws InvalidDateException the invalid date exception
      */
-    public void setDatetime(LocalDateTime datetime) throws InvalidDateException {
-        if ( (datetime== null)  ) {
-            throw new InvalidDateException("La date de facturation ne peut etre null");
-        }else if ( datetime.isAfter(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS) )) {
+    public void setDatetime(@NotNull LocalDateTime datetime) throws InvalidDateException {
+        LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS).plusSeconds(1);
 
-            throw new InvalidDateException("La date de facturation ne peut etre postérieur à aujourd'hui : " + LocalDateTime.now() + " < " + datetime);
+        if ( datetime.isAfter(now)) {
+
+            throw new InvalidDateException("La date de facturation ne peut etre postérieur à aujourd'hui : " + now + " < " + datetime);
         }else{
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
             System.out.println(datetime);
@@ -337,7 +338,7 @@ public class Purchase {
             for(PurchaseItem purchaseItem  : purchaseItems){
                 System.out.println(purchaseItems);
                 System.out.println(purchaseItem);
-//                this.ad(medicament);
+                this.addPurchaseItem(purchaseItem);
             }
         }
     }
@@ -349,6 +350,7 @@ public class Purchase {
      * @throws InvalidInputException the invalid input exception
      */
     public void setPrescription(Prescription prescription) throws  InvalidInputException {
+//        MedicamentDAO medicamentDAO = new MedicamentDAO();
         if (prescription == null){
             throw new InvalidInputException("L'ordonnance ne peut pas etre null");
         } else if (  prescription.getPrescriptionLines().isEmpty() ) {
@@ -359,7 +361,8 @@ public class Purchase {
             this.prescription = prescription;
             PurchaseItem purchaseItem = null;
             for (PrescriptionLine prescriptionLine : prescription.getPrescriptionLines()) {
-                purchaseItem = new PurchaseItem(null,prescriptionLine.getQuantity(),prescriptionLine.getMedicament());
+//                Stock stock = medicamentDAO.findStockByMedicament(prescriptionLine.getMedicament());
+                purchaseItem = new PurchaseItem(null,prescriptionLine.getQuantity(), prescriptionLine.getMedicament() );
                 addPurchaseItem(purchaseItem);
             }
         }

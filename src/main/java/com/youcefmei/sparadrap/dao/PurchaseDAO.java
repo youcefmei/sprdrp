@@ -12,7 +12,7 @@ import java.util.List;
 public class PurchaseDAO implements IDAOObservable<Purchase> {
     private PatientDAO patientDAO = new PatientDAO();
     private PrescriptionDAO prescriptionDAO = new PrescriptionDAO();
-    private StockDAO stockDAO = new StockDAO();
+    private MedicamentDAO medicamentDAODAO = new MedicamentDAO();
 
     @Override
     public Purchase findById(int id) {
@@ -57,6 +57,10 @@ public class PurchaseDAO implements IDAOObservable<Purchase> {
     public Integer create(Purchase purchase) {
         Integer purchaseId = null;
         try {
+            conn.setAutoCommit(false);
+
+
+
             PreparedStatement pStatement = conn.prepareStatement(
                     "INSERT INTO purchase(`price`,`price_mutual`,`date_buy`,`is_paid`) VALUES (?,?,?,?) ",
                     Statement.RETURN_GENERATED_KEYS
@@ -73,7 +77,28 @@ public class PurchaseDAO implements IDAOObservable<Purchase> {
             ResultSet generatedKeys = pStatement.getGeneratedKeys();
             if (generatedKeys.next()){
                 purchaseId = generatedKeys.getInt(1);
+
+                pStatement = conn.prepareStatement(
+                        "INSERT INTO purchase_item(`Id_Purchase`,`Id_Medicament`,`qty`,`unit_price`) VALUES (?,?,?,?) ",
+                        Statement.RETURN_GENERATED_KEYS
+                );
+                for (PurchaseItem purchaseItem : purchase.getPurchaseItems()) {
+                    pStatement.setInt(1, purchaseId);
+                    pStatement.setInt(2, purchaseItem.getMedicament().getMedicamentId());
+                    pStatement.setInt(3, purchaseItem.getQuantity());
+                    pStatement.setFloat(4, purchaseItem.getUnitPrice());
+                    pStatement.addBatch();
+                }
+                pStatement.executeBatch();
+
+
+                conn.commit();
+                conn.setAutoCommit(true);
+                return purchaseId;
             }
+            conn.rollback();
+            conn.setAutoCommit(true);
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -163,17 +188,19 @@ public class PurchaseDAO implements IDAOObservable<Purchase> {
                 List<PurchaseItem> purchaseItems = new ArrayList<>();
                 ResultSet resultSet1 = preparedStatement.executeQuery();
                 while (resultSet1.next()) {
-                    Stock stock = stockDAO.findById(resultSet1.getInt("stock_id"));
+                    Medicament medicament = medicamentDAODAO.findById(resultSet1.getInt("id_medicament"));
                     purchaseItems.add(
                       new PurchaseItem(
                               id,
                               resultSet1.getInt("qty"),
-                              stock.getMedicament(),
+                              medicament,
                               resultSet1.getFloat("unit_price")
                       )
                     );
                 }
+                purchase.setPurchaseItems(purchaseItems);
                 purchase.setPaid(isPaid);
+
                 purchases.add(purchase);
             }
         } catch (SQLException e) {

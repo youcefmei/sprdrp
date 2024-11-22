@@ -12,6 +12,7 @@ import com.youcefmei.sparadrap.model.Medicament;
 import com.youcefmei.sparadrap.model.Purchase;
 
 import com.youcefmei.sparadrap.model.PurchaseItem;
+import com.youcefmei.sparadrap.model.Stock;
 import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.transformation.FilteredList;
@@ -168,7 +169,6 @@ public class PurchaseWithoutPrescriptionController implements Initializable {
             alertInfo.setContentText("Veuillez choisir un medicament");
             alertInfo.showAndWait();
         }
-
         try {
             PurchaseItem purchaseItem = new PurchaseItem(
                     null,

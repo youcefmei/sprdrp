@@ -1,6 +1,7 @@
 package com.youcefmei.sparadrap.controller;
 
 
+import com.youcefmei.sparadrap.dao.MedicamentDAO;
 import com.youcefmei.sparadrap.exception.DuplicateException;
 import com.youcefmei.sparadrap.exception.InvalidDateException;
 import com.youcefmei.sparadrap.exception.InvalidInputException;
@@ -77,6 +78,7 @@ public class PurchaseWithPrescriptionController implements Initializable {
     private Patient patient;
     private Doctor doctor;
     private float healthMutualRate;
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -242,7 +244,15 @@ public class PurchaseWithPrescriptionController implements Initializable {
             }
 
             if (!isAddedAlready){
-                PurchaseItem purchaseItem = new PurchaseItem(null,medicamentQuantitySpinner.getValue(),medicament);
+
+                PurchaseItem purchaseItem = null;
+                try {
+                    purchaseItem = new PurchaseItem(null,medicamentQuantitySpinner.getValue(),medicament);
+                } catch (InvalidInputException e) {
+                    alertInfo.setContentText(e.getMessage());
+                    alertInfo.showAndWait();
+
+                }
                 medicamentTableItems.add(purchaseItem);
                 medicamentTable.refresh();
 

@@ -54,7 +54,7 @@ public class PurchaseHistoryController implements Initializable {
         priceCol.setCellValueFactory(new PropertyValueFactory<Purchase,String>("totalAmountWithoutMutual"));
         priceWithMutualCol.setCellValueFactory(new PropertyValueFactory<Purchase,String>("totalAmountWithMutual"));
         purchaseDateCol.setCellValueFactory(new PropertyValueFactory<Purchase,String>("datetimeStr"));
-        purchaseIdCol.setCellValueFactory(new PropertyValueFactory<Purchase,String>("ID"));
+        purchaseIdCol.setCellValueFactory(new PropertyValueFactory<Purchase,String>("ref"));
 
         patientSecuNumCol.setCellValueFactory(cellData -> {
             Prescription prescription = cellData.getValue().getPrescription();
