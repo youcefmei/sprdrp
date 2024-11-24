@@ -1,10 +1,12 @@
 package com.youcefmei.sparadrap.manage;
 
+import com.youcefmei.sparadrap.dao.*;
 import com.youcefmei.sparadrap.exception.DuplicateException;
 import com.youcefmei.sparadrap.exception.PaymentException;
 import com.youcefmei.sparadrap.model.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import lombok.Getter;
 
 /**
  * The type Pharmacy.
@@ -12,14 +14,31 @@ import javafx.collections.ObservableList;
 public class Pharmacy {
     private static Pharmacy INSTANCE;
 
-    private ObservableList<DoctorGeneral> doctorGenerals = FXCollections.observableArrayList();
-    private ObservableList<DoctorSpecialized> doctorSpecializeds = FXCollections.observableArrayList();
-    private ObservableList<HealthMutual> healthMutuals = FXCollections.observableArrayList();
-    private ObservableList<Medicament> medicaments = FXCollections.observableArrayList();
-    private ObservableList<Patient> patients = FXCollections.observableArrayList();
-    private ObservableList<Purchase> purchases = FXCollections.observableArrayList();
-    private ObservableList<Doctor> doctors = FXCollections.observableArrayList();
+
+    private HealthMutualDAO healthMutualDAO = new HealthMutualDAO();
+    private MedicamentDAO medicamentDAO = new MedicamentDAO();
+    private PatientDAO patientDAO = new PatientDAO();
+    private PurchaseDAO purchaseDAO = new PurchaseDAO();
+
+
+    private ObservableList<HealthMutual> healthMutuals ;
+    private ObservableList<Medicament> medicaments ;
+    private ObservableList<Patient> patients ;
+    private ObservableList<Purchase> purchases ;
+    @Getter
     private Purchase currentPurchase;
+
+
+    public Pharmacy(){
+        doctorGenerals = doctorGeneralDAO.findAllObservable();
+        doctorSpecializeds = doctorSpecializedDAO.findAllObservable();
+        healthMutuals = healthMutualDAO.findAllObservable();
+        medicaments = medicamentDAO.findAllObservable();
+        patients = patientDAO.findAllObservable();
+        purchases = purchaseDAO.findAllObservable();
+        doctors = doctorDAO.findAllObservable();
+        doctorSpecialities = doctorSpecialityDAO.findAllObservable();
+    }
 
     static {
         INSTANCE = new Pharmacy();

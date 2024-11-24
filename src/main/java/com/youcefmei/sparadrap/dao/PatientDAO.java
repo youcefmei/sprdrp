@@ -23,7 +23,7 @@ public class PatientDAO implements IDAOObservable<Patient> {
         DoctorGeneral familyDoctor = null;
         HealthMutual healthMutual = null;
         try {
-            PreparedStatement pStatement = conn.prepareStatement("SELECT * FROM patient p INNER JOIN users u ON u.id_users = p.id_users WHERE id_patient = ?"
+            PreparedStatement pStatement = conn.prepareStatement("SELECT * FROM Patient p INNER JOIN Users u ON u.id_users = p.id_users WHERE id_patient = ?"
             );
             pStatement.setInt(1, id);
             ResultSet resultSet = pStatement.executeQuery();
@@ -69,7 +69,7 @@ public class PatientDAO implements IDAOObservable<Patient> {
     public Integer create(Patient patient) {
         Integer patientId = null;
         try {
-            PreparedStatement pStatement = conn.prepareStatement("INSERT INTO USERS(`firstname`,`lastname`,`mail`,`address`,`areacode`,`city`,`phone`) VALUES (?,?,?,?,?,?,?) ",Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pStatement = conn.prepareStatement("INSERT INTO Users(`firstname`,`lastname`,`mail`,`address`,`areacode`,`city`,`phone`) VALUES (?,?,?,?,?,?,?) ",Statement.RETURN_GENERATED_KEYS);
             pStatement.setString(1, patient.getFirstName());
             pStatement.setString(2, patient.getLastName());
             pStatement.setString(3, patient.getMail());
@@ -112,13 +112,13 @@ public class PatientDAO implements IDAOObservable<Patient> {
     @Override
     public boolean update(Patient patient) {
         try {
-            PreparedStatement pStatement = conn.prepareStatement("SELECT * FROM patient p INNER JOIN users u ON u.id_users = p.id_users WHERE id_patient = ?"
+            PreparedStatement pStatement = conn.prepareStatement("SELECT * FROM Patient p INNER JOIN Users u ON u.id_users = p.id_users WHERE id_patient = ?"
             );
             pStatement.setInt(1,patient.getPatientId());
             ResultSet resultSet = pStatement.executeQuery();
             if ( resultSet.next() ) {
                 Integer usersId = resultSet.getInt("id_Users");
-                pStatement = conn.prepareStatement("UPDATE USERS SET " +
+                pStatement = conn.prepareStatement("UPDATE Users SET " +
                                 "firstname = ? , lastname = ? , mail = ? , address = ? , areacode = ? , city = ? , phone = ? " +
                                 "WHERE id_users = ? " ,
                         PreparedStatement.RETURN_GENERATED_KEYS);
@@ -133,7 +133,7 @@ public class PatientDAO implements IDAOObservable<Patient> {
                 pStatement.executeUpdate();
                 ResultSet generatedKeys = pStatement.getGeneratedKeys();
 //                if (generatedKeys.next()){
-                pStatement = conn.prepareStatement("UPDATE patient SET " +
+                pStatement = conn.prepareStatement("UPDATE Patient SET " +
                                 "id_doctorgeneral = ? , id_healthmutual = ? " +
                                 "WHERE id_patient = ? " ,
                         PreparedStatement.RETURN_GENERATED_KEYS);
@@ -167,17 +167,17 @@ public class PatientDAO implements IDAOObservable<Patient> {
     public boolean delete(int id) {
         try {
             PreparedStatement preparedStatement = conn.prepareStatement(
-                    "SELECT id_users FROM patient WHERE id_patient = ?",
+                    "SELECT id_users FROM Patient WHERE id_patient = ?",
                     PreparedStatement.RETURN_GENERATED_KEYS);
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 Integer userId = resultSet.getInt(1);
-                preparedStatement = conn.prepareStatement("DELETE FROM patient WHERE id_patient = ?");
+                preparedStatement = conn.prepareStatement("DELETE FROM Patient WHERE id_patient = ?");
                 preparedStatement.setInt(1,id);
                 preparedStatement.executeUpdate();
 
-                preparedStatement = conn.prepareStatement("DELETE FROM users WHERE id_users = ?");
+                preparedStatement = conn.prepareStatement("DELETE FROM Users WHERE id_users = ?");
                 preparedStatement.setInt(1,userId);
                 preparedStatement.executeUpdate();
                 preparedStatement.close();
@@ -196,7 +196,7 @@ public class PatientDAO implements IDAOObservable<Patient> {
         try {
             Statement statement = conn.createStatement();
             ResultSet resultSet = statement.executeQuery(
-                    "SELECT * FROM patient p INNER JOIN USERS u ON p.id_users = u.id_users;"
+                    "SELECT * FROM Patient p INNER JOIN Users u ON p.id_users = u.id_users;"
             );
             while (resultSet.next()) {
                 HealthMutual healthMutual = null;

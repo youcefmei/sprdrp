@@ -55,22 +55,22 @@ public class DoctorController implements Initializable {
     private TitledPane createOrUpdateDoctorTitledPane,listDoctorTitledPane;
 
 
-//    private Pharmacy pharmacy = Pharmacy.getInstance();
+    private Pharmacy pharmacy = Pharmacy.getInstance();
     private final Alert alertDelete = new Alert(Alert.AlertType.CONFIRMATION, "Etes-vous certains de vouloir supprimer ?");
     private final Alert alertInfo = new Alert(Alert.AlertType.INFORMATION, "Veuillez selectionner un patient");
 
     private Doctor currentDoctor;
 
-    private DoctorSpecialityDAO doctorSpecialityDAO = new DoctorSpecialityDAO();
-    private DoctorDAO doctorDAO = new DoctorDAO();
-    private DoctorSpecializedDAO doctorSpecializedDAO= new DoctorSpecializedDAO();
-    private DoctorGeneralDAO doctorGeneralDAO = new DoctorGeneralDAO();
+//    private DoctorSpecialityDAO doctorSpecialityDAO = new DoctorSpecialityDAO();
+//    private DoctorDAO doctorDAO = new DoctorDAO();
+//    private DoctorSpecializedDAO doctorSpecializedDAO= new DoctorSpecializedDAO();
+//    private DoctorGeneralDAO doctorGeneralDAO = new DoctorGeneralDAO();
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         doctorSpecialityCombo.setItems(
-                doctorSpecialityDAO.findAllObservable()
+                pharmacy.getDoctorSpecialities()
         );
         doctorSpecialityCombo.getSelectionModel().selectFirst();
         initDoctorTable();

@@ -186,7 +186,7 @@ TRIGGER
 */
 
 DELIMITER |
-CREATE TRIGGER del_purchase BEFORE DELETE ON purchase
+CREATE TRIGGER del_purchase BEFORE DELETE ON Purchase
        FOR EACH ROW 
        BEGIN
 			DELETE FROM purchase_item WHERE id_purchase = OLD.id_purchase ;
@@ -195,15 +195,15 @@ DELIMITER ;
 
 
 DELIMITER |
-CREATE TRIGGER del_doctor BEFORE DELETE ON doctor
+CREATE TRIGGER del_doctor BEFORE DELETE ON Doctor
        FOR EACH ROW 
        BEGIN
-			DELETE FROM prescription WHERE id_doctor = OLD.id_doctor;
+			DELETE FROM Prescription WHERE id_doctor = OLD.id_doctor;
        END |
 DELIMITER ;
 
 DELIMITER |
-CREATE TRIGGER del_prescription BEFORE DELETE ON prescription
+CREATE TRIGGER del_prescription BEFORE DELETE ON Prescription
        FOR EACH ROW 
        BEGIN
 			DELETE FROM prescription_line WHERE id_prescription = OLD.id_prescription;
@@ -408,7 +408,7 @@ INSERT INTO DoctorSpecialized(Id_Doctor,Id_speciality) VALUES
 (10,5)
 ;
 
-INSERT INTO patient
+INSERT INTO Patient
 (
 `secuid`,
 `birthdate`,
@@ -429,7 +429,7 @@ VALUES
 ;
 
 
-INSERT INTO `medicament`
+INSERT INTO Medicament
 (`name`,
 `date_first`,
 `price`,
@@ -453,7 +453,7 @@ VALUES
 ('Dexaméthasone', '2019-05-20', 11.00, 1, 15)
 ;
 
-INSERT INTO `sprdrp`.`stock`
+INSERT INTO Stock
 (`qty`,
 `Id_Medicament`)
 VALUES
@@ -498,7 +498,7 @@ INSERT INTO Prescription(date_prescription, id_patient, id_doctor) VALUES
 ;
 
 
-INSERT INTO `prescription_line` (id_prescription,id_medicament,qty)
+INSERT INTO Prescription_line (id_prescription,id_medicament,qty)
 VALUES
 (10,3,5),
 (9,6,4),

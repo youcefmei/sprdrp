@@ -14,7 +14,7 @@ public class StateDAO implements IDAOObservable<State> {
     public State findById(int id) {
         State state = null;
         try {
-            PreparedStatement preparedStatement = conn.prepareStatement("SELECT * FROM state WHERE id_state = ?", PreparedStatement.RETURN_GENERATED_KEYS);
+            PreparedStatement preparedStatement = conn.prepareStatement("SELECT * FROM State WHERE id_state = ?", PreparedStatement.RETURN_GENERATED_KEYS);
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -34,7 +34,7 @@ public class StateDAO implements IDAOObservable<State> {
     public Integer create(State state ) {
         Integer stateId = null;
         try {
-            PreparedStatement pStatement = conn.prepareStatement("INSERT INTO STATE(`name`,`code`) VALUES (?,?) ",Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pStatement = conn.prepareStatement("INSERT INTO State(`name`,`code`) VALUES (?,?) ",Statement.RETURN_GENERATED_KEYS);
             pStatement.setString(1, state.getName());
             pStatement.setString(2, state.getCode());
             pStatement.executeUpdate();
@@ -51,7 +51,7 @@ public class StateDAO implements IDAOObservable<State> {
     @Override
     public boolean update(State state) {
         try {
-            PreparedStatement preparedStatement = conn.prepareStatement("UPDATE state SET name = ? , code = ? WHERE id_state = ?", PreparedStatement.RETURN_GENERATED_KEYS);
+            PreparedStatement preparedStatement = conn.prepareStatement("UPDATE State SET name = ? , code = ? WHERE id_state = ?", PreparedStatement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, state.getName());
             preparedStatement.setString(2, state.getCode());
             preparedStatement.executeUpdate();
@@ -70,7 +70,7 @@ public class StateDAO implements IDAOObservable<State> {
     @Override
     public boolean delete(int id) {
         try {
-            PreparedStatement pStatement = conn.prepareStatement("DELETE FROM STATE " +
+            PreparedStatement pStatement = conn.prepareStatement("DELETE FROM State " +
                             "WHERE id_state = ? " ,
                     PreparedStatement.RETURN_GENERATED_KEYS);
             pStatement.setInt(1, id);
@@ -91,7 +91,7 @@ public class StateDAO implements IDAOObservable<State> {
         List<State> states = new ArrayList<>();
         try {
             Statement statement = conn.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM state");
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM State");
             while (resultSet.next()) {
 
                 Integer id = resultSet.getInt("id_state");

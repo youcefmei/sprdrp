@@ -20,7 +20,7 @@ public class PurchaseDAO implements IDAOObservable<Purchase> {
 
         try {
             PreparedStatement preparedStatement = conn.prepareStatement(
-                    "SELECT * FROM purchase pu LEFT JOIN prescription pr ON pu.Id_Prescription = pr.Id_Prescription WHERE Id_Purchase = ?",
+                    "SELECT * FROM Purchase pu LEFT JOIN Prescription pr ON pu.Id_Prescription = pr.Id_Prescription WHERE Id_Purchase = ?",
                     PreparedStatement.RETURN_GENERATED_KEYS
             );
             preparedStatement.setInt(1, id);
@@ -62,7 +62,7 @@ public class PurchaseDAO implements IDAOObservable<Purchase> {
 
 
             PreparedStatement pStatement = conn.prepareStatement(
-                    "INSERT INTO purchase(`price`,`price_mutual`,`date_buy`,`is_paid`) VALUES (?,?,?,?) ",
+                    "INSERT INTO Purchase(`price`,`price_mutual`,`date_buy`,`is_paid`) VALUES (?,?,?,?) ",
                     Statement.RETURN_GENERATED_KEYS
             );
             pStatement.setFloat(1, purchase.getTotalAmountWithoutMutual());
@@ -79,7 +79,7 @@ public class PurchaseDAO implements IDAOObservable<Purchase> {
                 purchaseId = generatedKeys.getInt(1);
 
                 pStatement = conn.prepareStatement(
-                        "INSERT INTO purchase_item(`Id_Purchase`,`Id_Medicament`,`qty`,`unit_price`) VALUES (?,?,?,?) ",
+                        "INSERT INTO Purchase_item(`Id_Purchase`,`Id_Medicament`,`qty`,`unit_price`) VALUES (?,?,?,?) ",
                         Statement.RETURN_GENERATED_KEYS
                 );
                 for (PurchaseItem purchaseItem : purchase.getPurchaseItems()) {
@@ -109,7 +109,7 @@ public class PurchaseDAO implements IDAOObservable<Purchase> {
     public boolean update(Purchase purchase) {
         try {
             PreparedStatement preparedStatement = conn.prepareStatement(
-                    "UPDATE purchase SET price = ? , price_mutual = ?, date_buy = ?, is_paid = ? WHERE Id_Purchase = ?",
+                    "UPDATE Purchase SET price = ? , price_mutual = ?, date_buy = ?, is_paid = ? WHERE Id_Purchase = ?",
                     PreparedStatement.RETURN_GENERATED_KEYS
             );
             preparedStatement.setFloat(1, purchase.getTotalAmountWithoutMutual());
@@ -140,7 +140,7 @@ public class PurchaseDAO implements IDAOObservable<Purchase> {
 //            pStatement.setInt(1, id);
 //            pStatement.executeUpdate();
 
-            PreparedStatement pStatement = conn.prepareStatement("DELETE FROM purchase " +
+            PreparedStatement pStatement = conn.prepareStatement("DELETE FROM Purchase " +
                             "WHERE Id_Purchase = ? " ,
                     PreparedStatement.RETURN_GENERATED_KEYS);
             pStatement.setInt(1, id);
@@ -161,7 +161,7 @@ public class PurchaseDAO implements IDAOObservable<Purchase> {
         List<Purchase> purchases = new ArrayList<>();
         try {
             Statement statement = conn.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM purchase pu LEFT JOIN prescription pr ON pu.Id_Prescription = pr.Id_Prescription");
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM Purchase pu LEFT JOIN Prescription pr ON pu.Id_Prescription = pr.Id_Prescription");
             while (resultSet.next()) {
                 Purchase purchase = null;
                 Integer id = resultSet.getInt("Id_Purchase");
