@@ -34,12 +34,12 @@ public class PurchaseHistoryController implements Initializable {
     @FXML
     private DatePicker purchaseDatePicker;
 
-    private PurchaseDAO purchaseDAO = new PurchaseDAO();
+//    private PurchaseDAO purchaseDAO = new PurchaseDAO();
 
-//    private Pharmacy pharmacy = Pharmacy.getInstance();
+    private Pharmacy pharmacy = Pharmacy.getInstance();
 
 //    private FilteredList<Purchase> purchaseInDate  = new FilteredList<>(pharmacy.getPurchases());
-    private FilteredList<Purchase> purchaseInDate  = new FilteredList<>(purchaseDAO.findAllObservable());
+    private FilteredList<Purchase> purchaseInDate  = new FilteredList<>(pharmacy.getPurchases());
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
@@ -93,7 +93,7 @@ public class PurchaseHistoryController implements Initializable {
         });
 
 //        purchaseHistoryTable.setItems(pharmacy.getPurchases());
-        purchaseHistoryTable.setItems(purchaseDAO.findAllObservable());
+        purchaseHistoryTable.setItems( pharmacy.getPurchases() );
     }
 
     /**
@@ -117,6 +117,7 @@ public class PurchaseHistoryController implements Initializable {
 
     @FXML
     private void handleEditPurchase(ActionEvent event) {
+        pharmacy.getPurchases().forEach(purchase -> System.out.println(purchase));
 //        initTable();
     }
 

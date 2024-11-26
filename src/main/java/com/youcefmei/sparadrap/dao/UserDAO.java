@@ -45,9 +45,9 @@ public class UserDAO implements IDAOObservable<User> {
     }
 
     @Override
-    public Integer create(User user) {
+    public User create(User user) {
 
-        Integer lastInsertId = null ;
+        Integer userId = null ;
         try {
             PreparedStatement pStatement = conn.prepareStatement("INSERT INTO USERS(`firstname`,`lastname`,`mail`,`address`,`areacode`,`city`,`phone`) VALUES (?,?,?,?,?,?,?) ",Statement.RETURN_GENERATED_KEYS);
             pStatement.setString(1, user.getFirstName());
@@ -61,12 +61,14 @@ public class UserDAO implements IDAOObservable<User> {
 
             ResultSet generatedKeys = pStatement.getGeneratedKeys();
             if (generatedKeys.next()){
-                lastInsertId =  generatedKeys.getInt(1);
+                userId =  generatedKeys.getInt(1);
+                user.setUserId(userId);
+                return user;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return lastInsertId;
+        return null;
     }
 
     @Override

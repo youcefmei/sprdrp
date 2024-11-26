@@ -52,7 +52,7 @@ public class MedicamentDAO implements IDAOObservable<Medicament> {
     }
 
     @Override
-    public Integer create(Medicament medicament) {
+    public Medicament create(Medicament medicament) {
         Integer medicamentId = null;
         try {
             PreparedStatement preparedStatement = conn.prepareStatement(
@@ -67,11 +67,13 @@ public class MedicamentDAO implements IDAOObservable<Medicament> {
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()){
                 medicamentId = generatedKeys.getInt(1);
+                medicament.setMedicamentId(medicamentId);
+                return medicament;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return medicamentId;
+        return null;
     }
 
     @Override

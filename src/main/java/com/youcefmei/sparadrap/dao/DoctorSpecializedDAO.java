@@ -5,10 +5,8 @@ import com.youcefmei.sparadrap.model.DoctorGeneral;
 import com.youcefmei.sparadrap.model.DoctorSpeciality;
 import com.youcefmei.sparadrap.model.DoctorSpecialized;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DoctorSpecializedDAO  implements IDAOObservable<DoctorSpecialized>{
@@ -56,7 +54,7 @@ public class DoctorSpecializedDAO  implements IDAOObservable<DoctorSpecialized>{
     }
 
     @Override
-    public Integer create(DoctorSpecialized doctorSpecialized) {
+    public DoctorSpecialized create(DoctorSpecialized doctorSpecialized) {
         Integer doctorSpecializedId = null;
         try {
             conn.setAutoCommit(false);
@@ -83,6 +81,7 @@ public class DoctorSpecializedDAO  implements IDAOObservable<DoctorSpecialized>{
                 generatedKeys = pStatement.getGeneratedKeys();
                 if (generatedKeys.next()) {
                     Integer doctorId = generatedKeys.getInt(1);
+                    doctorSpecialized.setDoctorId(doctorId);
                     pStatement = conn.prepareStatement("INSERT INTO doctorspecialized( Id_Speciality,Id_Doctor) VALUES (?,?)",PreparedStatement.RETURN_GENERATED_KEYS);
                     pStatement.setInt(1, doctorSpecialized.getSpeciality().getId());
                     pStatement.setInt(2, doctorId);
@@ -90,9 +89,10 @@ public class DoctorSpecializedDAO  implements IDAOObservable<DoctorSpecialized>{
                     generatedKeys = pStatement.getGeneratedKeys();
                     if (generatedKeys.next()) {
                         doctorSpecializedId = generatedKeys.getInt(1);
+                        doctorSpecialized.setDoctorId(doctorId);
                         conn.commit();
                         conn.setAutoCommit(true);
-                        return doctorSpecializedId;
+                        return doctorSpecialized;
                     }
                 }
             }
@@ -101,7 +101,7 @@ public class DoctorSpecializedDAO  implements IDAOObservable<DoctorSpecialized>{
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return doctorSpecializedId;
+        return null;
     }
 
     @Override
@@ -116,8 +116,49 @@ public class DoctorSpecializedDAO  implements IDAOObservable<DoctorSpecialized>{
 
     @Override
     public List<DoctorSpecialized> findAll() {
-        return List.of();
+        List<DoctorSpecialized> doctorSpecializeds = new ArrayList<>();
+        DoctorSpecialized doctorSpecialized = null;
+        try {
+            Statement statement = conn.createStatement();
+            ResultSet resultSet = statement.executeQuery(
+                    "SELECT * FROM doctorspecialized ds INNER JOIN doctor d ON d.id_doctor = ds.id_doctor INNER JOIN USERS u ON d.id_users = u.id_users INNER JOIN speciality s ON ds.id_speciality = s.id_speciality"
+            );
+            while (resultSet.next()) {
+                int idDoctorspecialized = resultSet.getInt("id_doctorspecialized");
+                String firstName = resultSet.getString("firstname");
+                String lastName = resultSet.getString("lastname");
+                String mail = resultSet.getString("mail");
+                String address = resultSet.getString("address");
+                String areacode = resultSet.getString("areacode");
+                String city = resultSet.getString("city");
+                String phone = resultSet.getString("phone");
+                String registrationnb = resultSet.getString("registrationnb");
+                int idDoctor = resultSet.getInt("id_doctor");
+                int idSpeciality = resultSet.getInt("id_speciality");
+                String specialityName = resultSet.getString("s.name");
+                DoctorSpeciality doctorSpeciality = new DoctorSpeciality(
+                        idSpeciality, specialityName
+                );
+                doctorSpecialized = new DoctorSpecialized(
+                        idDoctorspecialized,
+                        firstName,
+                        lastName,
+                        phone, mail, address, city, areacode, registrationnb, doctorSpeciality
+                );
+                doctorSpecialized.setDoctorId(idDoctor);
+
+                doctorSpecializeds.add(doctorSpecialized);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (InvalidInputException e) {
+            throw new RuntimeException(e);
+
+
+        }
+        return doctorSpecializeds;
     }
+
 
     public boolean deleteByDoctorId(Integer doctorId) {
         try {
@@ -137,24 +178,24 @@ public class DoctorSpecializedDAO  implements IDAOObservable<DoctorSpecialized>{
     }
 
 
-    public Integer findIdByDoctorId(Integer doctorId) {
-        try {
-            Integer idSpecialized = null;
-            PreparedStatement pStatement = conn.prepareStatement(
-                    "SELECT Id_DoctorSpecialized FROM doctor d \n" +
-                            " INNER JOIN doctorspecialized ds ON ds.id_doctor = d.id_doctor \n" +
-                            "WHERE  d.id_doctor = ? ;",
-                    PreparedStatement.RETURN_GENERATED_KEYS
-            );
-            pStatement.setInt(1, doctorId);
-            ResultSet resultSet = pStatement.executeQuery();
-            if (resultSet.next()) {
-                idSpecialized =  resultSet.getInt(1);
-            }
-            return idSpecialized;
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    public Integer findIdByDoctorId(Integer doctorId) {
+//        try {
+//            Integer idSpecialized = null;
+//            PreparedStatement pStatement = conn.prepareStatement(
+//                    "SELECT Id_DoctorSpecialized FROM doctor d \n" +
+//                            " INNER JOIN doctorspecialized ds ON ds.id_doctor = d.id_doctor \n" +
+//                            "WHERE  d.id_doctor = ? ;",
+//                    PreparedStatement.RETURN_GENERATED_KEYS
+//            );
+//            pStatement.setInt(1, doctorId);
+//            ResultSet resultSet = pStatement.executeQuery();
+//            if (resultSet.next()) {
+//                idSpecialized =  resultSet.getInt(1);
+//            }
+//            return idSpecialized;
+//
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 }

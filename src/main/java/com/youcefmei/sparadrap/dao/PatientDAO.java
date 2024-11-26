@@ -66,7 +66,7 @@ public class PatientDAO implements IDAOObservable<Patient> {
     }
 
     @Override
-    public Integer create(Patient patient) {
+    public Patient create(Patient patient) {
         Integer patientId = null;
         try {
             PreparedStatement pStatement = conn.prepareStatement("INSERT INTO USERS(`firstname`,`lastname`,`mail`,`address`,`areacode`,`city`,`phone`) VALUES (?,?,?,?,?,?,?) ",Statement.RETURN_GENERATED_KEYS);
@@ -99,13 +99,15 @@ public class PatientDAO implements IDAOObservable<Patient> {
                 generatedKeys = pStatement.getGeneratedKeys();
                 if ( generatedKeys.next() ){
                     patientId = generatedKeys.getInt(1);
+                    patient.setPatientId(patientId);
+                    return patient;
                 }
             }
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return patientId;
+        return null;
 
     }
 
@@ -133,9 +135,8 @@ public class PatientDAO implements IDAOObservable<Patient> {
                 pStatement.executeUpdate();
                 ResultSet generatedKeys = pStatement.getGeneratedKeys();
 //                if (generatedKeys.next()){
-                pStatement = conn.prepareStatement("UPDATE patient SET " +
-                                "id_doctorgeneral = ? , id_healthmutual = ? " +
-                                "WHERE id_patient = ? " ,
+                pStatement = conn.prepareStatement(
+                        "UPDATE patient SET id_doctorgeneral = ? , id_healthmutual = ? , birthdate = ? WHERE id_patient = ? " ,
                         PreparedStatement.RETURN_GENERATED_KEYS);
                 if ( patient.getFamilyDoctor() != null ){
                     pStatement.setInt(1, patient.getFamilyDoctor().getDoctorGeneralId() );
@@ -149,7 +150,8 @@ public class PatientDAO implements IDAOObservable<Patient> {
                 else{
                     pStatement.setNull(2, Types.INTEGER );
                 }
-                pStatement.setInt(3,patient.getPatientId());
+                pStatement.setDate(3, Date.valueOf(patient.getBirthDate()));
+                pStatement.setInt(4,patient.getPatientId());
                 pStatement.executeUpdate();
                 pStatement.close();
                 return true;

@@ -53,7 +53,7 @@ public class DoctorDAO implements IDAOObservable<Doctor> {
     }
 
     @Override
-    public Integer create( Doctor doctor) {
+    public Doctor create( Doctor doctor) {
         Integer doctorId = null;
         try {
             conn.setAutoCommit(false);
@@ -87,6 +87,8 @@ public class DoctorDAO implements IDAOObservable<Doctor> {
                     conn.commit();
                     conn.setAutoCommit(true);
                     doctorId = generatedKeys.getInt(1);
+                    doctor.setDoctorId(doctorId);
+                    return doctor;
                 }
             }
             conn.rollback();
@@ -106,7 +108,7 @@ public class DoctorDAO implements IDAOObservable<Doctor> {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return doctorId;
+        return null;
     }
 
     @Override
@@ -180,6 +182,7 @@ public class DoctorDAO implements IDAOObservable<Doctor> {
                     pStatement.executeUpdate();
                     generatedKeys = pStatement.getGeneratedKeys();
                     if ( generatedKeys.next() ){
+                        
                         return true;
                     }
                 }
@@ -227,7 +230,6 @@ public class DoctorDAO implements IDAOObservable<Doctor> {
         return doctors;
     }
 
-    public ObservableList<Doctor> findAllDoctors() {
-        return FXCollections.observableArrayList(findAll());
-    }
+
+
 }

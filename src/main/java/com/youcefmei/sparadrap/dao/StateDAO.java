@@ -31,7 +31,7 @@ public class StateDAO implements IDAOObservable<State> {
     }
 
     @Override
-    public Integer create(State state ) {
+    public State create(State state ) {
         Integer stateId = null;
         try {
             PreparedStatement pStatement = conn.prepareStatement("INSERT INTO STATE(`name`,`code`) VALUES (?,?) ",Statement.RETURN_GENERATED_KEYS);
@@ -41,11 +41,13 @@ public class StateDAO implements IDAOObservable<State> {
             ResultSet generatedKeys = pStatement.getGeneratedKeys();
             if (generatedKeys.next()){
                 stateId = generatedKeys.getInt(1);
+                state.setId(stateId);
+                return state;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return stateId;
+        return state;
     }
 
     @Override

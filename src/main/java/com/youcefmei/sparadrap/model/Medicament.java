@@ -2,6 +2,8 @@ package com.youcefmei.sparadrap.model;
 
 import com.youcefmei.sparadrap.exception.InvalidDateException;
 import com.youcefmei.sparadrap.exception.InvalidInputException;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -10,6 +12,7 @@ import java.util.List;
 /**
  * The type Medicament.
  */
+@Getter
 public class Medicament {
 
     /**
@@ -18,9 +21,11 @@ public class Medicament {
 
     private Integer medicamentId;
     private String title;
+    @Setter
     private MedicamentCategory category;
     private float price;
     private  LocalDate startDate;
+    @Setter
     private boolean needPrescription;
 
     /**
@@ -52,51 +57,6 @@ public class Medicament {
 
     public void setMedicamentId(Integer medicamentId) {
         this.medicamentId = medicamentId;
-    }
-
-    /**
-     * Gets title.
-     *
-     * @return the title
-     */
-    public String getTitle() {
-        return title;
-    }
-
-    /**
-     * Gets category.
-     *
-     * @return the category
-     */
-    public MedicamentCategory getCategory() {
-        return category;
-    }
-
-    /**
-     * Gets price.
-     *
-     * @return the price
-     */
-    public float getPrice() {
-        return price;
-    }
-
-    /**
-     * Gets start date.
-     *
-     * @return the start date
-     */
-    public LocalDate getStartDate() {
-        return startDate;
-    }
-
-    /**
-     * Is need prescription.
-     *
-     * @return the boolean
-     */
-    public boolean isNeedPrescription() {
-        return needPrescription;
     }
 
 
@@ -144,26 +104,6 @@ public class Medicament {
 //            throw  new InvalidInputException("La quantité n'est pas valide");
 //        }
 //    }
-
-    /**
-     * Sets category.
-     *
-     * @param category the category
-     * @throws InvalidInputException the invalid input exception
-     */
-    public void setCategory(MedicamentCategory category)  {
-            this.category = category;
-
-    }
-
-    /**
-     * Sets need prescription.
-     *
-     * @param needPrescription the need prescription
-     */
-    public void setNeedPrescription(boolean needPrescription) {
-        this.needPrescription = needPrescription;
-    }
 
     /**
      * Sets start date.

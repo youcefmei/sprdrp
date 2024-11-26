@@ -42,7 +42,7 @@ public class HealthMutualDAO implements IDAOObservable<HealthMutual> {
     }
 
     @Override
-    public Integer create(HealthMutual healthMutual) {
+    public HealthMutual create(HealthMutual healthMutual) {
         Integer healthMutualId = null;
         try {
 
@@ -59,13 +59,15 @@ public class HealthMutualDAO implements IDAOObservable<HealthMutual> {
             pStatement.setInt(8, healthMutual.getState().getId());
             pStatement.executeUpdate();
             ResultSet generatedKeys = pStatement.getGeneratedKeys();
-            if (generatedKeys.next()){
+            if ( generatedKeys.next() ){
                 healthMutualId = generatedKeys.getInt(1);
+                healthMutual.setHealthMutualId(healthMutualId);
+                return healthMutual;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return healthMutualId;
+        return null;
     }
 
     @Override

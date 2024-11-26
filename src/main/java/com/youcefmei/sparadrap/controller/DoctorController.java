@@ -17,13 +17,17 @@ import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import lombok.extern.log4j.Log4j2;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
  * The type Doctor controller.
  */
+@Log4j2
 public class DoctorController implements Initializable {
 
     @FXML
@@ -55,28 +59,26 @@ public class DoctorController implements Initializable {
     private TitledPane createOrUpdateDoctorTitledPane,listDoctorTitledPane;
 
 
-//    private Pharmacy pharmacy = Pharmacy.getInstance();
+    private Pharmacy pharmacy = Pharmacy.getInstance();
     private final Alert alertDelete = new Alert(Alert.AlertType.CONFIRMATION, "Etes-vous certains de vouloir supprimer ?");
     private final Alert alertInfo = new Alert(Alert.AlertType.INFORMATION, "Veuillez selectionner un patient");
 
     private Doctor currentDoctor;
 
-    private DoctorSpecialityDAO doctorSpecialityDAO = new DoctorSpecialityDAO();
-    private DoctorDAO doctorDAO = new DoctorDAO();
-    private DoctorSpecializedDAO doctorSpecializedDAO= new DoctorSpecializedDAO();
-    private DoctorGeneralDAO doctorGeneralDAO = new DoctorGeneralDAO();
-
+//    private DoctorSpecialityDAO doctorSpecialityDAO = new DoctorSpecialityDAO();
+//    private DoctorDAO doctorDAO = new DoctorDAO();
+//    private DoctorSpecializedDAO doctorSpecializedDAO= new DoctorSpecializedDAO();
+//    private DoctorGeneralDAO doctorGeneralDAO = new DoctorGeneralDAO();
+//
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         doctorSpecialityCombo.setItems(
-                doctorSpecialityDAO.findAllObservable()
+                pharmacy.getDoctorSpecialities()
         );
         doctorSpecialityCombo.getSelectionModel().selectFirst();
         initDoctorTable();
-
     }
-
 
     @FXML
     private void handleEditDoctor(ActionEvent event) {
@@ -88,6 +90,8 @@ public class DoctorController implements Initializable {
             doctorAccordion.setExpandedPane(createOrUpdateDoctorTitledPane);
             listDoctorTitledPane.setVisible(false);
 
+            doctorSpecialistRadio.setDisable(true);
+            doctorGeneralRadio.setDisable(true);
             doctorLastNameTextField.setText(currentDoctor.getLastName());
             doctorFirstNameTextField.setText(currentDoctor.getFirstName());
             doctorAddressTextField.setText(currentDoctor.getAddress());
@@ -99,7 +103,9 @@ public class DoctorController implements Initializable {
             if (currentDoctor instanceof DoctorSpecialized) {
                 doctorSpecialityCombo.setDisable(false);
                 doctorSpecialistRadio.setSelected(true);
-                doctorSpecialityCombo.getSelectionModel().select(((DoctorSpecialized) currentDoctor).getSpeciality());
+                log.info("doctorSpecialistRadio selected : {}",((DoctorSpecialized) currentDoctor).getSpeciality());
+                DoctorSpeciality doctorSpecialitySelected = pharmacy.getDoctorSpecialities().stream().filter(doctorSpeciality -> doctorSpeciality.getId().equals(((DoctorSpecialized) currentDoctor).getSpeciality().getId())).toList().getFirst();
+                doctorSpecialityCombo.getSelectionModel().select(doctorSpecialitySelected);
 
             }else{
                 doctorSpecialityCombo.setDisable(true);
@@ -117,15 +123,10 @@ public class DoctorController implements Initializable {
         }
         else{
             alertDelete.showAndWait().ifPresent(response -> {
-                if (response == ButtonType.OK){
-                    Doctor doctor = doctorDAO.findAllObservable().get(doctorTable.getSelectionModel().getSelectedIndex());
+                if ( response == ButtonType.OK){
+                    Doctor doctor = pharmacy.getDoctors().get(doctorTable.getSelectionModel().getSelectedIndex());
 //                    System.out.println(pharmacy.getPatients());
-                    if (doctor instanceof DoctorGeneral){
-                        doctorGeneralDAO.deleteByDoctorId(doctor.getDoctorId());
-                    } else {
-                        doctorSpecializedDAO.deleteByDoctorId(doctor.getDoctorId());
-                    }
-                    doctorDAO.delete(doctor.getDoctorId());
+                    pharmacy.deleteDoctor(doctor);
 //                    pharmacy.removeDoctor(doctor);
 //                    pharmacy.getPatients().remove(patient);
                 }
@@ -175,9 +176,11 @@ public class DoctorController implements Initializable {
 //                pharmacy.removeDoctor(currentDoctor);
 //                doctorDAO.delete(currentDoctor.getDoctorId());
                 doctorSpe.setDoctorId(currentDoctor.getDoctorId());
-                doctorSpe.setDoctorSpecializedId(doctorSpecializedDAO.findIdByDoctorId(currentDoctor.getDoctorId()));
+//                doctorSpe.setDoctorSpecializedId(doctorSpecializedDAO.findIdByDoctorId(currentDoctor.getDoctorId()));
+                doctorSpe.setDoctorSpecializedId( ((DoctorSpecialized) currentDoctor).getDoctorSpecializedId());
 
-                doctorSpecializedDAO.update(doctorSpe);
+                pharmacy.updateDoctor(doctorSpe);
+//                doctorSpecializedDAO.update(doctorSpe);
                 confirmUpdateOrCreate = "Le docteur spécialiste a été modifié";
 //                pharmacy.addDoctorSpecialized(doctorSpe);
             }
@@ -186,8 +189,8 @@ public class DoctorController implements Initializable {
 //                doctorDAO.delete(currentDoctor.getDoctorId());
 
                 doctorGe.setDoctorId(currentDoctor.getDoctorId());
-                doctorGe.setDoctorGeneralId( doctorGeneralDAO.findIdByDoctorId(currentDoctor.getDoctorId()));
-                doctorGeneralDAO.update(doctorGe);
+                doctorGe.setDoctorGeneralId( (( DoctorGeneral)  currentDoctor).getDoctorGeneralId() );
+                pharmacy.updateDoctor(doctorGe);
                 confirmUpdateOrCreate = "Le docteur généraliste a été modifié";
 //                pharmacy.addDoctorGeneral(doctorGe);
 //                doctorGeneralDAO.create(doctorGe);
@@ -195,12 +198,12 @@ public class DoctorController implements Initializable {
             else if ( (currentDoctor == null) && (doctorGe != null)) {
                 confirmUpdateOrCreate = "Le docteur généraliste a été crée";
 //                pharmacy.addDoctorGeneral(doctorGe);
-                doctorGeneralDAO.create(doctorGe);
+                pharmacy.addDoctor(doctorGe);
             }
             else if ( (currentDoctor == null) && (doctorSpe != null)) {
                 confirmUpdateOrCreate = "Le docteur spécialiste a été crée";
 //                pharmacy.addDoctorSpecialized(doctorSpe);
-                doctorSpecializedDAO.create(doctorSpe);
+                pharmacy.addDoctor(doctorSpe);
             }
 
             alertInfo.setContentText(confirmUpdateOrCreate);
@@ -212,7 +215,7 @@ public class DoctorController implements Initializable {
             clearInputs();
             doctorCancelEditButton.setVisible(false);
             initDoctorTable();
-        } catch (InvalidInputException e) {
+        } catch (InvalidInputException| DuplicateException e) {
             alertInfo.setContentText(e.getMessage());
             alertInfo.showAndWait();
         }
@@ -221,6 +224,8 @@ public class DoctorController implements Initializable {
     @FXML
     private void handleCancelEditDoctor(ActionEvent event) {
         currentDoctor = null;
+        doctorSpecialistRadio.setDisable(false);
+        doctorGeneralRadio.setDisable(false);
         createOrUpdateDoctorTitledPane.setText("Créer");
         listDoctorTitledPane.setVisible(true);
         doctorAccordion.setExpandedPane(listDoctorTitledPane);
@@ -258,6 +263,12 @@ public class DoctorController implements Initializable {
     }
 
     private void initDoctorTable() {
+        log.error("INIT DOCTOR TABLE");
+        List<Integer> doctorIdsSpecialized = new ArrayList<>();
+        for (DoctorSpecialized doctorSpecialized : pharmacy.getDoctorSpecializeds()) {
+            doctorIdsSpecialized.add(doctorSpecialized.getDoctorId());
+        }
+
         doctorFirstnameCol.setCellValueFactory(new PropertyValueFactory<>("firstName"));
         doctorLastnameCol.setCellValueFactory(new PropertyValueFactory<>("lastName"));
         doctorMailCol.setCellValueFactory(new PropertyValueFactory<>("mail"));
@@ -267,19 +278,19 @@ public class DoctorController implements Initializable {
         doctorCityCol.setCellValueFactory(new PropertyValueFactory<>("city"));
         doctorAreaCodeCol.setCellValueFactory(new PropertyValueFactory<>("areaCode"));
         doctorSpecialityCol.setCellValueFactory(cellData -> {
-//            Prescription prescription = cellData.getValue().getPrescription();
-            if ( cellData.getValue() instanceof DoctorSpecialized){
+            if ( cellData.getValue() instanceof DoctorSpecialized ){
                 return new SimpleStringProperty( ( (DoctorSpecialized)cellData.getValue() ).getSpeciality().getName()) ;
             } else {
                 return new SimpleStringProperty(null);
             }
+
         });
 
 //        doctorFirstnameCol.setEditable(true);
 //        doctorLastnameCol.setEditable(true);
 //        doctorTable.setEditable(true);
 //        doctorTable.setItems(pharmacy.getDoctors());
-        doctorTable.setItems(doctorDAO.findAllObservable());
+        doctorTable.setItems(pharmacy.getDoctors());
 
     }
 

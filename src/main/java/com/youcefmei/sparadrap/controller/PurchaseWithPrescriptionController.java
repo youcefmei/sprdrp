@@ -1,7 +1,6 @@
 package com.youcefmei.sparadrap.controller;
 
 
-import com.youcefmei.sparadrap.dao.MedicamentDAO;
 import com.youcefmei.sparadrap.exception.DuplicateException;
 import com.youcefmei.sparadrap.exception.InvalidDateException;
 import com.youcefmei.sparadrap.exception.InvalidInputException;
@@ -10,6 +9,7 @@ import com.youcefmei.sparadrap.manage.Pharmacy;
 import com.youcefmei.sparadrap.model.*;
 
 import javafx.beans.property.SimpleFloatProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -27,6 +27,7 @@ import javafx.util.converter.IntegerStringConverter;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Predicate;
 
@@ -56,6 +57,8 @@ public class PurchaseWithPrescriptionController implements Initializable {
     @FXML
     private TableView medicamentTable;
 //
+
+
     @FXML
     private TableColumn<PurchaseItem, String> medicamentTitleCol  ;
 
@@ -138,17 +141,28 @@ public class PurchaseWithPrescriptionController implements Initializable {
     @FXML
     private void handleRegisterPurchase(ActionEvent event) {
         try {
-            prescription = new Prescription(null,LocalDate.now(),patient,doctor,medicamentTable.getItems());
-            Purchase purchase = new Purchase(null,prescription);
-            purchase.setPaid(true);
-            pharmacy.setCurrentPurchase(purchase);
+
+            List<PrescriptionLine> prescriptionLines = new ArrayList<>();
+            medicamentTable.getItems().forEach(
+                    item -> {
+                        PurchaseItem purchaseItem = (PurchaseItem) item;
+                        PrescriptionLine prescriptionLine = new PrescriptionLine(null,purchaseItem.getQuantity(),purchaseItem.getMedicament());
+                        prescriptionLines.add((prescriptionLine));
+                    }
+            );
+
+            prescription = new Prescription(null, LocalDate.now(), patient,doctor, prescriptionLines);
+            System.out.println( prescription.getPrescriptionLines() );
+            Purchase purchase = new Purchase(null, prescription);
+            purchase.setPaid( true );
+            pharmacy.setCurrentPurchase( purchase );
+            pharmacy.addPurchase(purchase);
             alertInfo.setContentText("L'achat a bien été enregistré: "
                     + pharmacy.getCurrentPurchase().getTotalAmountWithMutual()
-                    + "€\nId: " + pharmacy.getCurrentPurchase().getRef()
-                    + "\nDate: " + pharmacy.getCurrentPurchase().getDatetimeStr()
+                    + "€\nId: " + purchase.getRef()
+                    + "\nDate: " + purchase.getDatetimeStr()
             );
             alertInfo.showAndWait();
-            pharmacy.addPurchase(purchase);
             pharmacy.setCurrentPurchase(new Purchase(null));
 
             handleClearPurchase(new ActionEvent());
@@ -295,8 +309,16 @@ public class PurchaseWithPrescriptionController implements Initializable {
 
 
     private void initMedicamentTable() {
-        medicamentTitleCol.setCellValueFactory(new PropertyValueFactory<>("title"));
-        medicamentPriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
+        medicamentTitleCol.setCellValueFactory(
+                cellData -> new SimpleStringProperty( cellData.getValue().getMedicament().getTitle() )
+        );
+
+        medicamentPriceCol.setCellValueFactory(
+                cellData ->  new SimpleFloatProperty(  cellData.getValue().getMedicament().getPrice() ).asObject()
+        );
+
+
+//        medicamentPriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
         medicamentTotalPriceCol.setCellValueFactory(new PropertyValueFactory<>("totalPrice"));
         medicamentTotalPriceWithMutualCol.setCellValueFactory(cellData -> ( new SimpleFloatProperty(
                 cellData.getValue().getTotalPrice() )).multiply( ( 100 - healthMutualRate ) / 100 ).asObject()

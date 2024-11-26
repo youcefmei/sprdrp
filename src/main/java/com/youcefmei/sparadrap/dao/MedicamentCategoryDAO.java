@@ -36,7 +36,7 @@ public class MedicamentCategoryDAO implements IDAOObservable<MedicamentCategory>
     }
 
     @Override
-    public Integer create(MedicamentCategory medcat) {
+    public MedicamentCategory create(MedicamentCategory medcat) {
         Integer medicamentCategoryId = null;
         try {
             PreparedStatement pStatement = conn.prepareStatement("INSERT INTO MEDICAMENTCATEGORY(`name`) VALUES (?) ",
@@ -47,12 +47,14 @@ public class MedicamentCategoryDAO implements IDAOObservable<MedicamentCategory>
             if (generatedKeys.next()){
                 pStatement.close();
                 medicamentCategoryId = generatedKeys.getInt(1);
+                medcat.setId(medicamentCategoryId);
+                return medcat;
             }
             pStatement.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return medicamentCategoryId;
+        return null;
     }
 
     @Override

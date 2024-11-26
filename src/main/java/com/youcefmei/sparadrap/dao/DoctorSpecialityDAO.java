@@ -39,7 +39,7 @@ public class DoctorSpecialityDAO implements IDAOObservable<DoctorSpeciality> {
     }
 
     @Override
-    public Integer create(DoctorSpeciality doctorSpeciality) {
+    public DoctorSpeciality create(DoctorSpeciality doctorSpeciality) {
         Integer doctorSpecialityId = null;
         try {
             PreparedStatement pStatement = conn.prepareStatement("INSERT INTO speciality(`name`) VALUES (?,?) ",Statement.RETURN_GENERATED_KEYS);
@@ -48,11 +48,13 @@ public class DoctorSpecialityDAO implements IDAOObservable<DoctorSpeciality> {
             ResultSet generatedKeys = pStatement.getGeneratedKeys();
             if (generatedKeys.next()){
                 doctorSpecialityId = generatedKeys.getInt(1);
+                doctorSpeciality.setId(doctorSpecialityId);
+                return doctorSpeciality;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return doctorSpecialityId;
+        return null;
     }
 
     @Override

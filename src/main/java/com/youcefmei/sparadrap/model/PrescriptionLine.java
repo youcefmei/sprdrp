@@ -8,7 +8,7 @@ import lombok.Setter;
 public class PrescriptionLine {
 
     @Getter @Setter
-    private Integer prescriptionId;
+    private Integer prescriptionLineId;
 
     @Getter
     @Setter
@@ -20,8 +20,8 @@ public class PrescriptionLine {
     @NotNull(message = "Le médicament ne peut pas être nul")
     private Medicament medicament;
 
-    public PrescriptionLine(Integer prescriptionId, int quantity, Medicament medicament) {
-        setPrescriptionId(prescriptionId);
+    public PrescriptionLine(Integer prescriptionLineId, int quantity, Medicament medicament) {
+        setPrescriptionLineId(prescriptionLineId);
         setQuantity(quantity);
         setMedicament(medicament);
     }

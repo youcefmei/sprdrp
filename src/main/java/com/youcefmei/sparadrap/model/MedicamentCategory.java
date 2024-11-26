@@ -1,29 +1,38 @@
 package com.youcefmei.sparadrap.model;
 
 import com.youcefmei.sparadrap.exception.InvalidInputException;
+import lombok.Getter;
+import lombok.Setter;
 
+/**
+ * The type Medicament category.
+ */
 public class MedicamentCategory {
+
+    @Getter @Setter
     private Integer id;
+    @Getter
     private String name;
 
 
+    /**
+     * Instantiates a new Medicament category.
+     *
+     * @param id   the id
+     * @param name the name
+     * @throws InvalidInputException the invalid input exception
+     */
     public MedicamentCategory(Integer id, String name) throws InvalidInputException {
         setId(id);
         setName( name );
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
+    /**
+     * Sets name.
+     *
+     * @param name the name
+     * @throws InvalidInputException the invalid input exception
+     */
     public void setName(String name) throws InvalidInputException {
         String regex = "^[A-Za-z][A-Za-z\\-ô'éè ]+$";
         if (name != null && ( name.matches(regex) ) ) {

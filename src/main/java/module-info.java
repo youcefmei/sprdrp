@@ -12,6 +12,7 @@ module sparadrapxml {
     requires java.naming;
     requires static lombok;
     requires jakarta.validation;
+    requires org.apache.logging.log4j;
     opens com.youcefmei.sparadrap.controller to javafx.fxml;
     opens com.youcefmei.sparadrap.model to javafx.base;
     exports com.youcefmei.sparadrap;

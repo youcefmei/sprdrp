@@ -68,15 +68,15 @@ public class PurchaseWithoutPrescriptionController implements Initializable {
     private TableColumn<PurchaseItem, Integer> medicamentQuantityCol;
 
     private Purchase purchase;
-//    private final Pharmacy pharmacy = Pharmacy.getInstance();
+    private final Pharmacy pharmacy = Pharmacy.getInstance();
 
 
     private final Alert alertDelete = new Alert(Alert.AlertType.CONFIRMATION, "Etes-vous certains de vouloir supprimer ?");
     private final Alert alertInfo = new Alert(Alert.AlertType.INFORMATION, "Veuillez selectionner un medicament");
     private FilteredList<Medicament> filteredMedicaments;
 
-    private PurchaseDAO purchaseDAO = new PurchaseDAO();
-    private MedicamentDAO medicamentDAO = new MedicamentDAO();
+//    private PurchaseDAO purchaseDAO = new PurchaseDAO();
+//    private MedicamentDAO medicamentDAO = new MedicamentDAO();
     //
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -86,8 +86,8 @@ public class PurchaseWithoutPrescriptionController implements Initializable {
 //                        pharmacy.getMedicaments()
 //                );
 
-//        medicamentNameCombo.setItems(pharmacy.getMedicaments());
-        medicamentNameCombo.setItems(medicamentDAO.findAllObservable());
+        medicamentNameCombo.setItems(pharmacy.getMedicaments());
+//        medicamentNameCombo.setItems(medicamentDAO.findAllObservable());
         medicamentNameCombo.getSelectionModel().selectFirst();
         // spinner init
         medicamentQuantitySpinner.setValueFactory(
@@ -122,11 +122,11 @@ public class PurchaseWithoutPrescriptionController implements Initializable {
     private void handleRegisterPurchase(ActionEvent event)  {
         try {
             purchase.setPaid(true);
-//            pharmacy.addPurchase(purchase);
-            Integer purchaseId =  purchaseDAO.create(purchase);
-            Purchase purchaseTemp = purchaseDAO.findById(purchaseId);
-            purchase.setPurchaseId(purchaseTemp.getPurchaseId());
-            purchase.setRef(purchaseTemp.getRef());
+            purchase =  pharmacy.addPurchase(purchase);
+//            Purchase purchaseTemp =  purchaseDAO.create(purchase);
+//            Purchase purchaseTemp = purchaseDAO.findById(purchaseId);
+//            purchase.setPurchaseId(purchaseTemp.getPurchaseId());
+//            purchase.setRef(purchaseTemp.getRef());
             alertInfo.setContentText("L'achat a bien été enregistré: "
                     + purchase.getTotalAmountWithoutMutual()
                     + "€\nId: " + purchase.getRef()
@@ -136,7 +136,7 @@ public class PurchaseWithoutPrescriptionController implements Initializable {
             purchase = new Purchase(null);
 //            pharmacy.setCurrentPurchase( purchase);
             handleClearPurchase(null);
-        } catch ( InvalidInputException | InvalidDateException e) {
+        } catch ( InvalidInputException | InvalidDateException | DuplicateException | PaymentException e) {
             alertInfo.setContentText(e.getMessage());
             alertInfo.showAndWait();
         }
@@ -144,7 +144,7 @@ public class PurchaseWithoutPrescriptionController implements Initializable {
 
     @FXML
     private void handleSearchMedicament(KeyEvent event) {
-        filteredMedicaments = new FilteredList<>( medicamentDAO.findAllObservable() );
+        filteredMedicaments = new FilteredList<>( pharmacy.getMedicaments() );
         filteredMedicaments.setPredicate(
                 new Predicate<Medicament>() {
                     @Override
@@ -190,7 +190,6 @@ public class PurchaseWithoutPrescriptionController implements Initializable {
 
     @FXML
     private void handleDeleteMedicament(ActionEvent event) {
-        System.out.println(purchase.getPurchaseItems());
         if (medicamentTable.getSelectionModel().getSelectedItem() == null){
             alertInfo.showAndWait();
         }

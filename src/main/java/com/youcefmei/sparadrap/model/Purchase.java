@@ -17,7 +17,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -25,7 +27,16 @@ import java.util.UUID;
  */
 public class Purchase {
 
+    @Getter
+    @Setter
     private Integer purchaseId;
+    /**
+     * -- GETTER --
+     *  Gets id.
+     *
+     * @return the id
+     */
+    @Getter
     @Setter
     @NotNull
     @Pattern(
@@ -33,10 +44,38 @@ public class Purchase {
             message = "L'identifiant est invalide"
     )
     private String ref;
+    /**
+     * -- GETTER --
+     *  Gets datetime.
+     *
+     * @return the datetime
+     */
+    @Getter
     private LocalDateTime datetime;
+    /**
+     * -- GETTER --
+     *  Gets datetime "French" formatted .
+     *
+     * @return the datetime str
+     */
+    @Getter
     private String datetimeStr;
+    /**
+     * -- GETTER --
+     *  Gets medicaments.
+     *
+     * @return the medicaments
+     */
+    @Getter
     private ObservableList<PurchaseItem> purchaseItems = FXCollections.observableArrayList();
     private boolean isPaid;
+    /**
+     * -- GETTER --
+     *  Gets prescription.
+     *
+     * @return the prescription
+     */
+    @Getter
     private Prescription prescription;
     @Setter
     @PositiveOrZero(message = "Le prix ne peut pas etre inférieur à zero")
@@ -96,14 +135,6 @@ public class Purchase {
         setPrescription(prescription);
     }
 
-    public Integer getPurchaseId() {
-        return purchaseId;
-    }
-
-    public void setPurchaseId(Integer purchaseId) {
-        this.purchaseId = purchaseId;
-    }
-
     /**
      * Is paid boolean.
      *
@@ -112,44 +143,6 @@ public class Purchase {
     public boolean isPaid() {
         return isPaid;
     }
-
-    /**
-     * Gets datetime.
-     *
-     * @return the datetime
-     */
-    public LocalDateTime getDatetime() {
-        return datetime;
-    }
-
-    /**
-     * Gets id.
-     *
-     * @return the id
-     */
-    public String getRef() {
-        return ref;
-    }
-
-    /**
-     * Gets medicaments.
-     *
-     * @return the medicaments
-     */
-    public ObservableList<PurchaseItem> getPurchaseItems() {
-        return purchaseItems;
-    }
-
-
-    /**
-     * Gets prescription.
-     *
-     * @return the prescription
-     */
-    public Prescription getPrescription() {
-        return prescription;
-    }
-
 
     /**
      * Gets total amount with mutual.
@@ -179,7 +172,6 @@ public class Purchase {
         }
     }
 
-
     /**
      * Get total amount without mutual.
      *
@@ -196,16 +188,6 @@ public class Purchase {
             }
             return totalPrice;
         }
-    }
-
-
-    /**
-     * Gets datetime "French" formatted .
-     *
-     * @return the datetime str
-     */
-    public String getDatetimeStr() {
-        return datetimeStr;
     }
 
     /**
@@ -227,7 +209,6 @@ public class Purchase {
             datetimeStr = datetime.format(formatter);
         }
     }
-
 
     /**
      * Add medicament.
@@ -285,7 +266,6 @@ public class Purchase {
         System.out.println("Purchase amount: " + getTotalAmountWithoutMutual());
     }
 
-
     /**
      * Remove purchase item.
      *
@@ -319,6 +299,7 @@ public class Purchase {
 
         }
     }
+
     /**
      * Sets medicaments.
      *
@@ -330,16 +311,24 @@ public class Purchase {
             throw new InvalidInputException("La liste de médicament ne peut etre null");
         } else if ( purchaseItems.isEmpty() ) {
             throw new InvalidInputException("La liste de médicament ne peut etre vide");
-        } else if ( prescription != null ) {
-
-            throw new InvalidInputException("La liste de médicament ne peut etre modifier car il s'agit d'un achat avec ordonnance");
-        }else{
-            this.purchaseItems.clear();
-            for(PurchaseItem purchaseItem  : purchaseItems){
-                System.out.println(purchaseItems);
-                System.out.println(purchaseItem);
-                this.addPurchaseItem(purchaseItem);
+        }
+        if ( prescription != null ) {
+            Set<Integer> medicamentIds = new HashSet<>();
+            for (PrescriptionLine prescriptionLine : prescription.getPrescriptionLines()) {
+                medicamentIds.add( prescriptionLine.getMedicament().getMedicamentId() );
             }
+            for ( PurchaseItem purchaseItem : purchaseItems ) {
+                if (  !medicamentIds.contains( purchaseItem.getMedicament().getMedicamentId()) ) {
+                    throw new InvalidInputException("La liste de médicament ne peut etre modifier car il s'agit d'un achat avec ordonnance");
+                }
+            }
+        }
+        this.purchaseItems.clear();
+        for(PurchaseItem purchaseItem  : purchaseItems){
+            System.out.println(purchaseItems);
+            System.out.println(purchaseItem);
+            this.addPurchaseItem(purchaseItem);
+
         }
     }
 
@@ -359,10 +348,9 @@ public class Purchase {
             throw new InvalidInputException("Il est impossible d'ajouter une ordonnance si un achat sans ordonnance est en cours");
         } else{
             this.prescription = prescription;
-            PurchaseItem purchaseItem = null;
             for (PrescriptionLine prescriptionLine : prescription.getPrescriptionLines()) {
 //                Stock stock = medicamentDAO.findStockByMedicament(prescriptionLine.getMedicament());
-                purchaseItem = new PurchaseItem(null,prescriptionLine.getQuantity(), prescriptionLine.getMedicament() );
+                PurchaseItem purchaseItem = new PurchaseItem(null,prescriptionLine.getQuantity(), prescriptionLine.getMedicament() );
                 addPurchaseItem(purchaseItem);
             }
         }
@@ -381,7 +369,6 @@ public class Purchase {
             isPaid = paid;
         }
     }
-
 
     @Override
     public String toString() {

@@ -2,8 +2,11 @@ package com.youcefmei.sparadrap.model;
 
 import com.youcefmei.sparadrap.exception.InvalidDateException;
 import com.youcefmei.sparadrap.exception.InvalidInputException;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,13 +14,38 @@ import java.util.List;
  */
 public class Prescription {
 
+    @Getter @Setter
     private Integer prescriptionId;
+    /**
+     * -- GETTER --
+     *  Gets date.
+     *
+     * @return the date
+     */
+    @Getter
     private LocalDate date;
+    /**
+     * -- GETTER --
+     *  Gets patient.
+     *
+     * @return the patient
+     */
+    @Getter
     private Patient patient;
+    /**
+     * -- GETTER --
+     *  Gets doctor.
+     *
+     * @return the doctor
+     */
+    @Getter
     private Doctor doctor;
+    @Setter
+    @Getter
     private List<PrescriptionLine> prescriptionLines;
     private float priceWithoutMutual;
     private float priceWithMutual;
+
 
     /**
      * Instantiates a new Prescription.
@@ -29,52 +57,12 @@ public class Prescription {
      * @throws InvalidDateException  the invalid date exception
      * @throws InvalidInputException the invalid input exception
      */
-
-
-
     public Prescription(Integer prescriptionId, LocalDate date, Patient patient, Doctor doctor, List<PrescriptionLine> prescriptionLines) throws InvalidDateException, InvalidInputException {
         setPrescriptionId(prescriptionId);
         setDate(date);
         setPatient(patient);
         setDoctor(doctor);
-    }
-
-
-    public Integer getPrescriptionId() {
-        return prescriptionId;
-    }
-
-    public void setPrescriptionId(Integer prescriptionId) {
-        this.prescriptionId = prescriptionId;
-    }
-
-    /**
-     * Gets patient.
-     *
-     * @return the patient
-     */
-    public Patient getPatient() {
-        return patient;
-    }
-
-    /**
-     * Gets doctor.
-     *
-     * @return the doctor
-     */
-    public Doctor getDoctor() {
-        return doctor;
-    }
-
-
-
-    /**
-     * Gets date.
-     *
-     * @return the date
-     */
-    public LocalDate getDate() {
-        return date;
+        setPrescriptionLines(prescriptionLines);
     }
 
     /**
@@ -133,7 +121,6 @@ public class Prescription {
         } else{
             this.patient = patient;
         }
-
     }
 
     /**
@@ -148,13 +135,5 @@ public class Prescription {
         } else{
             this.doctor = doctor;
         }
-    }
-
-    public List<PrescriptionLine> getPrescriptionLines() {
-        return prescriptionLines;
-    }
-
-    public void setPrescriptionLines(List<PrescriptionLine> prescriptionLines) {
-        this.prescriptionLines = prescriptionLines;
     }
 }

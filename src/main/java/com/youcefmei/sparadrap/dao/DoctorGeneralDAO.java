@@ -3,6 +3,7 @@ package com.youcefmei.sparadrap.dao;
 import com.youcefmei.sparadrap.exception.InvalidInputException;
 import com.youcefmei.sparadrap.model.DoctorGeneral;
 
+import javax.print.Doc;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +49,7 @@ public class DoctorGeneralDAO implements IDAOObservable<DoctorGeneral> {
     }
 
     @Override
-    public Integer create( DoctorGeneral doctorGeneral) {
+    public DoctorGeneral create(DoctorGeneral doctorGeneral) {
         Integer doctorGeneralId = null;
         try {
             conn.setAutoCommit(false);
@@ -75,6 +76,7 @@ public class DoctorGeneralDAO implements IDAOObservable<DoctorGeneral> {
                 generatedKeys = pStatement.getGeneratedKeys();
                 if (generatedKeys.next()) {
                     Integer doctorId = generatedKeys.getInt(1);
+                    doctorGeneral.setDoctorId(doctorId);
 
                     pStatement = conn.prepareStatement("INSERT INTO DoctorGeneral( Id_Doctor) VALUES (?)",PreparedStatement.RETURN_GENERATED_KEYS);
                     pStatement.setInt(1, doctorId);
@@ -82,9 +84,10 @@ public class DoctorGeneralDAO implements IDAOObservable<DoctorGeneral> {
                     generatedKeys = pStatement.getGeneratedKeys();
                     if (generatedKeys.next()) {
                         doctorGeneralId = generatedKeys.getInt(1);
+                        doctorGeneral.setDoctorGeneralId(doctorGeneralId);
                         conn.commit();
                         conn.setAutoCommit(true);
-                        return doctorGeneralId;
+                        return doctorGeneral;
                     }
                 }
             }
@@ -93,7 +96,7 @@ public class DoctorGeneralDAO implements IDAOObservable<DoctorGeneral> {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return doctorGeneralId;
+        return null;
     }
 
     @Override
@@ -205,6 +208,7 @@ public class DoctorGeneralDAO implements IDAOObservable<DoctorGeneral> {
             );
             while (resultSet.next()) {
                 int idDoctorgeneral = resultSet.getInt("id_doctorgeneral");
+                int idDoctor = resultSet.getInt("id_doctor");
                 String firstName = resultSet.getString("firstname");
                 String lastName = resultSet.getString("lastname");
                 String mail = resultSet.getString("mail");
@@ -219,6 +223,7 @@ public class DoctorGeneralDAO implements IDAOObservable<DoctorGeneral> {
                     lastName,
                         phone,mail,address,city,areacode,registrationnb
                 );
+                doctorGeneral.setDoctorId(idDoctor);
                 doctorGenerals.add(doctorGeneral);
             }
         } catch (SQLException e) {
@@ -248,26 +253,26 @@ public class DoctorGeneralDAO implements IDAOObservable<DoctorGeneral> {
 
 
 
-    public Integer findIdByDoctorId(Integer doctorId) {
-        try {
-            Integer idDoctorGeneral = null;
-            PreparedStatement pStatement = conn.prepareStatement(
-                    "SELECT Id_DoctorGeneral FROM doctor d \n" +
-                            " INNER JOIN doctorgeneral dg ON dg.id_doctor = d.id_doctor \n" +
-                            "WHERE  d.id_doctor = ? ;",
-                    PreparedStatement.RETURN_GENERATED_KEYS
-            );
-            pStatement.setInt(1, doctorId);
-            ResultSet resultSet = pStatement.executeQuery();
-            if (resultSet.next()) {
-                idDoctorGeneral =  resultSet.getInt(1);
-            }
-            return idDoctorGeneral;
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-
-    }
+//    public Integer findIdByDoctorId(Integer doctorId) {
+//        try {
+//            Integer idDoctorGeneral = null;
+//            PreparedStatement pStatement = conn.prepareStatement(
+//                    "SELECT Id_DoctorGeneral FROM doctor d \n" +
+//                            " INNER JOIN doctorgeneral dg ON dg.id_doctor = d.id_doctor \n" +
+//                            "WHERE  d.id_doctor = ? ;",
+//                    PreparedStatement.RETURN_GENERATED_KEYS
+//            );
+//            pStatement.setInt(1, doctorId);
+//            ResultSet resultSet = pStatement.executeQuery();
+//            if (resultSet.next()) {
+//                idDoctorGeneral =  resultSet.getInt(1);
+//            }
+//            return idDoctorGeneral;
+//
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//
+//    }
 }

@@ -3,10 +3,11 @@ package com.youcefmei.sparadrap.dao;
 import com.youcefmei.sparadrap.exception.InvalidDateException;
 import com.youcefmei.sparadrap.exception.InvalidInputException;
 import com.youcefmei.sparadrap.model.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class PrescriptionDAO implements IDAOObservable<Prescription>{
 
                 Integer patientId = resultSet.getInt("id_patient");
                 Integer doctorId = resultSet.getInt("id_doctor");
-                Integer purchaseId = resultSet.getInt("id_purchase");
+//                Integer prescriptionId = resultSet.getInt("id_prescription");
                 LocalDate date = resultSet.getDate("date_prescription").toLocalDate();
                 patient = patientDAO.findById(patientId);
 //                if (purchase != null) {
@@ -71,12 +72,11 @@ public class PrescriptionDAO implements IDAOObservable<Prescription>{
     }
 
     @Override
-    public Integer create(Prescription prescription) {
+    public Prescription create(Prescription prescription) {
         Integer prescriptionId = null;
+//        ObservableList<PrescriptionLine> prescriptionLines = FXCollections.observableArrayList();
         try {
             conn.setAutoCommit(false);
-
-
 
             PreparedStatement pStatement = conn.prepareStatement(
                     "INSERT INTO prescription(`date_prescription`,`id_patient`,`Id_Doctor`) VALUES (?,?,?) ",
@@ -89,27 +89,31 @@ public class PrescriptionDAO implements IDAOObservable<Prescription>{
             ResultSet generatedKeys = pStatement.getGeneratedKeys();
             if (generatedKeys.next()){
                 prescriptionId = generatedKeys.getInt(1);
-
-                for ( PrescriptionLine prescriptionLine : prescription.getPrescriptionLines()){
+                prescription.setPrescriptionId(prescriptionId);
+                for (int i = 0; i < prescription.getPrescriptionLines().size(); i++) {
                     pStatement = conn.prepareStatement(
                             "INSERT INTO prescription_line(`id_prescription`,`Id_Medicament`,`qty`) VALUES (?,?,?) ",
                             Statement.RETURN_GENERATED_KEYS
                     );
                     pStatement.setInt(1,prescriptionId);
-                    pStatement.setInt(2,prescriptionLine.getMedicament().getMedicamentId());
-                    pStatement.setInt(3,prescriptionLine.getQuantity());
-                    pStatement.executeUpdate();
-
+                    pStatement.setInt(2, prescription.getPrescriptionLines().get(i).getMedicament().getMedicamentId());
+                    pStatement.setInt(3,prescription.getPrescriptionLines().get(i).getQuantity());
+                    int idPrescriptionLine = pStatement.executeUpdate();
+                    if ( idPrescriptionLine != 0) {
+                        prescription.getPrescriptionLines().get(i).setPrescriptionLineId(prescriptionId);
+                    }
                 }
+//                prescription.setPrescriptionLines(prescriptionLines);
                 conn.commit();
                 conn.setAutoCommit(true);
+                return prescription;
             }
             conn.rollback();
             conn.setAutoCommit(true);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return prescriptionId;
+        return null;
     }
 
     @Override

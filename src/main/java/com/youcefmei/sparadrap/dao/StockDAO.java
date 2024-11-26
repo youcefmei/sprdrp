@@ -35,7 +35,7 @@ public class StockDAO implements IDAOObservable<Stock>{
     }
 
     @Override
-    public Integer create(Stock stock) {
+    public Stock create(Stock stock) {
         Integer stockId = null;
         try {
             PreparedStatement pStatement = conn.prepareStatement("INSERT INTO stock(`qty`,`Id_Medicament`) VALUES (?,?) ",Statement.RETURN_GENERATED_KEYS);
@@ -45,11 +45,13 @@ public class StockDAO implements IDAOObservable<Stock>{
             ResultSet generatedKeys = pStatement.getGeneratedKeys();
             if (generatedKeys.next()){
                 stockId = generatedKeys.getInt(1);
+                stock.setId(stockId);
+                return stock;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return stockId;
+        return stock;
     }
 
     @Override
