@@ -16,7 +16,7 @@ public class HealthMutualDAO implements IDAOObservable<HealthMutual> {
     public HealthMutual findById(int id) {
         HealthMutual healthMutual = null;
         try {
-            PreparedStatement preparedStatement = conn.prepareStatement("SELECT * FROM healthmutual WHERE Id_HealthMutual = ?", PreparedStatement.RETURN_GENERATED_KEYS);
+            PreparedStatement preparedStatement = conn.prepareStatement("SELECT * FROM HealthMutual WHERE Id_HealthMutual = ?", PreparedStatement.RETURN_GENERATED_KEYS);
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -47,7 +47,7 @@ public class HealthMutualDAO implements IDAOObservable<HealthMutual> {
         try {
 
             PreparedStatement pStatement = conn.prepareStatement(
-                    "INSERT INTO healthmutual(`name`,`address`,`areacode`,`city`,`phone`,`mail`,`rate`,`Id_state`) VALUES (?,?,?,?,?,?,?,?) ",
+                    "INSERT INTO HealthMutual(`name`,`address`,`areacode`,`city`,`phone`,`mail`,`rate`,`Id_state`) VALUES (?,?,?,?,?,?,?,?) ",
                     Statement.RETURN_GENERATED_KEYS);
             pStatement.setString(1, healthMutual.getName());
             pStatement.setString(2, healthMutual.getAddress());
@@ -73,7 +73,7 @@ public class HealthMutualDAO implements IDAOObservable<HealthMutual> {
     @Override
     public boolean update(HealthMutual healthMutual) {
         try {
-            PreparedStatement pStatement = conn.prepareStatement("UPDATE healthmutual " +
+            PreparedStatement pStatement = conn.prepareStatement("UPDATE HealthMutual " +
                             "SET name = ? , address = ? , areacode = ? , city = ? , phone = ? , mail = ? , rate = ? , id_state = ? " +
                             "WHERE Id_HealthMutual = ? " ,
                     PreparedStatement.RETURN_GENERATED_KEYS);
@@ -100,7 +100,7 @@ public class HealthMutualDAO implements IDAOObservable<HealthMutual> {
     @Override
     public boolean delete(int id) {
         try {
-            PreparedStatement pStatement = conn.prepareStatement("DELETE healthmutual " +
+            PreparedStatement pStatement = conn.prepareStatement("DELETE HealthMutual " +
                             "WHERE Id_HealthMutual = ? " ,
                     PreparedStatement.RETURN_GENERATED_KEYS);
             pStatement.setInt(1, id);
@@ -121,7 +121,7 @@ public class HealthMutualDAO implements IDAOObservable<HealthMutual> {
         List<HealthMutual> healthMutuals = new ArrayList<>();
         try {
             Statement statement = conn.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM healthmutual");
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM HealthMutual");
             while (resultSet.next()) {
                 int idHealthMutual = resultSet.getInt("Id_HealthMutual");
                 String name = resultSet.getString("Name");

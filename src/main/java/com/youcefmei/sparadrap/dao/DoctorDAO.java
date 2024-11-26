@@ -17,7 +17,7 @@ public class DoctorDAO implements IDAOObservable<Doctor> {
         Doctor doctor = null;
         try {
             PreparedStatement pStatement = conn.prepareStatement(
-                    "SELECT * FROM Doctor d INNER JOIN users u ON u.id_users = d.id_users WHERE id_doctor = ?",
+                    "SELECT * FROM Doctor d INNER JOIN Users u ON u.id_users = d.id_users WHERE id_doctor = ?",
                     Statement.RETURN_GENERATED_KEYS
             );
             pStatement.setInt(1, id);
@@ -57,7 +57,7 @@ public class DoctorDAO implements IDAOObservable<Doctor> {
         Integer doctorId = null;
         try {
             conn.setAutoCommit(false);
-            PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO USERS(`firstname`,`lastname`,`mail`,`address`,`areacode`,`city`,`phone`) " +
+            PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO Users(`firstname`,`lastname`,`mail`,`address`,`areacode`,`city`,`phone`) " +
                     "VALUES (?,?,?,?,?,?,?); ",Statement.RETURN_GENERATED_KEYS
             );
             preparedStatement.setString(1, doctor.getFirstName());
@@ -117,7 +117,7 @@ public class DoctorDAO implements IDAOObservable<Doctor> {
         try {
             conn.setAutoCommit(false);
             PreparedStatement preparedStatement = conn.prepareStatement(
-                    "UPDATE doctor SET registrationnb = ?  WHERE id_doctor = ?;",
+                    "UPDATE Doctor SET registrationnb = ?  WHERE id_doctor = ?;",
                     PreparedStatement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, doctor.getRegistrationNb());
             preparedStatement.setInt(2,doctor.getDoctorId());
@@ -126,7 +126,7 @@ public class DoctorDAO implements IDAOObservable<Doctor> {
             if (generatedKeys.next()) {
                 Integer userId = generatedKeys.getInt(1);
                 preparedStatement = conn.prepareStatement(
-                        "UPDATE USERS SET `firstname` = ?,`lastname` = ? , `mail` = ?, `address` = ? ,`areacode`= ?, `city`= ?,`phone`= ?  WHERE id_users = ?;",
+                        "UPDATE Users SET `firstname` = ?,`lastname` = ? , `mail` = ?, `address` = ? ,`areacode`= ?, `city`= ?,`phone`= ?  WHERE id_users = ?;",
                         PreparedStatement.RETURN_GENERATED_KEYS
                 );
                 preparedStatement.setString(1, doctor.getFirstName());
@@ -160,7 +160,7 @@ public class DoctorDAO implements IDAOObservable<Doctor> {
         try {
 
             PreparedStatement pStatement = conn.prepareStatement(
-            "SELECT u.id_users FROM Doctor d INNER JOIN users u ON u.id_users = d.id_users WHERE id_doctor = ?;",
+            "SELECT u.id_users FROM Doctor d INNER JOIN Users u ON u.id_users = d.id_users WHERE id_doctor = ?;",
                     PreparedStatement.RETURN_GENERATED_KEYS
             );
             pStatement.setInt(1, id);
@@ -175,7 +175,7 @@ public class DoctorDAO implements IDAOObservable<Doctor> {
                 ResultSet generatedKeys = pStatement.getGeneratedKeys();
                 if ( generatedKeys.next() ){
 
-                    pStatement = conn.prepareStatement("DELETE FROM users " +
+                    pStatement = conn.prepareStatement("DELETE FROM Users " +
                                     "WHERE Id_Users = ? " ,
                             PreparedStatement.RETURN_GENERATED_KEYS);
                     pStatement.setInt(1,userId);
@@ -201,7 +201,7 @@ public class DoctorDAO implements IDAOObservable<Doctor> {
         Doctor doctor = null;
         try {
             PreparedStatement preparedStatement = conn.prepareStatement(
-                    "SELECT * FROM doctor d INNER JOIN USERS u ON d.Id_Users = u.Id_Users",
+                    "SELECT * FROM Doctor d INNER JOIN Users u ON d.Id_Users = u.Id_Users",
                     PreparedStatement.RETURN_GENERATED_KEYS
             );
             preparedStatement.executeQuery();

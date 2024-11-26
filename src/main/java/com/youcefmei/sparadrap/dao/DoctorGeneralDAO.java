@@ -15,9 +15,9 @@ public class DoctorGeneralDAO implements IDAOObservable<DoctorGeneral> {
     public DoctorGeneral findById(int id) {
         DoctorGeneral doctorGeneral = null;
         try {
-            PreparedStatement pStatement = conn.prepareStatement("SELECT * FROM Doctorgeneral dg \n" +
-                    "INNER JOIN doctor d ON d.id_doctor = dg.id_doctor " +
-                    "INNER JOIN users u ON u.id_users = d.id_users " +
+            PreparedStatement pStatement = conn.prepareStatement("SELECT * FROM DoctorGeneral dg \n" +
+                    "INNER JOIN Doctor d ON d.id_doctor = dg.id_doctor " +
+                    "INNER JOIN Users u ON u.id_users = d.id_users " +
                     "WHERE id_doctorgeneral = ?"
             );
             pStatement.setInt(1, id);
@@ -54,7 +54,7 @@ public class DoctorGeneralDAO implements IDAOObservable<DoctorGeneral> {
         try {
             conn.setAutoCommit(false);
             PreparedStatement pStatement = conn.prepareStatement(
-                    "INSERT INTO USERS(`firstname`,`lastname`,`mail`,`address`,`areacode`,`city`,`phone`) VALUES (?,?,?,?,?,?,?)",
+                    "INSERT INTO Users(`firstname`,`lastname`,`mail`,`address`,`areacode`,`city`,`phone`) VALUES (?,?,?,?,?,?,?)",
                     PreparedStatement.RETURN_GENERATED_KEYS
             );
 
@@ -104,7 +104,7 @@ public class DoctorGeneralDAO implements IDAOObservable<DoctorGeneral> {
 
         try {
             PreparedStatement preparedStatement = conn.prepareStatement(
-                    "SELECT dg.id_doctor,d.id_users FROM doctorgeneral dg INNER JOIN doctor d ON d.id_doctor = dg.id_doctor INNER JOIN USERS u ON d.id_users = u.id_users  WHERE id_doctorgeneral = ?",
+                    "SELECT dg.id_doctor,d.id_users FROM DoctorGeneral dg INNER JOIN Doctor d ON d.id_doctor = dg.id_doctor INNER JOIN Users u ON d.id_users = u.id_users  WHERE id_doctorgeneral = ?",
                     PreparedStatement.RETURN_GENERATED_KEYS
             );
 
@@ -114,7 +114,7 @@ public class DoctorGeneralDAO implements IDAOObservable<DoctorGeneral> {
                 int idUsers = resultSet.getInt("id_users");
                 int idDoctor = resultSet.getInt("id_doctor");
                 preparedStatement = conn.prepareStatement(
-                        "UPDATE doctor SET registrationnb = ? WHERE id_doctor = ?",
+                        "UPDATE Doctor SET registrationnb = ? WHERE id_doctor = ?",
                         PreparedStatement.RETURN_GENERATED_KEYS
                 );
                 preparedStatement.setString(1, doctorGeneral.getRegistrationNb());
@@ -122,7 +122,7 @@ public class DoctorGeneralDAO implements IDAOObservable<DoctorGeneral> {
                 preparedStatement.executeUpdate();
 
                 preparedStatement = conn.prepareStatement(
-                        "UPDATE users SET firstname = ? , lastname = ? , mail = ? , address = ? , areacode = ? , city = ? , phone = ? WHERE id_users = ?",
+                        "UPDATE Users SET firstname = ? , lastname = ? , mail = ? , address = ? , areacode = ? , city = ? , phone = ? WHERE id_users = ?",
                         PreparedStatement.RETURN_GENERATED_KEYS
                 );
                 preparedStatement.setString(1, doctorGeneral.getFirstName());
@@ -146,7 +146,7 @@ public class DoctorGeneralDAO implements IDAOObservable<DoctorGeneral> {
     public boolean delete(int id) {
         try {
             PreparedStatement preparedStatement = conn.prepareStatement(
-                    "SELECT * FROM doctorgeneral dg INNER JOIN doctor d ON d.id_doctor = dg.id_doctor INNER JOIN USERS u ON d.id_users = u.id_users WHERE id_doctorgeneral = ?",
+                    "SELECT * FROM DoctorGeneral dg INNER JOIN Doctor d ON d.id_doctor = dg.id_doctor INNER JOIN Users u ON d.id_users = u.id_users WHERE id_doctorgeneral = ?",
                     PreparedStatement.RETURN_GENERATED_KEYS
             );
             preparedStatement.setInt(1, id);
@@ -174,7 +174,7 @@ public class DoctorGeneralDAO implements IDAOObservable<DoctorGeneral> {
                     if (generatedKeys.next()) {
 
                         preparedStatement = conn.prepareStatement(
-                                "DELETE FROM USERS WHERE id_users = ? ",
+                                "DELETE FROM Users WHERE id_users = ? ",
                                 PreparedStatement.RETURN_GENERATED_KEYS
                         );
                         preparedStatement.setInt(1, idUsers);
@@ -204,7 +204,7 @@ public class DoctorGeneralDAO implements IDAOObservable<DoctorGeneral> {
         try {
             Statement statement = conn.createStatement();
             ResultSet resultSet = statement.executeQuery(
-                    "SELECT * FROM doctorgeneral dg INNER JOIN doctor d ON d.id_doctor = dg.id_doctor INNER JOIN USERS u ON d.id_users = u.id_users;"
+                    "SELECT * FROM DoctorGeneral dg INNER JOIN Doctor d ON d.id_doctor = dg.id_doctor INNER JOIN Users u ON d.id_users = u.id_users;"
             );
             while (resultSet.next()) {
                 int idDoctorgeneral = resultSet.getInt("id_doctorgeneral");
@@ -236,7 +236,7 @@ public class DoctorGeneralDAO implements IDAOObservable<DoctorGeneral> {
 
     public boolean deleteByDoctorId(Integer doctorId) {
         try {
-            PreparedStatement pStatement = conn.prepareStatement("DELETE FROM doctorgeneral " +
+            PreparedStatement pStatement = conn.prepareStatement("DELETE FROM DoctorGeneral " +
                             "WHERE Id_Doctor = ? " ,
                     PreparedStatement.RETURN_GENERATED_KEYS);
             pStatement.setInt(1, doctorId);

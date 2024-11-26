@@ -19,7 +19,7 @@ public class DoctorSpecialityDAO implements IDAOObservable<DoctorSpeciality> {
         DoctorSpeciality doctorSpeciality = null;
         try {
             PreparedStatement preparedStatement = conn.prepareStatement(
-                    "SELECT * FROM speciality WHERE Id_Speciality = ?",
+                    "SELECT * FROM Speciality WHERE Id_Speciality = ?",
                     PreparedStatement.RETURN_GENERATED_KEYS
             );
             preparedStatement.setInt(1, id);
@@ -42,7 +42,7 @@ public class DoctorSpecialityDAO implements IDAOObservable<DoctorSpeciality> {
     public DoctorSpeciality create(DoctorSpeciality doctorSpeciality) {
         Integer doctorSpecialityId = null;
         try {
-            PreparedStatement pStatement = conn.prepareStatement("INSERT INTO speciality(`name`) VALUES (?,?) ",Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pStatement = conn.prepareStatement("INSERT INTO Speciality(`name`) VALUES (?,?) ",Statement.RETURN_GENERATED_KEYS);
             pStatement.setString(1, doctorSpeciality.getName());
             pStatement.executeUpdate();
             ResultSet generatedKeys = pStatement.getGeneratedKeys();
@@ -60,7 +60,7 @@ public class DoctorSpecialityDAO implements IDAOObservable<DoctorSpeciality> {
     @Override
     public boolean update(DoctorSpeciality doctorSpeciality) {
         try {
-            PreparedStatement preparedStatement = conn.prepareStatement("UPDATE speciality SET name = ?  WHERE Id_Speciality = ?", PreparedStatement.RETURN_GENERATED_KEYS);
+            PreparedStatement preparedStatement = conn.prepareStatement("UPDATE Speciality SET name = ?  WHERE Id_Speciality = ?", PreparedStatement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, doctorSpeciality.getName());
             preparedStatement.executeUpdate();
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
@@ -78,7 +78,7 @@ public class DoctorSpecialityDAO implements IDAOObservable<DoctorSpeciality> {
     @Override
     public boolean delete(int id) {
         try {
-            PreparedStatement pStatement = conn.prepareStatement(" DELETE FROM speciality " +
+            PreparedStatement pStatement = conn.prepareStatement(" DELETE FROM Speciality " +
                             "WHERE Id_Speciality = ? " ,
                     PreparedStatement.RETURN_GENERATED_KEYS);
             pStatement.setInt(1 , id);
@@ -99,7 +99,7 @@ public class DoctorSpecialityDAO implements IDAOObservable<DoctorSpeciality> {
         List<DoctorSpeciality> doctorSpecialities = new ArrayList<>();
         try {
             Statement statement = conn.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM speciality");
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM Speciality");
             while (resultSet.next()) {
 
                 Integer id = resultSet.getInt("id_speciality");
