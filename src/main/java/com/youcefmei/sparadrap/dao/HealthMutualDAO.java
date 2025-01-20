@@ -16,7 +16,9 @@ public class HealthMutualDAO implements IDAOObservable<HealthMutual> {
     public HealthMutual findById(int id) {
         HealthMutual healthMutual = null;
         try {
-            PreparedStatement preparedStatement = conn.prepareStatement("SELECT * FROM HealthMutual WHERE Id_HealthMutual = ?", PreparedStatement.RETURN_GENERATED_KEYS);
+            PreparedStatement preparedStatement = conn.prepareStatement(
+                    "SELECT * FROM HealthMutual WHERE Id_HealthMutual = ?",
+                    PreparedStatement.RETURN_GENERATED_KEYS);
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -46,9 +48,9 @@ public class HealthMutualDAO implements IDAOObservable<HealthMutual> {
         Integer healthMutualId = null;
         try {
 
-            PreparedStatement pStatement = conn.prepareStatement(
-                    "INSERT INTO HealthMutual(`name`,`address`,`areacode`,`city`,`phone`,`mail`,`rate`,`Id_state`) VALUES (?,?,?,?,?,?,?,?) ",
-                    Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pStatement = conn.prepareStatement("""
+                    INSERT INTO HealthMutual(`name`,`address`,`areacode`,`city`,`phone`,`mail`,`rate`,`Id_state`) 
+                    VALUES (?,?,?,?,?,?,?,?) """,Statement.RETURN_GENERATED_KEYS);
             pStatement.setString(1, healthMutual.getName());
             pStatement.setString(2, healthMutual.getAddress());
             pStatement.setString(3, healthMutual.getAreaCode());
@@ -73,10 +75,10 @@ public class HealthMutualDAO implements IDAOObservable<HealthMutual> {
     @Override
     public boolean update(HealthMutual healthMutual) {
         try {
-            PreparedStatement pStatement = conn.prepareStatement("UPDATE HealthMutual " +
-                            "SET name = ? , address = ? , areacode = ? , city = ? , phone = ? , mail = ? , rate = ? , id_state = ? " +
-                            "WHERE Id_HealthMutual = ? " ,
-                    PreparedStatement.RETURN_GENERATED_KEYS);
+            PreparedStatement pStatement = conn.prepareStatement("""
+                      UPDATE HealthMutual SET 
+                      name = ? , address = ? , areacode = ? , city = ? , phone = ? , mail = ? , rate = ? , id_state = ? 
+                      WHERE Id_HealthMutual = ? """ ,PreparedStatement.RETURN_GENERATED_KEYS);
             pStatement.setString(1, healthMutual.getName());
             pStatement.setString(2, healthMutual.getAddress());
             pStatement.setString(3, healthMutual.getAreaCode());
@@ -100,8 +102,7 @@ public class HealthMutualDAO implements IDAOObservable<HealthMutual> {
     @Override
     public boolean delete(int id) {
         try {
-            PreparedStatement pStatement = conn.prepareStatement("DELETE HealthMutual " +
-                            "WHERE Id_HealthMutual = ? " ,
+            PreparedStatement pStatement = conn.prepareStatement("DELETE HealthMutual WHERE Id_HealthMutual = ? " ,
                     PreparedStatement.RETURN_GENERATED_KEYS);
             pStatement.setInt(1, id);
             pStatement.executeUpdate();

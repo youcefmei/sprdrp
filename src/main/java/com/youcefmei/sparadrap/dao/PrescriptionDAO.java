@@ -25,7 +25,9 @@ public class PrescriptionDAO implements IDAOObservable<Prescription>{
 //        Purchase purchase = null;
         List<PrescriptionLine> prescriptionLines = new ArrayList<>();
         try {
-            PreparedStatement preparedStatement = conn.prepareStatement("SELECT * FROM prescription WHERE id_prescription = ?", PreparedStatement.RETURN_GENERATED_KEYS);
+            PreparedStatement preparedStatement = conn.prepareStatement(
+                    "SELECT * FROM prescription WHERE id_prescription = ?",
+                    PreparedStatement.RETURN_GENERATED_KEYS);
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -41,7 +43,9 @@ public class PrescriptionDAO implements IDAOObservable<Prescription>{
                 doctor = doctorDAO.findById(doctorId);
                 prescription = new Prescription(id,date,patient,doctor,prescriptionLines );
             }
-            preparedStatement = conn.prepareStatement("SELECT * FROM prescription_line WHERE id_prescription = ?", PreparedStatement.RETURN_GENERATED_KEYS);
+            preparedStatement = conn.prepareStatement(
+                    "SELECT * FROM prescription_line WHERE id_prescription = ?",
+                    PreparedStatement.RETURN_GENERATED_KEYS);
             preparedStatement.setInt(1, id);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -91,9 +95,9 @@ public class PrescriptionDAO implements IDAOObservable<Prescription>{
                 prescriptionId = generatedKeys.getInt(1);
                 prescription.setPrescriptionId(prescriptionId);
                 for (int i = 0; i < prescription.getPrescriptionLines().size(); i++) {
-                    pStatement = conn.prepareStatement(
-                            "INSERT INTO prescription_line(`id_prescription`,`Id_Medicament`,`qty`) VALUES (?,?,?) ",
-                            Statement.RETURN_GENERATED_KEYS
+                    pStatement = conn.prepareStatement("""
+                            INSERT INTO prescription_line(`id_prescription`,`Id_Medicament`,`qty`) VALUES (?,?,?) 
+                            """,Statement.RETURN_GENERATED_KEYS
                     );
                     pStatement.setInt(1,prescriptionId);
                     pStatement.setInt(2, prescription.getPrescriptionLines().get(i).getMedicament().getMedicamentId());

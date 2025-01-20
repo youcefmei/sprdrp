@@ -15,8 +15,8 @@ public class MedicamentCategoryDAO implements IDAOObservable<MedicamentCategory>
     public MedicamentCategory findById(int id) {
         MedicamentCategory medicamentCategory = null;
         try {
-            PreparedStatement pStatement = conn.prepareStatement("SELECT * FROM MEDICAMENTCATEGORY p \n" +
-                    " WHERE id_medicamentcategory = ? "
+            PreparedStatement pStatement = conn.prepareStatement("""
+                    SELECT * FROM MEDICAMENTCATEGORY p WHERE id_medicamentcategory = ? """
             );
             pStatement.setInt(1, id);
             ResultSet resultSet = pStatement.executeQuery();
@@ -39,8 +39,8 @@ public class MedicamentCategoryDAO implements IDAOObservable<MedicamentCategory>
     public MedicamentCategory create(MedicamentCategory medcat) {
         Integer medicamentCategoryId = null;
         try {
-            PreparedStatement pStatement = conn.prepareStatement("INSERT INTO MEDICAMENTCATEGORY(`name`) VALUES (?) ",
-                    Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pStatement = conn.prepareStatement("""
+                            INSERT INTO MEDICAMENTCATEGORY(`name`) VALUES (?) """,Statement.RETURN_GENERATED_KEYS);
             pStatement.setString(1, medcat.getName());
             pStatement.executeUpdate();
             ResultSet generatedKeys = pStatement.getGeneratedKeys();
@@ -60,7 +60,8 @@ public class MedicamentCategoryDAO implements IDAOObservable<MedicamentCategory>
     @Override
     public boolean update(MedicamentCategory medcat) {
         try {
-            PreparedStatement pStatement = conn.prepareStatement("UPDATE MEDICAMENTCATEGORY SET `name` = ? WHERE id_medicamentcategory = ? ",
+            PreparedStatement pStatement = conn.prepareStatement(
+                    "UPDATE MEDICAMENTCATEGORY SET `name` = ? WHERE id_medicamentcategory = ? ",
                     Statement.RETURN_GENERATED_KEYS);
             pStatement.setString(1, medcat.getName());
             pStatement.setInt(2, medcat.getId());
@@ -79,8 +80,8 @@ public class MedicamentCategoryDAO implements IDAOObservable<MedicamentCategory>
     @Override
     public boolean delete(int id) {
         try {
-            PreparedStatement pStatement = conn.prepareStatement("DELETE FROM MEDICAMENTCATEGORY " +
-                            "WHERE id_medicamentcategory = ? " ,
+            PreparedStatement pStatement = conn.prepareStatement(
+                    "DELETE FROM MEDICAMENTCATEGORY WHERE id_medicamentcategory = ? " ,
                     PreparedStatement.RETURN_GENERATED_KEYS);
             pStatement.setInt(1, id);
             pStatement.executeUpdate();

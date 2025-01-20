@@ -155,17 +155,17 @@ public class PurchaseWithPrescriptionController implements Initializable {
             System.out.println( prescription.getPrescriptionLines() );
             Purchase purchase = new Purchase(null, prescription);
             purchase.setPaid( true );
+            purchase =  pharmacy.addPurchase(purchase);
             pharmacy.setCurrentPurchase( purchase );
-            pharmacy.addPurchase(purchase);
             alertInfo.setContentText("L'achat a bien été enregistré: "
                     + pharmacy.getCurrentPurchase().getTotalAmountWithMutual()
-                    + "€\nId: " + purchase.getRef()
-                    + "\nDate: " + purchase.getDatetimeStr()
+                    + "€\nId: " + pharmacy.getCurrentPurchase().getRef()
+                    + "\nDate: " + pharmacy.getCurrentPurchase().getDatetimeStr()
             );
             alertInfo.showAndWait();
             pharmacy.setCurrentPurchase(new Purchase(null));
-
             handleClearPurchase(new ActionEvent());
+
         } catch ( InvalidInputException | InvalidDateException | DuplicateException  | PaymentException  e) {
             alertInfo.setContentText(e.getMessage());
             alertInfo.showAndWait();

@@ -40,6 +40,7 @@ abstract class User {
 abstract class Doctor extends User {
  - String registrationNb
  - List<Patient> patients
+ + addPatient(Patient)
 }
 
 
@@ -60,8 +61,9 @@ class DoctorGeneral extends Doctor {
 }
 
 class Medicament {
-    - String name
+    - String title
     - String category
+    - String[] CATEGORIES 
     - float price
     - int quantity
     - LocalDate startDate
@@ -73,37 +75,46 @@ class Prescription{
     - LocalDate date 
     - Patient patient 
     - Doctor doctor 
+    - float priceWithoutMutual
+    - float priceWithMutual
     - List<Medicament> medicaments
-    + getPrescriptionAmount()
 }
 
 class Purchase{
-    - LocalDate date 
+    - String ID
+    - LocalDatetime datetime 
     - List<Medicament> medicaments
     - Prescription prescription
     - bool isPaid()
     + addMedicament()
-    + getTotalAmount()
+    + getTotalWithMutualAmount()
+    + getTotalWithoutMutualAmount()
 }
 
 class HealthMutual{
-  - String name
+  - String title
   - String address
   - String areaCode
   - String city
   - String phone
   - String mail
   - String state
-  - float healthCareRate
+  - float healthCar
 }
 
-class DrugStore{
+class Pharmacy{
   - Purchase currentPurchase
-  - List<Purchase> purchaseHistory
+  - List<Purchase> purchases
   - List<Patient> patients
   - List<Doctor> doctors
+  - List<DoctorGeneral> doctorGenerals
+  - List<DoctorSpecialized> doctorSpecializeds
   - List<Medicament> medicaments
   - List<HealthMutual> healthMutuals
+  + addDoctorSpecialized(DoctorSpecialized)
+  + addDoctorGeneral(DoctorGeneral)
+  + addPatient(Patient)
+  + addCurrentPuchase()
 }
 
 
@@ -115,10 +126,10 @@ Patient::familyDoctor "0" *-- "1" DoctorGeneral
 Patient::doctorSpecializeds "0" *-- "*" DoctorSpecialized
 
 
-DrugStore::doctors "0" *-- "*" Doctor
-DrugStore::patients "0" *-- "*" Patient
-DrugStore::medicaments "0" *-- "*" Medicament
-DrugStore::healthMutuals "0" *-- "*" HealthMutual
+Pharmacy::doctors "0" *-- "*" Doctor
+Pharmacy::patients "0" *-- "*" Patient
+Pharmacy::medicaments "0" *-- "*" Medicament
+Pharmacy::healthMutuals "0" *-- "*" HealthMutual
 
 Purchase::medicaments "1" *-- "*" Medicament
 Purchase::prescription "1" *-- "*" Prescription

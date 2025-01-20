@@ -19,7 +19,8 @@ public class StockDAO implements IDAOObservable<Stock>{
     public Stock findById(int id) {
         Stock stock = null;
         try {
-            PreparedStatement preparedStatement = conn.prepareStatement("SELECT * FROM stock WHERE id_stock = ?", PreparedStatement.RETURN_GENERATED_KEYS);
+            PreparedStatement preparedStatement = conn.prepareStatement("SELECT * FROM stock WHERE id_stock = ?",
+                    PreparedStatement.RETURN_GENERATED_KEYS);
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -38,7 +39,9 @@ public class StockDAO implements IDAOObservable<Stock>{
     public Stock create(Stock stock) {
         Integer stockId = null;
         try {
-            PreparedStatement pStatement = conn.prepareStatement("INSERT INTO stock(`qty`,`Id_Medicament`) VALUES (?,?) ",Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pStatement = conn.prepareStatement(
+                    "INSERT INTO stock(`qty`,`Id_Medicament`) VALUES (?,?) ",
+                    Statement.RETURN_GENERATED_KEYS);
             pStatement.setInt(1, stock.getQuantity());
             pStatement.setInt(2, stock.getMedicament().getMedicamentId());
             pStatement.executeUpdate();
@@ -57,7 +60,9 @@ public class StockDAO implements IDAOObservable<Stock>{
     @Override
     public boolean update(Stock stock) {
         try {
-            PreparedStatement preparedStatement = conn.prepareStatement("UPDATE stock SET qty = ? , Id_Medicament = ? WHERE Id_Stock = ?", PreparedStatement.RETURN_GENERATED_KEYS);
+            PreparedStatement preparedStatement = conn.prepareStatement(
+                    "UPDATE stock SET qty = ? , Id_Medicament = ? WHERE Id_Stock = ?",
+                    PreparedStatement.RETURN_GENERATED_KEYS);
             preparedStatement.setInt(1, stock.getQuantity());
             preparedStatement.setInt(2, stock.getMedicament().getMedicamentId());
             preparedStatement.setInt(3, stock.getId());
@@ -77,8 +82,7 @@ public class StockDAO implements IDAOObservable<Stock>{
     @Override
     public boolean delete(int id) {
         try {
-            PreparedStatement pStatement = conn.prepareStatement("DELETE FROM stock " +
-                            "WHERE id_stock = ? " ,
+            PreparedStatement pStatement = conn.prepareStatement("DELETE FROM stock WHERE id_stock = ? " ,
                     PreparedStatement.RETURN_GENERATED_KEYS);
             pStatement.setInt(1, id);
             pStatement.executeUpdate();

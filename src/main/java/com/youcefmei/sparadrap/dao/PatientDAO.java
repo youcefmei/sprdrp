@@ -23,7 +23,8 @@ public class PatientDAO implements IDAOObservable<Patient> {
         DoctorGeneral familyDoctor = null;
         HealthMutual healthMutual = null;
         try {
-            PreparedStatement pStatement = conn.prepareStatement("SELECT * FROM patient p INNER JOIN users u ON u.id_users = p.id_users WHERE id_patient = ?"
+            PreparedStatement pStatement = conn.prepareStatement(
+                    "SELECT * FROM patient p INNER JOIN users u ON u.id_users = p.id_users WHERE id_patient = ?"
             );
             pStatement.setInt(1, id);
             ResultSet resultSet = pStatement.executeQuery();
@@ -69,7 +70,9 @@ public class PatientDAO implements IDAOObservable<Patient> {
     public Patient create(Patient patient) {
         Integer patientId = null;
         try {
-            PreparedStatement pStatement = conn.prepareStatement("INSERT INTO USERS(`firstname`,`lastname`,`mail`,`address`,`areacode`,`city`,`phone`) VALUES (?,?,?,?,?,?,?) ",Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pStatement = conn.prepareStatement("""
+                 INSERT INTO USERS(`firstname`,`lastname`,`mail`,`address`,`areacode`,`city`,`phone`) VALUES (?,?,?,?,?,?,?) 
+                 """,Statement.RETURN_GENERATED_KEYS);
             pStatement.setString(1, patient.getFirstName());
             pStatement.setString(2, patient.getLastName());
             pStatement.setString(3, patient.getMail());
@@ -89,7 +92,9 @@ public class PatientDAO implements IDAOObservable<Patient> {
                     healthMutualId = patient.getHealthMutual().getHealthMutualId();
                 }
                 int userId = generatedKeys.getInt(1);
-                pStatement = conn.prepareStatement("INSERT INTO Patient(`secuid`,`birthdate`,`Id_DoctorGeneral`,`Id_HealthMutual`,`Id_Users`) VALUES  (?,?,?,?,?)",Statement.RETURN_GENERATED_KEYS);
+                pStatement = conn.prepareStatement("""
+                    INSERT INTO Patient(`secuid`,`birthdate`,`Id_DoctorGeneral`,`Id_HealthMutual`,`Id_Users`) 
+                    VALUES  (?,?,?,?,?)""",Statement.RETURN_GENERATED_KEYS);
                 pStatement.setString(1, patient.getSecuId());
                 pStatement.setDate(2,Date.valueOf(patient.getBirthDate()));
                 pStatement.setInt(3,familyDoctorId);
@@ -114,15 +119,17 @@ public class PatientDAO implements IDAOObservable<Patient> {
     @Override
     public boolean update(Patient patient) {
         try {
-            PreparedStatement pStatement = conn.prepareStatement("SELECT * FROM patient p INNER JOIN users u ON u.id_users = p.id_users WHERE id_patient = ?"
+            PreparedStatement pStatement = conn.prepareStatement("""
+            SELECT * FROM patient p INNER JOIN users u ON u.id_users = p.id_users WHERE id_patient = ?"""
             );
             pStatement.setInt(1,patient.getPatientId());
             ResultSet resultSet = pStatement.executeQuery();
             if ( resultSet.next() ) {
                 Integer usersId = resultSet.getInt("id_Users");
-                pStatement = conn.prepareStatement("UPDATE USERS SET " +
-                                "firstname = ? , lastname = ? , mail = ? , address = ? , areacode = ? , city = ? , phone = ? " +
-                                "WHERE id_users = ? " ,
+                pStatement = conn.prepareStatement("""
+                            UPDATE USERS SET 
+                            firstname = ? , lastname = ? , mail = ? , address = ? , areacode = ? , city = ? , phone = ? 
+                            WHERE id_users = ? """ ,
                         PreparedStatement.RETURN_GENERATED_KEYS);
                 pStatement.setString(1, patient.getFirstName());
                 pStatement.setString(2, patient.getLastName());
@@ -135,8 +142,10 @@ public class PatientDAO implements IDAOObservable<Patient> {
                 pStatement.executeUpdate();
                 ResultSet generatedKeys = pStatement.getGeneratedKeys();
 //                if (generatedKeys.next()){
-                pStatement = conn.prepareStatement(
-                        "UPDATE patient SET id_doctorgeneral = ? , id_healthmutual = ? , birthdate = ? WHERE id_patient = ? " ,
+                pStatement = conn.prepareStatement("""
+                        UPDATE patient SET id_doctorgeneral = ? , id_healthmutual = ? , birthdate = ? 
+                        WHERE id_patient = ? 
+                        """ ,
                         PreparedStatement.RETURN_GENERATED_KEYS);
                 if ( patient.getFamilyDoctor() != null ){
                     pStatement.setInt(1, patient.getFamilyDoctor().getDoctorGeneralId() );

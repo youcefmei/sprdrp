@@ -15,10 +15,12 @@ public class DoctorGeneralDAO implements IDAOObservable<DoctorGeneral> {
     public DoctorGeneral findById(int id) {
         DoctorGeneral doctorGeneral = null;
         try {
-            PreparedStatement pStatement = conn.prepareStatement("SELECT * FROM DoctorGeneral dg \n" +
-                    "INNER JOIN Doctor d ON d.id_doctor = dg.id_doctor " +
-                    "INNER JOIN Users u ON u.id_users = d.id_users " +
-                    "WHERE id_doctorgeneral = ?"
+            PreparedStatement pStatement = conn.prepareStatement("""
+                    SELECT * FROM DoctorGeneral dg 
+                    INNER JOIN Doctor d ON d.id_doctor = dg.id_doctor
+                    INNER JOIN Users u ON u.id_users = d.id_users 
+                    WHERE id_doctorgeneral = ?
+                    """
             );
             pStatement.setInt(1, id);
 
@@ -53,8 +55,10 @@ public class DoctorGeneralDAO implements IDAOObservable<DoctorGeneral> {
         Integer doctorGeneralId = null;
         try {
             conn.setAutoCommit(false);
-            PreparedStatement pStatement = conn.prepareStatement(
-                    "INSERT INTO Users(`firstname`,`lastname`,`mail`,`address`,`areacode`,`city`,`phone`) VALUES (?,?,?,?,?,?,?)",
+            PreparedStatement pStatement = conn.prepareStatement("""
+                    INSERT INTO Users(`firstname`,`lastname`,`mail`,`address`,`areacode`,`city`,`phone`) 
+                    VALUES (?,?,?,?,?,?,?)
+                    """,
                     PreparedStatement.RETURN_GENERATED_KEYS
             );
 
@@ -69,7 +73,10 @@ public class DoctorGeneralDAO implements IDAOObservable<DoctorGeneral> {
             ResultSet generatedKeys = pStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 Integer userId = generatedKeys.getInt(1);
-                pStatement = conn.prepareStatement("INSERT INTO Doctor(registrationnb, Id_Users) VALUES (?,?)",PreparedStatement.RETURN_GENERATED_KEYS);
+                pStatement = conn.prepareStatement("""
+                        INSERT INTO Doctor(registrationnb, Id_Users) VALUES (?,?)
+                        """,
+                        PreparedStatement.RETURN_GENERATED_KEYS);
                 pStatement.setString(1, doctorGeneral.getRegistrationNb());
                 pStatement.setInt(2, userId);
                 pStatement.executeUpdate();
@@ -78,7 +85,9 @@ public class DoctorGeneralDAO implements IDAOObservable<DoctorGeneral> {
                     Integer doctorId = generatedKeys.getInt(1);
                     doctorGeneral.setDoctorId(doctorId);
 
-                    pStatement = conn.prepareStatement("INSERT INTO DoctorGeneral( Id_Doctor) VALUES (?)",PreparedStatement.RETURN_GENERATED_KEYS);
+                    pStatement = conn.prepareStatement(
+                            "INSERT INTO DoctorGeneral( Id_Doctor) VALUES (?)",
+                            PreparedStatement.RETURN_GENERATED_KEYS);
                     pStatement.setInt(1, doctorId);
                     pStatement.executeUpdate();
                     generatedKeys = pStatement.getGeneratedKeys();
@@ -104,8 +113,11 @@ public class DoctorGeneralDAO implements IDAOObservable<DoctorGeneral> {
 
         try {
             PreparedStatement preparedStatement = conn.prepareStatement(
-                    "SELECT dg.id_doctor,d.id_users FROM DoctorGeneral dg INNER JOIN Doctor d ON d.id_doctor = dg.id_doctor INNER JOIN Users u ON d.id_users = u.id_users  WHERE id_doctorgeneral = ?",
-                    PreparedStatement.RETURN_GENERATED_KEYS
+                    """
+                    SELECT dg.id_doctor,d.id_users FROM DoctorGeneral dg 
+                    INNER JOIN Doctor d ON d.id_doctor = dg.id_doctor INNER JOIN Users u ON d.id_users = u.id_users 
+                     WHERE id_doctorgeneral = ?
+                     """, PreparedStatement.RETURN_GENERATED_KEYS
             );
 
             preparedStatement.setInt(1,doctorGeneral.getDoctorGeneralId());
@@ -146,7 +158,10 @@ public class DoctorGeneralDAO implements IDAOObservable<DoctorGeneral> {
     public boolean delete(int id) {
         try {
             PreparedStatement preparedStatement = conn.prepareStatement(
-                    "SELECT * FROM DoctorGeneral dg INNER JOIN Doctor d ON d.id_doctor = dg.id_doctor INNER JOIN Users u ON d.id_users = u.id_users WHERE id_doctorgeneral = ?",
+                    """
+                    SELECT * FROM DoctorGeneral dg INNER JOIN Doctor d ON d.id_doctor = dg.id_doctor 
+                    INNER JOIN Users u ON d.id_users = u.id_users WHERE id_doctorgeneral = ?
+                    """,
                     PreparedStatement.RETURN_GENERATED_KEYS
             );
             preparedStatement.setInt(1, id);
@@ -204,7 +219,10 @@ public class DoctorGeneralDAO implements IDAOObservable<DoctorGeneral> {
         try {
             Statement statement = conn.createStatement();
             ResultSet resultSet = statement.executeQuery(
-                    "SELECT * FROM DoctorGeneral dg INNER JOIN Doctor d ON d.id_doctor = dg.id_doctor INNER JOIN Users u ON d.id_users = u.id_users;"
+            """
+                SELECT * FROM DoctorGeneral dg INNER JOIN Doctor d ON d.id_doctor = dg.id_doctor 
+                INNER JOIN Users u ON d.id_users = u.id_users;
+                """
             );
             while (resultSet.next()) {
                 int idDoctorgeneral = resultSet.getInt("id_doctorgeneral");
@@ -236,8 +254,9 @@ public class DoctorGeneralDAO implements IDAOObservable<DoctorGeneral> {
 
     public boolean deleteByDoctorId(Integer doctorId) {
         try {
-            PreparedStatement pStatement = conn.prepareStatement("DELETE FROM DoctorGeneral " +
-                            "WHERE Id_Doctor = ? " ,
+            PreparedStatement pStatement = conn.prepareStatement("""
+                            DELETE FROM DoctorGeneral WHERE Id_Doctor = ? 
+                            """ ,
                     PreparedStatement.RETURN_GENERATED_KEYS);
             pStatement.setInt(1, doctorId);
             pStatement.executeUpdate();

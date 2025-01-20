@@ -42,7 +42,8 @@ public class DoctorSpecialityDAO implements IDAOObservable<DoctorSpeciality> {
     public DoctorSpeciality create(DoctorSpeciality doctorSpeciality) {
         Integer doctorSpecialityId = null;
         try {
-            PreparedStatement pStatement = conn.prepareStatement("INSERT INTO Speciality(`name`) VALUES (?,?) ",Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pStatement = conn.prepareStatement(
+                    "INSERT INTO Speciality(`name`) VALUES (?,?) ",Statement.RETURN_GENERATED_KEYS);
             pStatement.setString(1, doctorSpeciality.getName());
             pStatement.executeUpdate();
             ResultSet generatedKeys = pStatement.getGeneratedKeys();
@@ -60,7 +61,9 @@ public class DoctorSpecialityDAO implements IDAOObservable<DoctorSpeciality> {
     @Override
     public boolean update(DoctorSpeciality doctorSpeciality) {
         try {
-            PreparedStatement preparedStatement = conn.prepareStatement("UPDATE Speciality SET name = ?  WHERE Id_Speciality = ?", PreparedStatement.RETURN_GENERATED_KEYS);
+            PreparedStatement preparedStatement = conn.prepareStatement(
+                    "UPDATE Speciality SET name = ?  WHERE Id_Speciality = ?",
+                    PreparedStatement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, doctorSpeciality.getName());
             preparedStatement.executeUpdate();
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
@@ -78,8 +81,7 @@ public class DoctorSpecialityDAO implements IDAOObservable<DoctorSpeciality> {
     @Override
     public boolean delete(int id) {
         try {
-            PreparedStatement pStatement = conn.prepareStatement(" DELETE FROM Speciality " +
-                            "WHERE Id_Speciality = ? " ,
+            PreparedStatement pStatement = conn.prepareStatement(" DELETE FROM Speciality WHERE Id_Speciality = ? " ,
                     PreparedStatement.RETURN_GENERATED_KEYS);
             pStatement.setInt(1 , id);
             pStatement.executeUpdate();

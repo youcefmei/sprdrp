@@ -15,8 +15,7 @@ public class UserDAO implements IDAOObservable<User> {
     public User findById(int id) {
         User user = null;
         try {
-            PreparedStatement pStatement = conn.prepareStatement("SELECT * FROM USERS p \n" +
-                    " WHERE id_users = ? "
+            PreparedStatement pStatement = conn.prepareStatement("SELECT * FROM USERS  WHERE id_users = ? "
             );
             pStatement.setInt(1, id);
             ResultSet resultSet = pStatement.executeQuery();
@@ -49,7 +48,9 @@ public class UserDAO implements IDAOObservable<User> {
 
         Integer userId = null ;
         try {
-            PreparedStatement pStatement = conn.prepareStatement("INSERT INTO USERS(`firstname`,`lastname`,`mail`,`address`,`areacode`,`city`,`phone`) VALUES (?,?,?,?,?,?,?) ",Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pStatement = conn.prepareStatement("""
+                INSERT INTO USERS(`firstname`,`lastname`,`mail`,`address`,`areacode`,`city`,`phone`) 
+                VALUES (?,?,?,?,?,?,?) """, Statement.RETURN_GENERATED_KEYS);
             pStatement.setString(1, user.getFirstName());
             pStatement.setString(2, user.getLastName());
             pStatement.setString(3, user.getMail());
@@ -74,9 +75,10 @@ public class UserDAO implements IDAOObservable<User> {
     @Override
     public boolean update(User user) {
         try {
-            PreparedStatement pStatement = conn.prepareStatement("UPDATE USERS " +
-                            "SET firstname = ? , lastname = ? , mail = ? , address = ? , areacode = ? , city = ? , phone = ? " +
-                            "WHERE id_users = ? " ,
+            PreparedStatement pStatement = conn.prepareStatement("""
+                            UPDATE USERS SET 
+                            firstname = ? , lastname = ? , mail = ? , address = ? , areacode = ? , city = ? , phone = ? 
+                            WHERE id_users = ? """ ,
                     PreparedStatement.RETURN_GENERATED_KEYS);
             pStatement.setString(1, user.getFirstName());
             pStatement.setString(2, user.getLastName());
@@ -102,8 +104,7 @@ public class UserDAO implements IDAOObservable<User> {
     public boolean delete(int id) {
 
         try {
-            PreparedStatement pStatement = conn.prepareStatement("DELETE FROM USERS " +
-                            "WHERE id_users = ? " ,
+            PreparedStatement pStatement = conn.prepareStatement("DELETE FROM USERS WHERE id_users = ? " ,
                     PreparedStatement.RETURN_GENERATED_KEYS);
             pStatement.setInt(1, id);
             pStatement.executeUpdate();

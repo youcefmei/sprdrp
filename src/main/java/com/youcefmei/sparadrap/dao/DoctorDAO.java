@@ -57,8 +57,10 @@ public class DoctorDAO implements IDAOObservable<Doctor> {
         Integer doctorId = null;
         try {
             conn.setAutoCommit(false);
-            PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO Users(`firstname`,`lastname`,`mail`,`address`,`areacode`,`city`,`phone`) " +
-                    "VALUES (?,?,?,?,?,?,?); ",Statement.RETURN_GENERATED_KEYS
+            PreparedStatement preparedStatement = conn.prepareStatement("""
+                    INSERT INTO Users(`firstname`,`lastname`,`mail`,`address`,`areacode`,`city`,`phone`) 
+                    VALUES (?,?,?,?,?,?,?); 
+                    """,Statement.RETURN_GENERATED_KEYS
             );
             preparedStatement.setString(1, doctor.getFirstName());
             preparedStatement.setString(2, doctor.getLastName());
@@ -126,7 +128,11 @@ public class DoctorDAO implements IDAOObservable<Doctor> {
             if (generatedKeys.next()) {
                 Integer userId = generatedKeys.getInt(1);
                 preparedStatement = conn.prepareStatement(
-                        "UPDATE Users SET `firstname` = ?,`lastname` = ? , `mail` = ?, `address` = ? ,`areacode`= ?, `city`= ?,`phone`= ?  WHERE id_users = ?;",
+                        """
+                        UPDATE Users SET 
+                         `firstname` = ?,`lastname` = ? , `mail` = ?, `address` = ? ,`areacode`= ?, `city`= ?,`phone`= ?  
+                         WHERE id_users = ?;
+                        """,
                         PreparedStatement.RETURN_GENERATED_KEYS
                 );
                 preparedStatement.setString(1, doctor.getFirstName());

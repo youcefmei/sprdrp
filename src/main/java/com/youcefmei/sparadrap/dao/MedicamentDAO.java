@@ -55,9 +55,9 @@ public class MedicamentDAO implements IDAOObservable<Medicament> {
     public Medicament create(Medicament medicament) {
         Integer medicamentId = null;
         try {
-            PreparedStatement preparedStatement = conn.prepareStatement(
-                    "INSERT INTO Medicament(`name`,`date_first`,`price`,`needprescription`,`Id_MedicamentCategory`) VALUES (?,?,?,?,?) ",
-                    PreparedStatement.RETURN_GENERATED_KEYS);
+            PreparedStatement preparedStatement = conn.prepareStatement("""
+                INSERT INTO Medicament(`name`,`date_first`,`price`,`needprescription`,`Id_MedicamentCategory`) 
+                VALUES (?,?,?,?,?) """, PreparedStatement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, medicament.getTitle());
             preparedStatement.setDate(2, Date.valueOf(medicament.getStartDate()));
             preparedStatement.setFloat(3, medicament.getPrice());
@@ -79,8 +79,10 @@ public class MedicamentDAO implements IDAOObservable<Medicament> {
     @Override
     public boolean update(Medicament medicament) {
         try {
-            PreparedStatement preparedStatement = conn.prepareStatement(
-                    "UPDATE Medicament SET name = ? , date_first = ?, price = ?, needprescription = ?, id_medicamentcategory = ? WHERE id_medicament = ?",
+            PreparedStatement preparedStatement = conn.prepareStatement("""
+                    UPDATE Medicament SET 
+                    name = ? , date_first = ?, price = ?, needprescription = ?, id_medicamentcategory = ? 
+                    WHERE id_medicament = ?""",
                     PreparedStatement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, medicament.getTitle());
             preparedStatement.setDate(2, Date.valueOf(medicament.getStartDate()));
@@ -126,7 +128,10 @@ public class MedicamentDAO implements IDAOObservable<Medicament> {
         MedicamentCategory medicamentCategory = null;
         try {
             Statement statement = conn.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM Medicament m INNER JOIN MedicamentCategory mc ON m.id_medicamentcategory = mc.id_medicamentcategory ");
+            ResultSet resultSet = statement.executeQuery("""
+            SELECT * FROM Medicament m 
+            INNER JOIN MedicamentCategory mc ON m.id_medicamentcategory = mc.id_medicamentcategory 
+            """);
             while (resultSet.next()) {
 
                 Integer medicamentId = resultSet.getInt("id_medicament");
@@ -160,8 +165,10 @@ public class MedicamentDAO implements IDAOObservable<Medicament> {
     public Stock findStockByMedicament(@NotNull Medicament medicament) {
         try {
             Stock stock = null;
-            PreparedStatement preparedStatement = conn.prepareStatement(
-                    "SELECT * FROM Medicament m  INNER JOIN Stock s ON s.Id_medicament = m.Id_medicament WHERE m.Id_medicament = ?"
+            PreparedStatement preparedStatement = conn.prepareStatement("""
+            SELECT * FROM Medicament m  
+            INNER JOIN Stock s ON s.Id_medicament = m.Id_medicament 
+            WHERE m.Id_medicament = ?"""
             );
             preparedStatement.setInt(1, medicament.getMedicamentId());
             ResultSet resultSet = preparedStatement.executeQuery();
